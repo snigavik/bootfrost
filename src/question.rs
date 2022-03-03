@@ -16,6 +16,6 @@ pub struct Tqf{
 
 pub struct Question{
 	aformula: TqfId,
-	nid: NodeId,
+	bid: BlockId,
 }
 

@@ -13,7 +13,7 @@ struct LogTuple{
 pub struct Answer{
 	amap: HashMap<TermId, TermId>,
 	log: Vec<LogTuple>,
-	nid: NodeId, 
+	bid: BlockId, 
 }
 
 impl Answer{

@@ -9,9 +9,9 @@ use crate::context::*;
 
 
 pub enum FunctorType{
+	None,
 	SFunctor,
 	IFunctor(fn(&Vec<TermId>, &mut PSTerms) -> TermId),
-
 }
 
 pub struct Symbol{
@@ -21,20 +21,20 @@ pub struct Symbol{
 }
 
 
-
 pub enum Term{
 	AVariable(SymbolId),
-	EVariable(SymbolId, NodeId),
+	EVariable(SymbolId, BlockId),
 	SConstant(SymbolId),
 	Bool(bool),
 	Integer(i64),
 	String(String),
-	Functor(SymbolId, Vec<TermId>),
+	SFunctor(SymbolId, Vec<TermId>),
+	IFunctor(SymbolId, Vec<TermId>, fn(&Vec<TermId>, &mut PSTerms) -> TermId),
 }
 
 pub struct BTerm{
 	pub term: TermId,
-	pub nid: NodeId,
+	pub bid: BlockId,
 	pub deleted: bool,
 }
 
@@ -54,9 +54,31 @@ impl Index<&TermId> for PSTerms{
 	}
 }
 
+impl Index<&SymbolId> for PSTerms{
+	type Output = Symbol;
+
+	fn index (&self, sid: &SymbolId) -> &Self::Output{
+		&self.symbols[sid.0]
+	}
+}
+
 impl PSTerms{
-	pub fn get(&self, tid:&TermId) -> Option<&Term>{
-		self.terms.get(tid.0)
+	pub fn get_term(&self, tid:&TermId) -> &Term{
+		//self.terms.get(tid.0)
+		&self.terms[tid.0]
+	}
+
+	pub fn get_symbol(&self, sid:&SymbolId) -> &Symbol{
+		//self.symbols.get(sid.0)
+		&self.symbols[sid.0]
+	}
+
+	pub fn len(&self) -> usize{
+		self.terms.len()
+	}
+
+	pub fn back_to(&mut self, car: usize){
+
 	}
 }
 

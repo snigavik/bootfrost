@@ -10,7 +10,7 @@ pub struct TqfId(pub usize);
 pub struct ConjunctIndex(pub usize);
 pub struct QuestionId(pub usize);
 pub struct AnswerId(pub usize, pub usize);
-pub struct NodeId(pub usize);
+pub struct BlockId(pub usize);
 
 
 pub enum DisplayMode{
