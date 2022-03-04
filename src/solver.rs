@@ -31,7 +31,8 @@ impl Solver{
 	fn eval_term(&mut self, tid:TermId) -> TermId{
 		let t = &self.psterms.get_term(&tid);
 		match t{
-			Term::IFunctor(sid, args, f) => {
+			Term::IFunctor(sid, args) => {
+				let f = self.psterms.get_symbol(&sid).f;
 				f(args, &mut self.psterms)
 			},
 			_ => tid
@@ -43,8 +44,8 @@ impl Solver{
 		if btid == qtid{
 			true
 		}else{
-			let bterm = &self.psterms.get_term(&btid);
-			let qterm = &self.psterms.get_term(&qtid);
+			let bterm = self.psterms.get_term(&btid);
+			let qterm = self.psterms.get_term(&qtid);
 			match qterm{
 				Term::AVariable(..) => {
 					if let Some(new_qtid) = context.get(&qtid){
@@ -71,7 +72,7 @@ impl Solver{
 						_ => false,
 					}
 				},
-				Term::IFunctor(q_sid, q_args, _) => {
+				Term::IFunctor(q_sid, q_args) => {
 					let p = self.psterms.len();
 					let new_qtid = self.eval_term(qtid);
 					let m = self.matching(btid, new_qtid, context, curr_answer);

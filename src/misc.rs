@@ -10,6 +10,8 @@ pub struct TqfId(pub usize);
 pub struct ConjunctIndex(pub usize);
 pub struct QuestionId(pub usize);
 pub struct AnswerId(pub usize, pub usize);
+
+#[derive(Clone, Hash, PartialEq, Eq)]
 pub struct BlockId(pub usize);
 
 
@@ -17,3 +19,4 @@ pub enum DisplayMode{
 	Plain,
 	Full,
 }
+
