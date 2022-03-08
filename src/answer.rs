@@ -4,22 +4,32 @@ use std::collections::HashMap;
 use crate::misc::*;
 //use crate::term::*;
 
-// struct LogTuple{
-// 	qatom: usize,
-// 	batom: usize,
-// 	avars: Vec<TermId>,
-// }
 
-enum LogTuple{
-	Matching{qatom_i: usize, batom_i: usize, avars:Vec<TermId>},
-	Interpretation{qatom_i: usize},
+enum MatchingState{
+	Ready,
+	Fail,
+	Success,
+	RollBack,
+}
+
+enum LogItem{
+	Matching{
+		qatom_i: usize, 
+		batom_i: usize, 
+		avars:Vec<TermId>, 
+	},
+	Interpretation{
+		qatom_i: usize, 
+	},
 }
 
 pub struct Answer{
 	amap: HashMap<TermId, TermId>,
-	log: Vec<LogTuple>,
+	log: Vec<LogItem>,
 	bid: BlockId, 
 }
+
+
 
 impl Answer{
 	pub fn get(&self, tid:&TermId) -> Option<&TermId>{
@@ -30,7 +40,7 @@ impl Answer{
 		self.amap.insert(qtid,btid);
 		if let Some(last) = self.log.last_mut(){
 			match last{
-				LogTuple::Matching{avars, ..} => {
+				LogItem::Matching{avars, ..} => {
 					avars.push(qtid);
 				},
 				_ => panic!(""),
@@ -44,7 +54,7 @@ impl Answer{
 	pub fn back(&mut self) -> bool{
 		if let Some(last) = self.log.pop(){
 			match last{
-				LogTuple::Matching{avars, ..} => {
+				LogItem::Matching{avars, ..} => {
 					avars.iter().for_each(|v| {self.amap.remove(&v);});
 					true
 				},
@@ -55,6 +65,29 @@ impl Answer{
 		}
 	}
 }
+
+pub struct AnswerState{
+	lower: usize,
+	middle: usize,
+	upper: usize,
+	k: usize,
+	alen: usize,
+	state: MatchingState,
+	curr_answer: Answer,
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

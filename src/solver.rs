@@ -28,6 +28,14 @@ struct Solver{
 
 impl Solver{
 
+	fn question_mut(&mut self, i:usize) -> &mut Question{
+		if let Some(q) = self.questions.get_mut(i){
+			q
+		}else{
+			panic!("");
+		}
+	}
+
 	fn eval_term(&mut self, tid:TermId) -> TermId{
 		let t = &self.psterms.get_term(&tid);
 		match t{
@@ -85,4 +93,14 @@ impl Solver{
 			}
 		}
 	}
+
+
+
+	fn proc(&mut self){
+		//choose question
+		//get current state (represented by answer), bounds and k
+		// 
+	}
+
+	
 }

@@ -1,4 +1,5 @@
 use crate::misc::*;
+use crate::answer::*;
 
 #[derive(Clone)]
 pub enum Quantifier{
@@ -7,6 +8,7 @@ pub enum Quantifier{
 }
 
 pub struct Tqf{
+	quantifier: Quantifier,
 	vars: Vec<TermId>,
 	conj: Vec<TermId>,
 	commands: Vec<TermId>,
@@ -14,8 +16,12 @@ pub struct Tqf{
 }
 
 
+
 pub struct Question{
 	aformula: TqfId,
 	bid: BlockId,
+	answer_state: AnswerState,
+	// curr_answer: Answer,
+	// bounds: Bounds,
 }
 
