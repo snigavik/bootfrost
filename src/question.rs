@@ -10,18 +10,35 @@ pub enum Quantifier{
 pub struct Tqf{
 	quantifier: Quantifier,
 	vars: Vec<TermId>,
-	conj: Vec<TermId>,
+	pub conj: Vec<TermId>,
 	commands: Vec<TermId>,
 	next: Vec<TqfId>,
 }
 
+impl Tqf{
+	pub fn conj_len(&self) -> usize{
+		self.conj.len()
+	}
+}
 
 
 pub struct Question{
-	aformula: TqfId,
+	pub aformula: TqfId,
 	bid: BlockId,
-	answer_state: AnswerState,
+	pub answer_state: AnswerState,
 	// curr_answer: Answer,
 	// bounds: Bounds,
 }
 
+
+
+
+
+
+
+
+
+
+
+
+//

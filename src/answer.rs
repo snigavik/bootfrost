@@ -5,7 +5,7 @@ use crate::misc::*;
 //use crate::term::*;
 
 
-enum MatchingState{
+pub enum MatchingState{
 	Ready,
 	Fail,
 	Success,
@@ -32,8 +32,20 @@ pub struct Answer{
 
 
 impl Answer{
+	pub fn len(&self) -> usize{
+		self.log.len()
+	}
+
 	pub fn get(&self, tid:&TermId) -> Option<&TermId>{
 		self.amap.get(tid)
+	}
+
+	pub fn push_satom(&mut self, qatom_i: usize){
+		self.log.push(LogItem::Matching{qatom_i: qatom_i, batom_i:0, avars: vec![]});
+	}
+
+	pub fn push_iatom(&mut self, qatom_i: usize){
+		self.log.push(LogItem::Interpretation{qatom_i: qatom_i});
 	}
 
 	pub fn push(&mut self, qtid: TermId, btid:TermId){
@@ -71,9 +83,9 @@ pub struct AnswerState{
 	middle: usize,
 	upper: usize,
 	k: usize,
-	alen: usize,
-	state: MatchingState,
-	curr_answer: Answer,
+	pub conj_len: usize,
+	pub state: MatchingState,
+	pub curr_answer: Answer,
 }
 
 

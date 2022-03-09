@@ -28,11 +28,19 @@ struct Solver{
 
 impl Solver{
 
-	fn question_mut(&mut self, i:usize) -> &mut Question{
-		if let Some(q) = self.questions.get_mut(i){
+	fn question_mut(&mut self, i:QuestionId) -> &mut Question{
+		if let Some(q) = self.questions.get_mut(i.0){
 			q
 		}else{
 			panic!("");
+		}
+	}
+
+	fn tqf(&self, i: TqfId) -> &Tqf{
+		if let Some(tqf) = self.tqfs.get(i.0){
+			tqf
+		}else{
+			panic!("")
 		}
 	}
 
@@ -94,7 +102,43 @@ impl Solver{
 		}
 	}
 
+fn next_a(&mut self, qid: QuestionId) -> bool{
+	let mut question = self.questions.get_mut(qid.0).unwrap();
+	let state_len = question.answer_state.curr_answer.len();
+	let conj_len = question.answer_state.conj_len;
+	if state_len < conj_len{
+		let x = &self.tqfs[question.aformula.0].conj[state_len];
+		let q_term = self.psterms.get_term(x);
+		question.answer_state.state = MatchingState::Ready;
+		match q_term{
+			Term::SFunctor(..) => {
+				question.answer_state.curr_answer.push_satom(state_len);
+				true
+			},
+			Term::IFunctor(..) => {
+				question.answer_state.curr_answer.push_iatom(state_len);
+				true
+			},
+			_ => {
+				panic!("");
+			}
+		}
+	}else{
+		false
+	}	
+}
 
+	fn next_b(&mut self, qid: QuestionId){
+
+	}
+
+	fn next_k(&mut self, qid: QuestionId){
+
+	}
+
+	fn nwxt_bounds(&mut self, qid: QuestionId){
+
+	}
 
 	fn proc(&mut self){
 		//choose question
@@ -104,3 +148,33 @@ impl Solver{
 
 	
 }
+
+
+
+
+
+// fn next_a(qid: QuestionId, s: &mut Solver) -> bool{
+// 	let mut question = s.questions.get_mut(qid.0).unwrap();
+// 	let state_len = question.answer_state.curr_answer.len();
+// 	let conj_len = question.answer_state.conj_len;
+// 	if state_len < conj_len{
+// 		let x = &s.tqfs[question.aformula.0].conj[state_len];
+// 		let q_term = s.psterms.get_term(x);
+// 		question.answer_state.state = MatchingState::Ready;
+// 		match q_term{
+// 			Term::SFunctor(..) => {
+// 				question.answer_state.curr_answer.push_satom(state_len);
+// 				true
+// 			},
+// 			Term::IFunctor(..) => {
+// 				question.answer_state.curr_answer.push_iatom(state_len);
+// 				true
+// 			},
+// 			_ => {
+// 				panic!("");
+// 			}
+// 		}
+// 	}else{
+// 		false
+// 	}	
+// }
