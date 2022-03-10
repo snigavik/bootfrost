@@ -102,34 +102,33 @@ impl Solver{
 		}
 	}
 
-fn next_a(&mut self, qid: QuestionId) -> bool{
-	let mut question = self.questions.get_mut(qid.0).unwrap();
-	let state_len = question.answer_state.curr_answer.len();
-	let conj_len = question.answer_state.conj_len;
-	if state_len < conj_len{
-		let x = &self.tqfs[question.aformula.0].conj[state_len];
-		let q_term = self.psterms.get_term(x);
-		question.answer_state.state = MatchingState::Ready;
-		match q_term{
-			Term::SFunctor(..) => {
-				question.answer_state.curr_answer.push_satom(state_len);
-				true
-			},
-			Term::IFunctor(..) => {
-				question.answer_state.curr_answer.push_iatom(state_len);
-				true
-			},
-			_ => {
-				panic!("");
+	fn next_a(&mut self, qid: QuestionId){
+		let mut question = self.questions.get_mut(qid.0).unwrap();
+		let state_len = question.answer_state.curr_answer.len();
+		let conj_len = question.answer_state.conj_len;
+		if state_len < conj_len{
+			let x = &self.tqfs[question.aformula.0].conj[state_len];
+			let q_term = self.psterms.get_term(x);
+			question.answer_state.state = MatchingState::Ready;
+			match q_term{
+				Term::SFunctor(..) => {
+					question.answer_state.curr_answer.push_satom(state_len);
+				},
+				Term::IFunctor(..) => {
+					question.answer_state.curr_answer.push_iatom(state_len);
+				},
+				_ => {
+					panic!("");
+				}
 			}
-		}
-	}else{
-		false
-	}	
-}
+		}else{
+			question.answer_state.state = MatchingState::NextB;
+		}	
+	}
 
 	fn next_b(&mut self, qid: QuestionId){
-
+		let mut question = self.questions.get_mut(qid.0).unwrap();
+		question.answer_state.next_b();
 	}
 
 	fn next_k(&mut self, qid: QuestionId){
@@ -140,10 +139,31 @@ fn next_a(&mut self, qid: QuestionId) -> bool{
 
 	}
 
-	fn proc(&mut self){
-		//choose question
-		//get current state (represented by answer), bounds and k
-		// 
+	fn proc(&mut self, qid:QuestionId){
+		//let mut question = self.questions.get_mut(qid.0).unwrap();
+		
+		while true{
+			match self.questions[qid.0].answer_state.state{
+				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
+					self.next_a(qid);
+				},
+				MatchingState::NextB | MatchingState::Fail => {
+
+				},
+				MatchingState::Ready => {
+
+				},
+				MatchingState::Rollback => {
+
+				},
+				MatchingState::NextK => {
+					self.question_mut(qid).answer_state.state = MatchingState::Zero;
+				},
+				MatchingState::Exhausted => {
+
+				}
+			}
+		}		 
 	}
 
 	
