@@ -146,18 +146,44 @@ impl Solver{
 			match self.questions[qid.0].answer_state.state{
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
 					self.next_a(qid);
+					continue;
 				},
 				MatchingState::NextB | MatchingState::Fail => {
-
+					self.next_b(qid);
+					continue;
 				},
 				MatchingState::Ready => {
-
+					match self.questions[qid.0].answer_state.curr_answer.last().unwrap(){
+						LogItem::Matching{batom_i, qatom_i, ..} => {
+							let bterm = &self.base[*batom_i];
+							if bterm.deleted{
+								self.question_mut(qid).answer_state.state = MatchingState::Fail;
+								continue;
+							}
+							let btid = bterm.term;
+							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
+							let mut context = &mut self.pstack[self.questions[qid.0].fstack_i].context;
+							let mut curr_answer = &mut self.question_mut(qid).answer_state.curr_answer;
+							if self.matching(btid, qtid, context, &mut curr_answer){
+								self.question_mut(qid).answer_state.state = MatchingState::Success;
+								continue;
+							}else{
+								self.question_mut(qid).answer_state.state = MatchingState::Fail;
+								continue;								
+							}
+						},
+						LogItem::Interpretation{qatom_i} => {
+							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
+							self.eval_term(qtid); // CHECK false
+							continue;
+						},
+					}
 				},
 				MatchingState::Rollback => {
 
 				},
 				MatchingState::NextK => {
-					self.question_mut(qid).answer_state.state = MatchingState::Zero;
+					//self.question_mut(qid).answer_state.state = MatchingState::Zero;
 				},
 				MatchingState::Exhausted => {
 
