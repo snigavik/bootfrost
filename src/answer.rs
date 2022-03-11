@@ -115,6 +115,26 @@ pub struct AnswerState{
 }
 
 impl AnswerState{
+
+	pub fn shift_bounds(&mut self, blen:usize) -> bool{
+		if self.upper < blen{
+			self.middle = self.upper;
+			self.upper = blen;
+			true
+		}else{
+			false
+		}
+	}
+
+	pub fn next_k(&mut self){
+		if self.k < self.conj_len - 1{
+			self.k = self.k  + 1;
+			self.state = MatchingState::Zero;
+		}else{
+			self.state = MatchingState::Exhausted;
+		}
+	}
+
 	pub fn next_b(&mut self){
 		match self.curr_answer.last_mut().unwrap(){
 			LogItem::Matching{ref mut batom_i, qatom_i, ..} => {
