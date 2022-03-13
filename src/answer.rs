@@ -11,7 +11,7 @@ pub enum MatchingState{
 	Success,
 	Rollback,
 	Zero,
-	NextA,
+	NextA, // ??
 	NextB,
 	NextK,
 	Exhausted,
@@ -32,6 +32,12 @@ pub struct Answer{
 	amap: HashMap<TermId, TermId>,
 	log: Vec<LogItem>,
 	bid: BlockId, 
+	lower: usize,
+	middle: usize,
+	upper: usize,
+	k: usize,
+	pub conj_len: usize,
+	pub state: MatchingState,	
 }
 
 
@@ -52,8 +58,8 @@ impl Answer{
 		self.amap.get(tid)
 	}
 
-	pub fn push_satom(&mut self, qatom_i: usize){
-		self.log.push(LogItem::Matching{qatom_i: qatom_i, batom_i:0, avars: vec![]}); //FIX
+	pub fn push_satom(&mut self, qatom_i: usize, b:usize){
+		self.log.push(LogItem::Matching{qatom_i: qatom_i, batom_i:b, avars: vec![]}); //FIX
 	}
 
 	pub fn push_iatom(&mut self, qatom_i: usize){
@@ -102,19 +108,16 @@ impl Answer{
 			false
 		}
 	}
-}
 
-pub struct AnswerState{
-	lower: usize,
-	middle: usize,
-	upper: usize,
-	k: usize,
-	pub conj_len: usize,
-	pub state: MatchingState,
-	pub curr_answer: Answer,
-}
-
-impl AnswerState{
+	pub fn get_b(&self, qatom_i:usize) -> usize{
+		if qatom_i < self.k{
+			self.lower
+		}else if qatom_i == self.k{
+			self.middle
+		}else{
+			self.lower
+		}
+	}
 
 	pub fn shift_bounds(&mut self, blen:usize) -> bool{
 		if self.upper < blen{
@@ -136,35 +139,37 @@ impl AnswerState{
 	}
 
 	pub fn next_b(&mut self){
-		match self.curr_answer.last_mut().unwrap(){
+		match self.log.last_mut().unwrap(){
 			LogItem::Matching{ref mut batom_i, qatom_i, ..} => {
 				if *qatom_i < self.k{
 					if *batom_i < self.middle{
 						*batom_i = *batom_i + 1;
-						self.curr_answer.back_top();
+						self.back_top();
 					}
 				}else if *qatom_i == self.k{
 					if *batom_i < self.upper{
 						*batom_i = *batom_i + 1;
-						self.curr_answer.back_top();
+						self.back_top();
 					}
 				}else if *qatom_i > self.k{
 					if *batom_i < self.upper{
 						*batom_i = *batom_i + 1;
-						self.curr_answer.back_top();
+						self.back_top();
 					}
 				}else{
-					self.curr_answer.pop();
+					self.pop();
 					self.state = MatchingState::Rollback;
 				}
 			},
 			LogItem::Interpretation{..} => {
-				self.curr_answer.pop();
+				self.pop();
 				self.state = MatchingState::Rollback;
 			},
 		}
-	}
+	}		
 }
+
+
 
 
 

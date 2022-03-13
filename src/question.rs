@@ -26,9 +26,7 @@ pub struct Question{
 	pub aformula: TqfId,
 	bid: BlockId,
 	pub fstack_i:usize,
-	pub answer_state: AnswerState,
-	// curr_answer: Answer,
-	// bounds: Bounds,
+	pub answer: Answer,
 }
 
 
