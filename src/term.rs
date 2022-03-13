@@ -67,6 +67,15 @@ impl Index<&SymbolId> for PSTerms{
 
 
 impl PSTerms{
+	pub fn check_value(&self, tid:&TermId) -> bool{
+		match self.terms[tid.0]{
+			Term::Bool(b) => b,
+			_ => {
+				panic!("");
+			},
+		}
+	}
+
 	pub fn get_term(&self, tid:&TermId) -> Term{
 		//self.terms.get(tid.0)
 		self.terms[tid.0].clone()

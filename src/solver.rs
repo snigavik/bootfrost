@@ -127,7 +127,12 @@ impl Solver{
 						},
 						LogItem::Interpretation{qatom_i} => {
 							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-							eval_term(&mut self.psterms, qtid); // CHECK false
+							let b = eval_term(&mut self.psterms, qtid);
+							if self.psterms.check_value(&b){
+								self.question_mut(qid).answer.state = MatchingState::Success;
+							}else{
+								self.question_mut(qid).answer.state = MatchingState::Fail;
+							}
 							continue;
 						},
 					}
