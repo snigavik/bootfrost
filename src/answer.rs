@@ -5,6 +5,7 @@ use crate::misc::*;
 //use crate::term::*;
 
 
+#[derive(Clone)]
 pub enum MatchingState{
 	Ready,
 	Fail,
@@ -15,8 +16,11 @@ pub enum MatchingState{
 	NextB,
 	NextK,
 	Exhausted,
+	Answer,
+	Empty,
 }
 
+#[derive(Clone)]
 pub enum LogItem{
 	Matching{
 		qatom_i: usize, 
@@ -28,6 +32,7 @@ pub enum LogItem{
 	},
 }
 
+#[derive(Clone)]
 pub struct Answer{
 	amap: HashMap<TermId, TermId>,
 	log: Vec<LogItem>,
@@ -145,20 +150,26 @@ impl Answer{
 					if *batom_i < self.middle{
 						*batom_i = *batom_i + 1;
 						self.back_top();
+					}else{
+						self.pop();
+						self.state = MatchingState::Rollback;
 					}
 				}else if *qatom_i == self.k{
 					if *batom_i < self.upper{
 						*batom_i = *batom_i + 1;
 						self.back_top();
-					}
+					}else{
+						self.pop();
+						self.state = MatchingState::Rollback;
+					}	
 				}else if *qatom_i > self.k{
 					if *batom_i < self.upper{
 						*batom_i = *batom_i + 1;
 						self.back_top();
+					}else{
+						self.pop();
+						self.state = MatchingState::Rollback;
 					}
-				}else{
-					self.pop();
-					self.state = MatchingState::Rollback;
 				}
 			},
 			LogItem::Interpretation{..} => {

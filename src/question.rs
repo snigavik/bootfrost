@@ -23,10 +23,11 @@ impl Tqf{
 
 
 pub struct Question{
-	pub aformula: TqfId,
 	bid: BlockId,
+	pub aformula: TqfId,
 	pub fstack_i:usize,
-	pub answer: Answer,
+	pub curr_answer_stack: Vec<Answer>,
+	pub answers: Vec<Answer>,
 }
 
 
