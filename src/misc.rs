@@ -13,7 +13,7 @@ pub struct ConjunctIndex(pub usize);
 pub struct QuestionId(pub usize);
 pub struct AnswerId(pub usize, pub usize);
 
-#[derive(Clone, Hash, PartialEq, Eq)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub struct BlockId(pub usize);
 
 

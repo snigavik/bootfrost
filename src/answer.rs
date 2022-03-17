@@ -36,7 +36,7 @@ pub enum LogItem{
 pub struct Answer{
 	amap: HashMap<TermId, TermId>,
 	log: Vec<LogItem>,
-	bid: BlockId, 
+	pub bid: BlockId, 
 	lower: usize,
 	middle: usize,
 	upper: usize,
@@ -48,6 +48,21 @@ pub struct Answer{
 
 
 impl Answer{
+
+	pub fn new(bid: BlockId, b_len: usize, q_len: usize) -> Self{
+		Self{
+			amap: HashMap::new(),
+			log: vec![],
+			bid: bid,
+			lower: 0,
+			middle: 0,
+			upper: b_len,
+			k: 0,
+			conj_len: q_len,
+			state: MatchingState::Zero,
+		}
+	}
+
 	pub fn len(&self) -> usize{
 		self.log.len()
 	}

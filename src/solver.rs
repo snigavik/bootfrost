@@ -7,6 +7,13 @@ use crate::question::*;
 use crate::context::*;
 use crate::answer::*;
 
+struct StrategyItem{
+	qid: QuestionId,
+	selector: SelectorStrategy,
+	sf: StartFrom,
+	limit: usize,
+}
+
 enum SelectorStrategy{
 	First(fn(&Answer, &PSTerms) -> bool),
 	Best,
@@ -105,7 +112,21 @@ impl Solver{
 	}
 
 	//TODO: Check boundary conditions everywhere
-	fn proc(&mut self, qid:QuestionId, limit:usize){
+	fn proc(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
+		let qid = si.qid;
+		let limit = si.limit;
+		if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
+			if top.bid != bid{
+				let mut new_top = top.clone();
+				new_top.bid = bid;
+				self.questions[qid.0].curr_answer_stack.push(new_top);
+			}
+		}else{
+			let new_top = Answer::new(bid, self.base.len(), self.tqf(self.questions[qid.0].aformula).conj.len());
+			self.questions[qid.0].curr_answer_stack.push(new_top);
+		}
+
+
 		let mut i = 0;
 		while i < limit{
 			i = i + 1;
@@ -183,7 +204,24 @@ impl Solver{
 					break;
 				}
 			}
-		}		 
+
+		}
+		None		 
+	}
+
+	fn strategy(&self) -> Vec<StrategyItem>{
+		vec![]
+	}
+
+	pub fn solver_loop(&mut self){
+		let bid = BlockId(1000);
+		let strategy = self.strategy();
+		for si in strategy.iter(){
+			if let Some(answer) = self.proc(si, bid){
+
+				break;
+			}
+		}
 	}
 }
 
