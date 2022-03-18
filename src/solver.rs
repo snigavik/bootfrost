@@ -7,6 +7,7 @@ use crate::question::*;
 use crate::context::*;
 use crate::answer::*;
 
+
 struct StrategyItem{
 	qid: QuestionId,
 	selector: SelectorStrategy,
@@ -30,7 +31,7 @@ struct FBlock{
 	aid: AnswerId,
 	eid: TqfId,
 	context: Context,
-	bid: BlockId,
+	pub bid: BlockId,
 	enable: bool,
 }
 
@@ -40,7 +41,7 @@ struct Solver{
 	base_index: BTreeMap<TermId, ConjunctIndex>,
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
-	pstack: Vec<FBlock>,
+	stack: Vec<FBlock>,
 	bid: BlockId,
 }
 
@@ -111,8 +112,7 @@ impl Solver{
 		question.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
 	}
 
-	//TODO: Check boundary conditions everywhere
-	fn proc(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
+	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
 		let qid = si.qid;
 		let limit = si.limit;
 		if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
@@ -149,7 +149,7 @@ impl Solver{
 							}
 							let btid = bterm.term;
 							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-							let context = &self.pstack[self.questions[qid.0].fstack_i].context;
+							let context = &self.stack[self.questions[qid.0].fstack_i].context;
 							let mut curr_answer = &mut self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
 							if matching(&mut self.psterms, btid, qtid, context, curr_answer){
 								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
@@ -206,22 +206,26 @@ impl Solver{
 			}
 
 		}
-		None		 
+		None //		 
 	}
 
 	fn strategy(&self) -> Vec<StrategyItem>{
 		vec![]
 	}
 
-	pub fn solver_loop(&mut self){
-		let bid = BlockId(1000);
+	fn find_answer_global(&mut self) -> Option<Answer>{
+		let bid = self.stack.last().unwrap().bid;
 		let strategy = self.strategy();
 		for si in strategy.iter(){
-			if let Some(answer) = self.proc(si, bid){
-
-				break;
+			if let Some(answer) = self.find_answer_local(si, bid){
+				return Some(answer);
 			}
 		}
+		None
+	}
+
+	pub fn solver_loop(&mut self){
+
 	}
 }
 
