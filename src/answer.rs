@@ -37,6 +37,7 @@ pub struct Answer{
 	amap: HashMap<TermId, TermId>,
 	log: Vec<LogItem>,
 	pub bid: BlockId, 
+	pub qid: QuestionId,
 	lower: usize,
 	middle: usize,
 	upper: usize,
@@ -49,11 +50,12 @@ pub struct Answer{
 
 impl Answer{
 
-	pub fn new(bid: BlockId, b_len: usize, q_len: usize) -> Self{
+	pub fn new(bid: BlockId, qid: QuestionId, b_len: usize, q_len: usize) -> Self{
 		Self{
 			amap: HashMap::new(),
 			log: vec![],
 			bid: bid,
+			qid: qid,
 			lower: 0,
 			middle: 0,
 			upper: b_len,

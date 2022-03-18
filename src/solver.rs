@@ -1,5 +1,6 @@
 
 use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use crate::misc::*;
 use crate::term::*;
@@ -32,13 +33,13 @@ struct FBlock{
 	eid: TqfId,
 	context: Context,
 	pub bid: BlockId,
-	enable: bool,
+	status: bool,
 }
 
 struct Solver{
 	psterms: PSTerms,
 	base: Vec<BTerm>,
-	base_index: BTreeMap<TermId, ConjunctIndex>,
+	base_index: HashMap<TermId, ConjunctIndex>,
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
 	stack: Vec<FBlock>,
@@ -122,7 +123,7 @@ impl Solver{
 				self.questions[qid.0].curr_answer_stack.push(new_top);
 			}
 		}else{
-			let new_top = Answer::new(bid, self.base.len(), self.tqf(self.questions[qid.0].aformula).conj.len());
+			let new_top = Answer::new(bid, qid, self.base.len(), self.tqf(self.questions[qid.0].aformula).conj.len());
 			self.questions[qid.0].curr_answer_stack.push(new_top);
 		}
 
@@ -224,8 +225,60 @@ impl Solver{
 		None
 	}
 
-	pub fn solver_loop(&mut self){
+	fn remove_top_block(&mut self){
+		if let Some(top) = self.stack.pop(){
+			if top.status{
+				while let Some(last) = self.base.last(){
+					if last.bid == top.bid{
+						if let Some(bt) = self.base.pop(){
+							self.base_index.remove(&bt.term);
+						}else{
+							panic!("");
+						}
+					}else{
+						break;
+					}
+				}
 
+				self.questions.retain(|q| q.bid != top.bid);
+
+				self.questions.iter_mut().for_each(|q| q.remove_answers(top.bid));
+			}else{
+				panic!("");
+			}
+		}else{
+			panic!("");
+		}
+	}
+
+	fn remove_solved_blocks(&mut self){
+		while let Some(top) = self.stack.last(){
+			if top.status{
+				self.remove_top_block();
+			}else{
+				break;
+			}
+		}
+	}
+
+	fn transform(&mut self, answer: Answer){
+		
+	}
+
+	fn activate_top_block(&mut self){
+		
+	}
+
+	pub fn solver_loop(&mut self, limit:usize){
+		let mut i = 0;
+		while i < limit{
+			i = i + 1;
+			if let Some(answer) = self.find_answer_global(){
+				self.transform(answer);
+			}else{
+
+			}
+		}
 	}
 }
 
