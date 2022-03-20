@@ -33,7 +33,7 @@ struct FBlock{
 	eid: TqfId,
 	context: Context,
 	pub bid: BlockId,
-	status: bool,
+	activated: bool,
 }
 
 struct Solver{
@@ -227,7 +227,7 @@ impl Solver{
 
 	fn remove_top_block(&mut self){
 		if let Some(top) = self.stack.pop(){
-			if top.status{
+			if top.activated{
 				while let Some(last) = self.base.last(){
 					if last.bid == top.bid{
 						if let Some(bt) = self.base.pop(){
@@ -253,7 +253,7 @@ impl Solver{
 
 	fn remove_solved_blocks(&mut self){
 		while let Some(top) = self.stack.last(){
-			if top.status{
+			if top.activated{
 				self.remove_top_block();
 			}else{
 				break;
@@ -262,7 +262,35 @@ impl Solver{
 	}
 
 	fn transform(&mut self, answer: Answer){
+		let qid = answer.qid;
+		let curr_context = &self.stack[self.questions[qid.0].fstack_i].context;	
+		let a_tqf = &self.questions[qid.0].aformula;
+		let e_tqfs = &self.tqfs[a_tqf.0].next;
+
+		if e_tqfs.len() == 0{
+			self.remove_solved_blocks();
+			return;
+		}
+
+		let commands = &self.tqfs[a_tqf.0].commands;
+		commands.iter().for_each(|c| run_command(&mut self.psterms, *c));
 		
+
+		let mut new_blocks: Vec<FBlock> = 
+			e_tqfs
+				.iter()
+				.enumerate()
+				.map(|(i,ef)|
+					FBlock{
+						qid: qid,
+						aid: AnswerId(qid.0, 100000),
+						eid: *ef,
+						context: Context::new(&curr_context, &answer, &self.tqfs[ef.0].vars, &mut self.psterms),
+						bid: BlockId(self.bid.0 + i),
+						activated: false,
+					}).collect();
+		self.stack.append(&mut new_blocks);
+		self.activate_top_block(); 
 	}
 
 	fn activate_top_block(&mut self){
@@ -283,8 +311,16 @@ impl Solver{
 }
 
 
+fn get_number(psterms: &mut PSTerms, tid:TermId, context: &Context) -> TermId{
+	return TermId(1000000);
+}
 
-fn eval_term(psterms: &mut PSTerms,  tid:TermId) -> TermId{
+
+fn run_command(psterms: &mut PSTerms,  tid:TermId){
+
+}
+
+fn eval_term(psterms: &mut PSTerms, tid:TermId) -> TermId{
 	let t = &psterms.get_term(&tid);
 	match t{
 		Term::IFunctor(sid, args) => {

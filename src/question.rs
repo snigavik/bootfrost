@@ -9,10 +9,10 @@ pub enum Quantifier{
 
 pub struct Tqf{
 	quantifier: Quantifier,
-	vars: Vec<TermId>,
+	pub vars: Vec<TermId>,
 	pub conj: Vec<TermId>,
-	commands: Vec<TermId>,
-	next: Vec<TqfId>,
+	pub commands: Vec<TermId>,
+	pub next: Vec<TqfId>,
 }
 
 impl Tqf{
