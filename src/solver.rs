@@ -311,8 +311,50 @@ impl Solver{
 }
 
 
-fn get_number(psterms: &mut PSTerms, tid:TermId, context: &Context) -> TermId{
-	return TermId(1000000);
+fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context) -> ProcessingResult{
+	let t = &psterms.get_term(&tid);
+	match t{
+		Term::AVariable(..) => {
+			if let Some(new_tid) = context.get(&tid){
+				ProcessingResult::Existing(*new_tid)
+			}else{
+				panic!("");
+			}
+		},
+		Term::EVariable(..) => {
+			if let Some(new_tid) = context.get(&tid){
+				ProcessingResult::Existing(*new_tid)
+			}else{
+				ProcessingResult::Existing(tid)
+			}			
+		}
+		Term::SConstant(..) | Term::Bool(..) | Term::Integer(..) | Term::String(..) => {
+			ProcessingResult::Existing(tid)
+		},
+		Term::SFunctor(sid, args) => {
+			let new_term = Term::SFunctor(
+				*sid, 
+				args
+					.iter()
+					.map(|arg| 
+						processing(*arg, psterms, context).unwrap())
+					.collect());
+			psterms.get_tid(new_term)
+		},
+		Term::IFunctor(sid, args) => {
+			let f = psterms.get_symbol(&sid).f;
+			processing(
+				f(
+					&args
+						.iter()
+						.map(|arg| 
+							processing(*arg, psterms, context).unwrap())
+						.collect(), 
+					psterms),
+				psterms,
+				context)
+		},
+	}
 }
 
 
@@ -378,28 +420,3 @@ fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, 
 }
 
 
-// fn next_a(qid: QuestionId, s: &mut Solver) -> bool{
-// 	let mut question = s.questions.get_mut(qid.0).unwrap();
-// 	let state_len = question.answer_state.curr_answer.len();
-// 	let conj_len = question.answer_state.conj_len;
-// 	if state_len < conj_len{
-// 		let x = &s.tqfs[question.aformula.0].conj[state_len];
-// 		let q_term = s.psterms.get_term(x);
-// 		question.answer_state.state = MatchingState::Ready;
-// 		match q_term{
-// 			Term::SFunctor(..) => {
-// 				question.answer_state.curr_answer.push_satom(state_len);
-// 				true
-// 			},
-// 			Term::IFunctor(..) => {
-// 				question.answer_state.curr_answer.push_iatom(state_len);
-// 				true
-// 			},
-// 			_ => {
-// 				panic!("");
-// 			}
-// 		}
-// 	}else{
-// 		false
-// 	}	
-// }

@@ -76,6 +76,17 @@ impl PSTerms{
 		}
 	}
 
+	pub fn get_tid(&mut self, term:Term) -> ProcessingResult{
+		if let Some(tid) = self.index.get(&term){
+			ProcessingResult::Existing(*tid)
+		}else{
+			let new_tid = TermId(self.terms.len());
+			self.terms.push(term.clone());
+			self.index.insert(term.clone(), new_tid);
+			ProcessingResult::New(new_tid)
+		}
+	}
+
 	pub fn get_term(&self, tid:&TermId) -> Term{
 		//self.terms.get(tid.0)
 		self.terms[tid.0].clone()

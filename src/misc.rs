@@ -22,3 +22,19 @@ pub enum DisplayMode{
 	Full,
 }
 
+pub enum ProcessingResult{
+	New(TermId),
+	Existing(TermId),
+	Error,
+}
+
+impl ProcessingResult{
+	pub fn unwrap(&self) -> TermId{
+		match self{
+			ProcessingResult::New(tid) | ProcessingResult::Existing(tid) => *tid,
+			_ => {
+				panic!("");
+			}
+		}
+	}
+}
