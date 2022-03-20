@@ -39,7 +39,7 @@ struct FBlock{
 struct Solver{
 	psterms: PSTerms,
 	base: Vec<BTerm>,
-	base_index: HashMap<TermId, ConjunctIndex>,
+	base_index: HashMap<TermId, usize>,
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
 	stack: Vec<FBlock>,
@@ -290,11 +290,53 @@ impl Solver{
 						activated: false,
 					}).collect();
 		self.stack.append(&mut new_blocks);
-		self.activate_top_block(); 
+		if !self.activate_top_block(){
+			self.remove_solved_blocks();
+		} 
 	}
 
-	fn activate_top_block(&mut self){
-		
+	fn activate_top_block(&mut self) -> bool{
+		let fstack_i = self.stack.len() - 1;
+		if let Some(top) = self.stack.last_mut(){
+			let e_tqf = &self.tqfs[top.eid.0];
+			let e_conj = &e_tqf.conj;
+			let mut pst = &mut self.psterms;
+			let new_conj = e_conj.iter().map(|a| processing(*a, pst, &top.context).unwrap());
+			for a in new_conj{
+				// if !pst.check_value(&a){
+				// 	return false;
+				// }
+
+				if let Some(i) = self.base_index.get(&a){
+					if self.base[*i].deleted{
+						self.base_index.insert(a, self.base.len());
+						self.base.push(BTerm{term: a, bid: top.bid, deleted: false})
+					}
+				}else{
+					self.base_index.insert(a, self.base.len());
+					self.base.push(BTerm{term: a, bid: top.bid, deleted: false})
+				}
+			}	
+
+			// add questions
+			let a_tqfs = &e_tqf.next;
+			let new_questions = 
+				a_tqfs
+					.iter()
+					.map(|af| 
+						Question{
+							bid: top.bid,
+							aformula: *af,
+							fstack_i: fstack_i,
+							curr_answer_stack: vec![],
+							answers: vec![],
+						});
+
+			top.activated = true;
+			return true;		
+		}else{
+			panic!("");
+		}
 	}
 
 	pub fn solver_loop(&mut self, limit:usize){
