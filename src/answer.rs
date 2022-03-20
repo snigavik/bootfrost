@@ -34,7 +34,7 @@ pub enum LogItem{
 
 #[derive(Clone)]
 pub struct Answer{
-	amap: HashMap<TermId, TermId>,
+	pub amap: HashMap<TermId, TermId>,
 	log: Vec<LogItem>,
 	pub bid: BlockId, 
 	pub qid: QuestionId,

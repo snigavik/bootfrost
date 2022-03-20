@@ -264,6 +264,7 @@ impl Solver{
 	fn transform(&mut self, answer: Answer){
 		let qid = answer.qid;
 		let curr_context = &self.stack[self.questions[qid.0].fstack_i].context;	
+		let origin_bid = self.stack[self.questions[qid.0].fstack_i].bid;	
 		let a_tqf = &self.questions[qid.0].aformula;
 		let e_tqfs = &self.tqfs[a_tqf.0].next;
 
@@ -285,7 +286,7 @@ impl Solver{
 						qid: qid,
 						aid: AnswerId(qid.0, 100000),
 						eid: *ef,
-						context: Context::new(&curr_context, &answer, &self.tqfs[ef.0].vars, &mut self.psterms),
+						context: Context::new(&curr_context, &answer, &self.tqfs[ef.0].vars, &mut self.psterms, origin_bid),
 						bid: BlockId(self.bid.0 + i),
 						activated: false,
 					}).collect();

@@ -76,6 +76,20 @@ impl PSTerms{
 		}
 	}
 
+	pub fn new_e(&mut self, e: TermId, bid: BlockId) -> TermId{
+		let sid = match self.get_term(&e){
+			Term::EVariable(sid, ..) =>{
+				sid
+			},
+			_ => {
+				panic!("");
+			}
+		};
+		let new_tid = TermId(self.terms.len());
+		self.terms.push(Term::EVariable(sid, bid));
+		new_tid
+	} 
+
 	pub fn get_tid(&mut self, term:Term) -> ProcessingResult{
 		if let Some(tid) = self.index.get(&term){
 			ProcessingResult::Existing(*tid)
