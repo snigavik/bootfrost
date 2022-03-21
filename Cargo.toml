@@ -2,7 +2,15 @@
 name = "bootfrost"
 version = "0.1.0"
 edition = "2021"
+build = "src/build.rs" # LALRPOP preprocessing
+
+[build-dependencies]
+lalrpop = "0.19.7"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+#lalrpop-util = "0.19.7"
+#https://github.com/lalrpop/lalrpop/issues/650
+lalrpop-util = { version = "0.19.7", features = ["lexer"] }
+regex = "1"

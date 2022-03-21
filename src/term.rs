@@ -67,6 +67,16 @@ impl Index<&SymbolId> for PSTerms{
 
 
 impl PSTerms{
+
+	pub fn is_false(&self, tid:&TermId) -> bool{
+		match self.terms[tid.0]{
+			Term::Bool(b) if b == false => {
+				true
+			},
+			_ => false
+		}
+	}
+
 	pub fn check_value(&self, tid:&TermId) -> bool{
 		match self.terms[tid.0]{
 			Term::Bool(b) => b,

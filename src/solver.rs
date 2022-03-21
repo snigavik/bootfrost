@@ -301,12 +301,11 @@ impl Solver{
 		if let Some(top) = self.stack.last_mut(){
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
-			let mut pst = &mut self.psterms;
-			let new_conj = e_conj.iter().map(|a| processing(*a, pst, &top.context).unwrap());
+			let new_conj = e_conj.iter().map(|a| processing(*a, &mut self.psterms, &top.context).unwrap());
 			for a in new_conj{
-				// if !pst.check_value(&a){
-				// 	return false;
-				// }
+				if a == TermId(0){
+					return false;
+				}
 
 				if let Some(i) = self.base_index.get(&a){
 					if self.base[*i].deleted{
