@@ -1,5 +1,74 @@
+use std::str::FromStr;
+use crate::plain::*;
+
 grammar;
 
-pub Symbol: String = {
+pub PlainFormula:PlainFormula = {
+	aformula
+}
+
+aformula: PlainFormula = {
+	"!" <vars:vars> <conj:conj> <next:eformula_list_br> => PlainFormula::new("!".to_string(),vars,conj,next)
+}
+
+eformula: PlainFormula = {
+	"?" <vars:vars> <conj:conj> <next:aformula_list_br> => PlainFormula::new("?".to_string(),vars,conj,next)
+}
+
+eformula_list_br: Vec<PlainFormula> = {
+	"[" "]" => vec![],
+	"[" <e: eformula_list> "]" => e
+}
+
+eformula_list: Vec<PlainFormula> = {
+	<e: eformula> => vec![e],
+	<e: eformula> "," <es:eformula_list> => { let mut es = es; es.insert(0, e); es }	
+}
+
+aformula_list_br: Vec<PlainFormula> = {
+	"[" "]" => vec![],
+	"[" <f: aformula_list> "]" => f
+}
+
+aformula_list: Vec<PlainFormula> = {
+	<f: aformula> => vec![f],
+	<f: aformula> "," <fs:aformula_list> => { let mut fs = fs; fs.insert(0, f); fs }	
+}
+
+
+
+vars: Vec<PlainTerm> = {
+	"[" "]" => vec![],
+	"[" <ts:terms> "]" => ts,
+}
+
+conj: Vec<PlainTerm> = {
+	"[" "]" => vec![],
+	"[" <ts:terms> "]" => ts,
+}
+
+
+terms: Vec<PlainTerm> = {
+    <t: gterm> => vec!(t),
+    <t: gterm> "," <ts: terms> => { let mut ts = ts; ts.insert(0, t); ts }	
+}
+
+
+pterm: PlainTerm = {
+	<s: symbol> => PlainTerm::new(s.parse().unwrap(),vec![]),
+	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a),
+}
+
+infix_pterm: PlainTerm = {
+	<a1: pterm> "++" <a2: pterm> => PlainTerm::new("++".to_string(),vec![a1,a2]),
+}
+
+gterm: PlainTerm = {
+	<t: pterm> => t,
+	<t: infix_pterm> => t,
+}
+
+
+symbol: String = {
     <s: r#"["=<>+$a-zA-Z0-9_][=<>+a-zA-Z0-9_"]*"#> => s.to_string(),
 };
