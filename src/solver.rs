@@ -384,7 +384,7 @@ fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context) -> Processin
 			psterms.get_tid(new_term)
 		},
 		Term::IFunctor(sid, args) => {
-			let f = psterms.get_symbol(&sid).f;
+			let f = psterms.get_symbol(&sid).f.unwrap();
 			processing(
 				f(
 					&args

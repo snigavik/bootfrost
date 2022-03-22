@@ -17,10 +17,9 @@ pub enum FunctorType{
 }
 
 pub struct Symbol{
-	uid: usize,
-	name: String,
-	//f: FunctorType,
-	pub f: fn(&Vec<TermId>, &mut PSTerms) -> TermId
+	pub uid: usize,
+	pub name: String,
+	pub f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]
@@ -67,6 +66,25 @@ impl Index<&SymbolId> for PSTerms{
 
 
 impl PSTerms{
+
+	pub fn add_plain_var(&mut self, v:String, q:Quantifier) -> TermId{
+		let sid = self.symbols.len();
+		self.symbols.push(Symbol{uid: sid, name: v, f: None});
+		let term = match q{
+			Quantifier::Forall => {
+				Term::AVariable(SymbolId(sid))
+			},
+			Quantifier::Exists => {
+				Term::EVariable(SymbolId(sid),BlockId(0))
+			},
+		};
+		let tid = TermId(self.terms.len());
+		self.terms.push(term.clone());
+		self.index.insert(term, tid);
+		tid	
+	}
+
+
 
 	pub fn is_false(&self, tid:&TermId) -> bool{
 		match self.terms[tid.0]{

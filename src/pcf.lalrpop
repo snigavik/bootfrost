@@ -8,11 +8,11 @@ pub PlainFormula:PlainFormula = {
 }
 
 aformula: PlainFormula = {
-	"!" <vars:vars> <conj:conj> <next:eformula_list_br> => PlainFormula::new("!".to_string(),vars,conj,next)
+	"!" <vars:vars> <conj:conj> <commands:commands> <next:eformula_list_br> => PlainFormula::new("!".to_string(),vars,conj, commands, next)
 }
 
 eformula: PlainFormula = {
-	"?" <vars:vars> <conj:conj> <next:aformula_list_br> => PlainFormula::new("?".to_string(),vars,conj,next)
+	"?" <vars:vars> <conj:conj> <commands:commands> <next:aformula_list_br> => PlainFormula::new("?".to_string(),vars,conj, commands, next)
 }
 
 eformula_list_br: Vec<PlainFormula> = {
@@ -43,6 +43,11 @@ vars: Vec<PlainTerm> = {
 }
 
 conj: Vec<PlainTerm> = {
+	"[" "]" => vec![],
+	"[" <ts:terms> "]" => ts,
+}
+
+commands: Vec<PlainTerm> = {
 	"[" "]" => vec![],
 	"[" <ts:terms> "]" => ts,
 }

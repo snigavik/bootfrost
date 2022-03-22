@@ -1,14 +1,8 @@
 use crate::misc::*;
 use crate::answer::*;
 
-#[derive(Clone)]
-pub enum Quantifier{
-    Forall,
-    Exists,
-}
-
 pub struct Tqf{
-	quantifier: Quantifier,
+	pub quantifier: Quantifier,
 	pub vars: Vec<TermId>,
 	pub conj: Vec<TermId>,
 	pub commands: Vec<TermId>,
