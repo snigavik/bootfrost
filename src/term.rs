@@ -8,6 +8,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::misc::*;
 use crate::context::*;
+use crate::plain::PlainTerm;
 
 
 pub enum FunctorType{
@@ -66,6 +67,93 @@ impl Index<&SymbolId> for PSTerms{
 
 
 impl PSTerms{
+
+	pub fn add_plain_functor(&mut self, pt:PlainTerm, fmap: &mut HashMap<String, SymbolId>) -> TermId{
+		if let Some(_sid) = fmap.get(&pt.symbol){
+			if let Some(sid) = self.symbols.get(_sid.0){
+				if let Some(..) = sid.f{
+					let term = Term::IFunctor(*_sid, pt.args.iter().map(|a| self.add_plain_functor(*a, fmap)).collect());
+					if let Some(tid) = self.index.get(&term){
+						return *tid;
+					}else{
+		            	let tid = TermId(self.terms.len());
+		            	self.terms.push(term);
+		            	self.index.insert(term, tid);
+		            	return tid;						
+					}
+				}else{
+					let term = Term::SFunctor(*_sid, pt.args.iter().map(|a| self.add_plain_functor(*a, fmap)).collect());
+					if let Some(tid) = self.index.get(&term){
+						return *tid;
+					}else{
+		            	let tid = TermId(self.terms.len());
+		            	self.terms.push(term);
+		            	self.index.insert(term, tid);
+		            	return tid;						
+					}
+				}
+			}else{
+				panic!("");
+			}
+		}else{
+			let sid = SymbolId(self.symbols.len());
+			fmap.insert(pt.symbol, sid);
+			let term = Term::SFunctor(sid, pt.args.iter().map(|a| self.add_plain_functor(*a, fmap)).collect());
+			let tid = TermId(self.terms.len());
+			self.terms.push(term);
+			self.index.insert(term,tid);
+			return tid;
+		}
+	}
+
+	pub fn add_plain_const(&mut self, s:String, smap: &mut HashMap<String, TermId>) -> TermId{
+        if let Ok(n) = &s.parse::<i64>(){
+            let term = Term::Integer(*n);
+            if let Some(tid) = self.index.get(&term){
+            	return *tid;
+            }else{
+            	let tid = TermId(self.terms.len());
+            	self.terms.push(term);
+            	return tid;
+            }
+        }
+
+        if s == "true"{
+            return TermId(1);
+        }
+
+        if s == "false"{
+            return TermId(0);
+        }
+
+        if s.starts_with("\"") && s.ends_with("\""){
+			let mut s1 = s.clone();
+			s1.remove(0);
+			s1.remove(s1.len()-1);
+
+		    let term = Term::String(s1);
+            if let Some(tid) = self.index.get(&term){
+            	return *tid;
+            }else{
+            	let tid = TermId(self.terms.len());
+            	self.terms.push(term);
+            	return tid;
+            }
+        }
+
+		if let Some(tid) = smap.get(&s){
+			return *tid;
+		}else{
+			let sid = self.symbols.len();
+			self.symbols.push(Symbol{uid: sid, name: s, f: None});
+			let term = Term::SConstant(SymbolId(sid));
+			let tid = TermId(self.terms.len());
+			self.terms.push(term.clone());
+			self.index.insert(term, tid);
+			smap.insert(s, tid);
+			return tid;	
+		}		
+	}
 
 	pub fn add_plain_var(&mut self, v:String, q:Quantifier) -> TermId{
 		let sid = self.symbols.len();
