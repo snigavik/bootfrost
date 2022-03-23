@@ -1,0 +1,67 @@
+use std::str::FromStr;
+use crate::plain::*;
+
+grammar;
+
+pub TqfLine: PlainFormula = {
+	<q:quantifier> => PlainFormula::new(q, vec![], vec![], vec![], vec![]),
+	<q:quantifier> <conj:atoms> => PlainFormula::new(q, vec![], conj, vec![], vec![]),
+	<q:quantifier> <vars:vars> <conj:atoms> => PlainFormula::new(q, vars, conj, vec![], vec![]),
+	<q:quantifier> <vars:vars> <conj:atoms> "$" <commands:atoms> => PlainFormula::new(q, vars, conj, commands, vec![]),	
+	<q:quantifier> "$" <commands:atoms> => PlainFormula::new(q, vec![], vec![], commands, vec![]),
+	<q:quantifier> <conj:atoms> "$" <commands:atoms> => PlainFormula::new(q, vec![], conj, commands, vec![]),
+}
+
+quantifier:String = {
+	"!" => "!".to_string(),
+	"?" => "?".to_string(),
+}
+
+terms: Vec<PlainTerm> = {
+    <t: gterm> => vec!(t),
+    <t: gterm> "," <ts: terms> => { let mut ts = ts; ts.insert(0, t); ts }	
+}
+
+vars: Vec<PlainTerm> = {
+	<t: symbol> => vec!(PlainTerm::new(t,vec![])),
+	<t: symbol> "," <ts: vars> => { let mut ts = ts; ts.insert(0, PlainTerm::new(t,vec![])); ts }		
+}
+
+atoms: Vec<PlainTerm> = {
+    <t: atom> => vec!(t),
+    <t: atom> "," <ts: atoms> => { let mut ts = ts; ts.insert(0, t); ts }	
+}
+
+
+atom: PlainTerm = {
+	<s: symbol> "(" ")" => PlainTerm::new(s.parse().unwrap(),vec![]),
+	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a),
+	<a1: pterm> <infatom:infatom> <a2: pterm> => PlainTerm::new(infatom,vec![a1,a2]),
+}
+
+pterm: PlainTerm = {
+	<s: symbol> => PlainTerm::new(s.parse().unwrap(),vec![]),
+	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a),
+}
+
+infix_pterm: PlainTerm = {
+	<a1: pterm> "++" <a2: pterm> => PlainTerm::new("++".to_string(),vec![a1,a2]),
+}
+
+gterm: PlainTerm = {
+	<t: pterm> => t,
+	<t: infix_pterm> => t,
+}
+
+infatom:String = {
+	">" => ">".to_string(),
+	"<" => ">".to_string(),
+	"==" => ">".to_string(),
+	">=" => ">".to_string(),
+	"<=" => ">".to_string(),
+	"!=" => ">".to_string(),
+}
+
+symbol: String = {
+    <s: r#"["=<>+$a-zA-Z0-9_][=<>+a-zA-Z0-9_"]*"#> => s.to_string(),
+};

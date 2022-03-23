@@ -16,7 +16,7 @@ pub struct AnswerId(pub usize, pub usize);
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub struct BlockId(pub usize);
 
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub enum Quantifier{
     Forall,
     Exists,

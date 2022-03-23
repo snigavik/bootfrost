@@ -72,22 +72,22 @@ impl PSTerms{
 		if let Some(_sid) = fmap.get(&pt.symbol){
 			if let Some(sid) = self.symbols.get(_sid.0){
 				if let Some(..) = sid.f{
-					let term = Term::IFunctor(*_sid, pt.args.iter().map(|a| self.add_plain_functor(*a, fmap)).collect());
+					let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
 						return *tid;
 					}else{
 		            	let tid = TermId(self.terms.len());
-		            	self.terms.push(term);
+		            	self.terms.push(term.clone());
 		            	self.index.insert(term, tid);
 		            	return tid;						
 					}
 				}else{
-					let term = Term::SFunctor(*_sid, pt.args.iter().map(|a| self.add_plain_functor(*a, fmap)).collect());
+					let term = Term::SFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
 						return *tid;
 					}else{
 		            	let tid = TermId(self.terms.len());
-		            	self.terms.push(term);
+		            	self.terms.push(term.clone());
 		            	self.index.insert(term, tid);
 		            	return tid;						
 					}
@@ -98,9 +98,9 @@ impl PSTerms{
 		}else{
 			let sid = SymbolId(self.symbols.len());
 			fmap.insert(pt.symbol, sid);
-			let term = Term::SFunctor(sid, pt.args.iter().map(|a| self.add_plain_functor(*a, fmap)).collect());
+			let term = Term::SFunctor(sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
 			let tid = TermId(self.terms.len());
-			self.terms.push(term);
+			self.terms.push(term.clone());
 			self.index.insert(term,tid);
 			return tid;
 		}
@@ -145,12 +145,12 @@ impl PSTerms{
 			return *tid;
 		}else{
 			let sid = self.symbols.len();
-			self.symbols.push(Symbol{uid: sid, name: s, f: None});
+			self.symbols.push(Symbol{uid: sid, name: s.clone(), f: None});
 			let term = Term::SConstant(SymbolId(sid));
 			let tid = TermId(self.terms.len());
 			self.terms.push(term.clone());
 			self.index.insert(term, tid);
-			smap.insert(s, tid);
+			smap.insert(s.clone(), tid);
 			return tid;	
 		}		
 	}

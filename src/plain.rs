@@ -32,7 +32,7 @@ impl PlainFormula{
 
 
 fn plain_to_term(pt: PlainTerm, psterms: &mut PSTerms, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>) -> TermId{
-	if let Some(m) = vstack.iter().rev().find(|&&vs| vs.contains_key(&pt.symbol)){
+	if let Some(m) = vstack.iter().rev().find(|&vs| vs.contains_key(&pt.symbol)){
 		*m.get(&pt.symbol).unwrap()
 	}else{
 		if pt.args.is_empty(){
@@ -61,7 +61,7 @@ pub fn plain_to_tqf(pf: PlainFormula, psterms: &mut PSTerms, vstack: &mut Vec<Ha
     let mut vars = vec![];
     let mut vmap: HashMap<String, TermId> = HashMap::new();	
     for v in pf.vars{
-    	let tid = psterms.add_plain_var(v.symbol, q);
+    	let tid = psterms.add_plain_var(v.symbol.clone(), q);
     	vmap.insert(v.symbol, tid);
     	vars.push(tid);
     }

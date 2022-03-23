@@ -408,7 +408,7 @@ fn eval_term(psterms: &mut PSTerms, tid:TermId) -> TermId{
 	let t = &psterms.get_term(&tid);
 	match t{
 		Term::IFunctor(sid, args) => {
-			let f = psterms.get_symbol(&sid).f;
+			let f = psterms.get_symbol(&sid).f.unwrap();
 			f(args, psterms)
 		},
 		_ => tid

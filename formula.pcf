@@ -1,0 +1,4 @@
+? A(x,y),B(e) $ Com(e)
+	!x Z(x)
+	! $ Com(r), Com2(e)
+		?
