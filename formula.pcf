@@ -1,4 +1,10 @@
 ? A(x,y),B(e) $ Com(e)
 	!x Z(x)
 	! $ Com(r), Com2(e)
-		?
+		?x B(x)
+	!x Z(x),N(x)
+		?y B(y)
+			!z B(z)
+	!y N(y)
+	!
+		? A(e)

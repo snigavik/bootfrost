@@ -13,20 +13,62 @@ impl PlainTerm{
 	pub fn new(symbol: String, args:Vec<PlainTerm>) -> PlainTerm{
 		PlainTerm{symbol: symbol, args: args}
 	}
-}
 
+	pub fn print(&self){
+		print!("{}", self.symbol);
+		if self.args.len() > 0{
+			print!("(");
+			for a in &self.args{
+				a.print();
+				print!(",");
+			}
+			print!(")");
+		}
+	}
+}
+ 
 pub struct PlainFormula{
-	quantifier: String,
-	vars: Vec<PlainTerm>,
-	conjunct: Vec<PlainTerm>,
-	commands: Vec<PlainTerm>,
-	next: Vec<PlainFormula>,
+	pub quantifier: String,
+	pub vars: Vec<PlainTerm>,
+	pub conjunct: Vec<PlainTerm>,
+	pub commands: Vec<PlainTerm>,
+	pub next: Vec<PlainFormula>,
 }
 
 impl PlainFormula{
 	pub fn new(q: String, vars: Vec<PlainTerm>, conj: Vec<PlainTerm>, commands:Vec<PlainTerm>, next: Vec<PlainFormula>) -> PlainFormula{
 		PlainFormula{quantifier:q, vars: vars, conjunct: conj, commands: commands, next: next}
 	}
+
+	pub fn print(&self, tab:String){
+		print!("{}", tab);
+		print!("{}", self.quantifier);
+		for v in &self.vars{
+			v.print();
+		}
+		print!("  ");
+		for a in &self.conjunct{
+			a.print();
+			print!(",");
+		}
+
+		if self.commands.len() > 0{
+			print!("  $  ");
+			for c in &self.commands{
+				c.print();
+				print!(",");
+			}
+		}
+
+		println!("");
+		if self.next.len() > 0 {
+			for n in &self.next{
+				let mut new_tab = tab.clone();
+				new_tab.push_str("    ");
+				n.print(new_tab);
+			}
+		}
+ 	}
 }
 
 
