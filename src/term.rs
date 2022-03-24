@@ -68,6 +68,10 @@ impl Index<&SymbolId> for PSTerms{
 
 impl PSTerms{
 
+	pub fn new() -> PSTerms{
+		PSTerms{symbols: vec![], terms: vec![], index: HashMap::new()}
+	}
+
 	pub fn add_plain_functor(&mut self, pt:PlainTerm, fmap: &mut HashMap<String, SymbolId>) -> TermId{
 		if let Some(_sid) = fmap.get(&pt.symbol){
 			if let Some(sid) = self.symbols.get(_sid.0){

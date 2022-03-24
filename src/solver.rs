@@ -7,7 +7,7 @@ use crate::term::*;
 use crate::question::*;
 use crate::context::*;
 use crate::answer::*;
-
+use crate::plain::*;
 
 struct StrategyItem{
 	qid: QuestionId,
@@ -36,7 +36,7 @@ struct FBlock{
 	activated: bool,
 }
 
-struct Solver{
+pub struct Solver{
 	psterms: PSTerms,
 	base: Vec<BTerm>,
 	base_index: HashMap<TermId, usize>,
@@ -47,6 +47,142 @@ struct Solver{
 }
 
 impl Solver{
+
+	pub fn print_term(&self, tid: TermId, context: &Context){
+		if let Some(new_tid) = context.get(&tid){
+			self.print_term(*new_tid, context);
+		}else{
+			let t = self.psterms.get_term(&tid);
+			match t{
+				Term::AVariable(sid) => {
+					let s = self.psterms.get_symbol(&sid);
+					print!("{}.{}", s.name, s.uid);
+				},
+				Term::EVariable(sid, bid) => {
+					let s = self.psterms.get_symbol(&sid);
+					print!("{}.{}.{}", s.name, s.uid, bid.0);
+				},
+				Term::SConstant(sid) => {
+					let s = self.psterms.get_symbol(&sid);
+					print!("{}", s.name);
+				},
+				Term::Bool(b) => {
+					print!("{}",b);
+				},
+				Term::Integer(i) => {
+					print!("{}",i);
+				},
+				Term::String(s) => {
+					print!("{}",s);
+				},
+				Term::SFunctor(sid, args) | Term::IFunctor(sid, args) => {
+					let s = self.psterms.get_symbol(&sid);
+					print!("{}", s.name);
+					print!("(");
+					for (i,a) in args.iter().enumerate(){
+						self.print_term(*a,context);
+						if i < args.len() - 1{
+							print!(",");
+						}
+					}
+					print!(")");
+				}
+			}
+		}
+	}
+
+	pub fn print_tqf(&self, tid: TqfId, tab:String, context: &Context){
+		let tqf = &self.tqfs[tid.0];
+		print!("{}", tab);
+		match tqf.quantifier{
+			Quantifier::Forall => {
+				print!("!");
+			},
+			Quantifier::Exists => {
+				print!("?");
+			}
+		}
+		for (i,v) in tqf.vars.iter().enumerate(){
+			self.print_term(*v,context);
+			if i < tqf.vars.len() - 1{
+				print!(",");
+			}
+		}
+		print!(" ");
+		for (i,c) in tqf.conj.iter().enumerate(){
+			self.print_term(*c,context);
+			if i < tqf.conj.len() - 1{
+				print!(",");
+			}
+		}
+		print!(" ");
+		if !tqf.commands.is_empty(){
+			print!("$ ");
+			for (i,c) in tqf.commands.iter().enumerate(){
+				self.print_term(*c,context);
+				if i < tqf.commands.len() - 1{
+					print!(",");
+				}
+			}			
+		}
+		println!("");
+		let mut new_tab = tab.clone();
+		new_tab.push_str("    ");
+		for n in &tqf.next{
+			self.print_tqf(*n, new_tab.clone(), context);
+		}		
+
+	}
+
+	pub fn print(&self){
+		for (i,b) in self.base.iter().enumerate(){
+			self.print_term(b.term, &Context::new_empty());
+			if i < self.base.len() - 1{
+				print!(",");
+			}			
+		}
+		println!("");
+		for q in &self.questions{
+			self.print_tqf(q.aformula, "".to_string(), &self.stack[q.fstack_i].context);
+		}
+	}
+
+	pub fn parse(path: &str) -> Solver{
+		let pf = crate::parser::parse(path);
+		pf.print("".to_string());
+		let mut psterms = PSTerms::new();
+		let mut vstack = vec![];
+		let mut smap = HashMap::new();
+		let mut fmap = HashMap::new();
+		let mut tqfs = vec![];
+		let tid = plain_to_tqf(pf, &mut psterms, &mut vstack, &mut smap, &mut fmap, &mut tqfs);
+
+		let mut fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
+			FBlock{
+				qid:QuestionId(1000000000), 
+				aid: AnswerId(1000000000, 1000000000),
+				eid: *eid,
+				context: Context::new_empty(),
+				bid: BlockId(i),
+				activated: false,
+			}
+		).collect();
+
+		let bid = fblocks.len();
+
+
+		let mut solver = Solver{
+			psterms: psterms,
+			base: vec![],
+			base_index: HashMap::new(),
+			tqfs: tqfs,
+			questions: vec![],
+			stack: fblocks,
+			bid: BlockId(bid),
+		};
+		solver.activate_top_block();
+		solver
+	}
 
 	fn question_mut(&mut self, i:QuestionId) -> &mut Question{
 		if let Some(q) = self.questions.get_mut(i.0){

@@ -89,7 +89,13 @@ fn plain_to_term(pt: PlainTerm, psterms: &mut PSTerms, vstack: &mut Vec<HashMap<
 	}
 }
 
-pub fn plain_to_tqf(pf: PlainFormula, psterms: &mut PSTerms, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>, tqfs:&mut Vec<Tqf>) -> TqfId{
+pub fn plain_to_tqf(
+	pf: PlainFormula, 
+	psterms: &mut PSTerms, 
+	vstack: &mut Vec<HashMap<String,TermId>>, 
+	smap: &mut HashMap<String, TermId>, 
+	fmap: &mut HashMap<String, SymbolId>, 
+	tqfs: &mut Vec<Tqf>) -> TqfId{
 	
 	let q = if pf.quantifier == "!".to_string(){
 		Quantifier::Forall

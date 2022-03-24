@@ -10,6 +10,10 @@ pub struct Context{
 }
 
 impl Context{
+	pub fn new_empty() -> Context{
+		Context{map: HashMap::new()}
+	}
+
 	pub fn new(prev_context: &Context, answer:&Answer, e_list: &Vec<TermId>, psterms: &mut PSTerms, bid:BlockId) -> Self{
 		let mut new_map = prev_context.map.clone();
 		new_map.extend(answer.amap.clone().into_iter());

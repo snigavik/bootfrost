@@ -64,11 +64,11 @@ fn proc(lines: &Vec<PfLine>, k: &mut usize, parent_indent: i64) -> Vec<PlainForm
 
 
 
-pub fn parse() -> PlainFormula{
+pub fn parse(path: &str) -> PlainFormula{
 	let mut true_lines: Vec<PfLine> = vec![];
 	let mut buff = String::new();
 
-    if let Ok(lines) = read_lines("./formula.pcf") {
+    if let Ok(lines) = read_lines(path) {
     	let mut flag = false;
         for line in lines {
             if let Ok(origin_line) = line {
