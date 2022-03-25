@@ -517,6 +517,10 @@ impl Solver{
 		while i < limit{
 			println!("================================ Step {} ================================", self.step);
 			i = i + 1;
+			if self.stack.is_empty(){
+				println!("Refuted");
+				break;
+			}
 			if let Some(answer) = self.find_answer_global(){
 				self.transform(answer);
 			}else{
