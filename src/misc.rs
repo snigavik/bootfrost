@@ -3,7 +3,7 @@
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct SymbolId(pub usize);
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct TermId(pub usize);
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]

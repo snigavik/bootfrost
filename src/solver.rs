@@ -253,6 +253,7 @@ impl Solver{
 
 	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
 		let qid = si.qid;
+		dbg!(&qid.0);
 		let limit = si.limit;
 		if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
 			if top.bid != bid{
@@ -265,11 +266,19 @@ impl Solver{
 			self.questions[qid.0].curr_answer_stack.push(new_top);
 		}
 
+		dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap());
 
 		let mut i = 0;
 		while i < limit{
+			let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
+			dbg!(i);
+			dbg!(a);
+			if let Some(logitem) = a.log.last(){
+				dbg!(logitem);	
+			}
+			//dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap().log.last().unwrap());
 			i = i + 1;
-			match self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{
+			match dbg!(&self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state){
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
 					self.next_a(qid);
 					continue;
@@ -338,6 +347,20 @@ impl Solver{
 					}else{
 						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
 					}
+
+					let answer1 = self.questions[qid.0].answers.last().unwrap().clone();
+					match si.selector{
+						SelectorStrategy::First(f) => {
+							if f(&answer1, &self.psterms){
+								return Some(answer1)
+							}else{
+								continue;
+							}
+						},
+						SelectorStrategy::Best => {
+							continue;
+						}
+					}
 				},
 				MatchingState::Empty => {
 					break;
@@ -348,13 +371,7 @@ impl Solver{
 		None //		 
 	}
 
-	fn strategy(&self) -> Vec<StrategyItem>{
-// struct StrategyItem{
-// 	qid: QuestionId,
-// 	selector: SelectorStrategy,
-// 	sf: StartFrom,
-// 	limit: usize,
-// }		
+	fn strategy(&self) -> Vec<StrategyItem>{		
 		let mut vq:Vec<StrategyItem> = 
 		self.questions
 			.iter()

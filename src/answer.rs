@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 use crate::misc::*;
 //use crate::term::*;
+use std::fmt;
 
 
 #[derive(Clone)]
@@ -20,7 +21,26 @@ pub enum MatchingState{
 	Empty,
 }
 
-#[derive(Clone)]
+impl fmt::Debug for MatchingState{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	match self{
+    		MatchingState::Ready => write!(fmt,"Ready"),
+    		MatchingState::Fail => write!(fmt,"Fail"),
+    		MatchingState::Success => write!(fmt,"Success"),
+    		MatchingState::Rollback => write!(fmt,"Rollback"),
+    		MatchingState::Zero => write!(fmt,"Zero"),
+    		MatchingState::NextA => write!(fmt,"NextA"),
+    		MatchingState::NextB => write!(fmt,"NextB"),
+    		MatchingState::NextK => write!(fmt,"NextK"),
+    		MatchingState::Exhausted => write!(fmt,"Exhausted"),
+    		MatchingState::Answer => write!(fmt,"Answer"),
+    		MatchingState::Empty => write!(fmt,"Empty"),
+    	}
+    }
+}
+
+
+#[derive(Clone, Debug)]
 pub enum LogItem{
 	Matching{
 		qatom_i: usize, 
@@ -32,10 +52,25 @@ pub enum LogItem{
 	},
 }
 
+// impl fmt::Debug for LogItem{
+//     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+//     	match self{
+//     		LogItem::Matching{qatom_i, batom_i, avars} =>{
+//     			write!(fmt,"qi: {}, bi: {}", qatom_i, batom_i)
+//     		},
+//     		LogItem::Interpretation{qatom_i} => {
+//     			write!(fmt,"qi: {}", qatom_i)		
+//     		} 
+//     	}
+//     }
+// }
+
+
+
 #[derive(Clone)]
 pub struct Answer{
 	pub amap: HashMap<TermId, TermId>,
-	log: Vec<LogItem>,
+	pub log: Vec<LogItem>,
 	pub bid: BlockId, 
 	pub qid: QuestionId,
 	lower: usize,
@@ -47,8 +82,15 @@ pub struct Answer{
 }
 
 
+impl fmt::Debug for Answer{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	write!(fmt,"{}, {}, {}, {}, {}", self.lower, self.middle, self.upper, self.k, self.conj_len)
+    }
+}
+
 
 impl Answer{
+
 
 	pub fn new(bid: BlockId, qid: QuestionId, b_len: usize, q_len: usize) -> Self{
 		Self{
@@ -167,6 +209,7 @@ impl Answer{
 					if *batom_i < self.middle{
 						*batom_i = *batom_i + 1;
 						self.back_top();
+						self.state = MatchingState::Ready;
 					}else{
 						self.pop();
 						self.state = MatchingState::Rollback;
@@ -175,6 +218,7 @@ impl Answer{
 					if *batom_i < self.upper{
 						*batom_i = *batom_i + 1;
 						self.back_top();
+						self.state = MatchingState::Ready;
 					}else{
 						self.pop();
 						self.state = MatchingState::Rollback;
@@ -183,6 +227,7 @@ impl Answer{
 					if *batom_i < self.upper{
 						*batom_i = *batom_i + 1;
 						self.back_top();
+						self.state = MatchingState::Ready;
 					}else{
 						self.pop();
 						self.state = MatchingState::Rollback;
