@@ -44,6 +44,7 @@ pub struct Solver{
 	questions: Vec<Question>,
 	stack: Vec<FBlock>,
 	bid: BlockId,
+	step: usize,
 }
 
 impl Solver{
@@ -178,6 +179,7 @@ impl Solver{
 			questions: vec![],
 			stack: fblocks,
 			bid: BlockId(bid),
+			step:0,
 		};
 
 		solver.activate_top_block();
@@ -347,7 +349,24 @@ impl Solver{
 	}
 
 	fn strategy(&self) -> Vec<StrategyItem>{
-		vec![]
+// struct StrategyItem{
+// 	qid: QuestionId,
+// 	selector: SelectorStrategy,
+// 	sf: StartFrom,
+// 	limit: usize,
+// }		
+		let mut vq:Vec<StrategyItem> = 
+		self.questions
+			.iter()
+			.enumerate()
+			.map(|(i,q)| 
+				StrategyItem{
+					qid: QuestionId(i),
+					selector: SelectorStrategy::First(|x,y| true),
+					sf: StartFrom::Last,
+					limit:100000}).collect();
+		vq.rotate_left(self.step);	
+		vq
 	}
 
 	fn find_answer_global(&mut self) -> Option<Answer>{
@@ -427,6 +446,7 @@ impl Solver{
 						activated: false,
 					}).collect();
 		self.stack.append(&mut new_blocks);
+		self.step = self.step + 1;
 		if !self.activate_top_block(){
 			self.remove_solved_blocks();
 		} 
@@ -478,12 +498,15 @@ impl Solver{
 	pub fn solver_loop(&mut self, limit:usize){
 		let mut i = 0;
 		while i < limit{
+			println!("================================ Step {} ================================", self.step);
 			i = i + 1;
 			if let Some(answer) = self.find_answer_global(){
 				self.transform(answer);
 			}else{
-
+				println!("Exhausted");
+				break;
 			}
+			self.print();
 		}
 	}
 }
