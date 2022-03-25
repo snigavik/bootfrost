@@ -73,7 +73,7 @@ impl PlainFormula{
 
 
 
-fn plain_to_term(pt: PlainTerm, psterms: &mut PSTerms, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>) -> TermId{
+pub fn plain_to_term(pt: PlainTerm, psterms: &mut PSTerms, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>) -> TermId{
 	if let Some(m) = vstack.iter().rev().find(|&vs| vs.contains_key(&pt.symbol)){
 		*m.get(&pt.symbol).unwrap()
 	}else{
@@ -84,7 +84,7 @@ fn plain_to_term(pt: PlainTerm, psterms: &mut PSTerms, vstack: &mut Vec<HashMap<
 				psterms.add_plain_const(pt.symbol, smap)
 			}
 		}else{
-			psterms.add_plain_functor(pt, fmap)
+			psterms.add_plain_functor(pt, vstack, smap, fmap)
 		}
 	}
 }

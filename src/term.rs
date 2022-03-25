@@ -8,7 +8,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::misc::*;
 use crate::context::*;
-use crate::plain::PlainTerm;
+use crate::plain::*;
 
 
 pub enum FunctorType{
@@ -68,15 +68,23 @@ impl Index<&SymbolId> for PSTerms{
 
 impl PSTerms{
 
+	pub fn print_symbols(&self){
+		for s in &self.symbols{
+			println!("{}.{}",s.name, s.uid);
+		}
+	}
+
 	pub fn new() -> PSTerms{
 		PSTerms{symbols: vec![], terms: vec![], index: HashMap::new()}
 	}
 
-	pub fn add_plain_functor(&mut self, pt:PlainTerm, fmap: &mut HashMap<String, SymbolId>) -> TermId{
+	pub fn add_plain_functor(&mut self, pt:PlainTerm, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>) -> TermId{
 		if let Some(_sid) = fmap.get(&pt.symbol){
 			if let Some(sid) = self.symbols.get(_sid.0){
 				if let Some(..) = sid.f{
-					let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
+					//let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
+					//psterms.add_plain_functor(pt, &mut vstack, &mut smap, &mut fmap)
+					let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
 						return *tid;
 					}else{
@@ -86,7 +94,8 @@ impl PSTerms{
 		            	return tid;						
 					}
 				}else{
-					let term = Term::SFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
+					//let term = Term::SFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
+					let term = Term::SFunctor(*_sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
 						return *tid;
 					}else{
@@ -101,8 +110,9 @@ impl PSTerms{
 			}
 		}else{
 			let sid = SymbolId(self.symbols.len());
+			self.symbols.push(Symbol{uid: sid.0, name: pt.symbol.clone(), f: None});
 			fmap.insert(pt.symbol, sid);
-			let term = Term::SFunctor(sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
+			let term = Term::SFunctor(sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 			let tid = TermId(self.terms.len());
 			self.terms.push(term.clone());
 			self.index.insert(term,tid);

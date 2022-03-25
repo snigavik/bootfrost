@@ -149,7 +149,6 @@ impl Solver{
 
 	pub fn parse(path: &str) -> Solver{
 		let pf = crate::parser::parse(path);
-		pf.print("".to_string());
 		let mut psterms = PSTerms::new();
 		let mut vstack = vec![];
 		let mut smap = HashMap::new();
@@ -180,6 +179,7 @@ impl Solver{
 			stack: fblocks,
 			bid: BlockId(bid),
 		};
+
 		solver.activate_top_block();
 		solver
 	}
@@ -456,7 +456,7 @@ impl Solver{
 
 			// add questions
 			let a_tqfs = &e_tqf.next;
-			let new_questions = 
+			let mut new_questions = 
 				a_tqfs
 					.iter()
 					.map(|af| 
@@ -466,8 +466,8 @@ impl Solver{
 							fstack_i: fstack_i,
 							curr_answer_stack: vec![],
 							answers: vec![],
-						});
-
+						}).collect();
+			self.questions.append(&mut new_questions);
 			top.activated = true;
 			return true;		
 		}else{

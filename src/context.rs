@@ -5,6 +5,7 @@ use crate::misc::*;
 use crate::term::*;
 use crate::answer::*;
 
+#[derive(Clone)]
 pub struct Context{
 	pub map: HashMap<TermId, TermId>
 }

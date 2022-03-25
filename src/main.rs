@@ -16,5 +16,6 @@ lalrpop_mod!(pub tqfline); // synthesized by LALRPOP
 
 fn main() {
 	let solver = Solver::parse("./formula.pcf");
+	println!("");
 	solver.print();
 }
