@@ -100,7 +100,7 @@ impl Answer{
 			qid: qid,
 			lower: 0,
 			middle: 0,
-			upper: b_len,
+			upper: b_len-1,
 			k: 0,
 			conj_len: q_len,
 			state: MatchingState::Zero,
