@@ -254,6 +254,7 @@ impl Solver{
 	}
 
 	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
+		dbg!("");
 		let qid = si.qid;
 		dbg!(&qid.0);
 		let limit = si.limit;
@@ -374,6 +375,7 @@ impl Solver{
 	}
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
+		dbg!(self.questions.len());
 		let mut vq:Vec<StrategyItem> = 
 		self.questions
 			.iter()
@@ -384,14 +386,19 @@ impl Solver{
 					selector: SelectorStrategy::First(|x,y| true),
 					sf: StartFrom::Last,
 					limit:100000}).collect();
-		vq.rotate_left(self.step);	
+		dbg!(self.step);
+		vq.rotate_left(self.step % self.questions.len());	
+		dbg!(vq.len());
 		vq
 	}
 
 	fn find_answer_global(&mut self) -> Option<Answer>{
 		let bid = self.stack.last().unwrap().bid;
+		dbg!("");
 		let strategy = self.strategy();
+		dbg!("");
 		for si in strategy.iter(){
+			dbg!("");
 			if let Some(answer) = self.find_answer_local(si, bid){
 				return Some(answer);
 			}
@@ -442,6 +449,7 @@ impl Solver{
 		let a_tqf = &self.questions[qid.0].aformula;
 		let e_tqfs = &self.tqfs[a_tqf.0].next;
 
+		dbg!(e_tqfs.len());
 		if e_tqfs.len() == 0{
 			self.remove_solved_blocks();
 			return;
@@ -519,11 +527,13 @@ impl Solver{
 		while i < limit{
 			println!("================================ Step {} ================================", self.step);
 			i = i + 1;
+			dbg!(self.stack.len());
 			if self.stack.is_empty(){
 				println!("Refuted");
 				break;
 			}
 			if let Some(answer) = self.find_answer_global(){
+				dbg!("global");
 				self.transform(answer);
 			}else{
 				println!("Exhausted");

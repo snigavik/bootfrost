@@ -186,7 +186,7 @@ impl Answer{
 	pub fn shift_bounds(&mut self, blen:usize) -> bool{
 		if self.upper < blen{
 			self.middle = self.upper;
-			self.upper = blen;
+			self.upper = blen-1;
 			true
 		}else{
 			false
