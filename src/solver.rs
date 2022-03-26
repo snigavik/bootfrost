@@ -150,11 +150,13 @@ impl Solver{
 
 	pub fn parse(path: &str) -> Solver{
 		let pf = crate::parser::parse(path);
-		let mut psterms = PSTerms::new();
+		//let mut psterms = PSTerms::new();
 		let mut vstack = vec![];
 		let mut smap = HashMap::new();
-		let mut fmap = HashMap::new();
+		// let mut fmap = HashMap::new();
 		let mut tqfs = vec![];
+		let (mut psterms, mut fmap) = crate::ifunctions::init();
+
 		let tid = plain_to_tqf(pf, &mut psterms, &mut vstack, &mut smap, &mut fmap, &mut tqfs);
 
 		let mut fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
@@ -635,7 +637,8 @@ fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, 
 				m
 			},
 			_ => {
-				panic!("");
+				//panic!("");
+				false
 			}
 		}
 	}

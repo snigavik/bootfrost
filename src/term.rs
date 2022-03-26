@@ -68,6 +68,15 @@ impl Index<&SymbolId> for PSTerms{
 
 impl PSTerms{
 
+	pub fn add_ifunction(&mut self, name:String, f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>) -> SymbolId{
+		let sid = self.symbols.len();
+		self.symbols.push(Symbol{uid:sid, name:name, f:f});
+
+		SymbolId(sid)
+	}
+
+
+
 	pub fn print_symbols(&self){
 		for s in &self.symbols{
 			println!("{}.{}",s.name, s.uid);

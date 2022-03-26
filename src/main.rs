@@ -6,6 +6,7 @@ mod question;
 mod solver;
 mod plain;
 mod parser;
+mod ifunctions;
 
 use crate::parser::*;
 use crate::solver::*;
