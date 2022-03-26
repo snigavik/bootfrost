@@ -1,6 +1,6 @@
 
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct SymbolId(pub usize);
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -13,7 +13,7 @@ pub struct ConjunctIndex(pub usize);
 pub struct QuestionId(pub usize);
 pub struct AnswerId(pub usize, pub usize);
 
-#[derive(Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
 pub struct BlockId(pub usize);
 
 #[derive(Copy, Clone)]

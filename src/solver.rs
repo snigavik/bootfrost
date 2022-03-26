@@ -10,7 +10,7 @@ use crate::answer::*;
 use crate::plain::*;
 
 struct StrategyItem{
-	qid: QuestionId,
+	pub qid: QuestionId,
 	selector: SelectorStrategy,
 	sf: StartFrom,
 	limit: usize,
@@ -254,9 +254,8 @@ impl Solver{
 	}
 
 	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
-		dbg!("");
 		let qid = si.qid;
-		dbg!(&qid.0);
+		dbg!(si.qid.0);
 		let limit = si.limit;
 		if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
 			if top.bid != bid{
@@ -269,19 +268,14 @@ impl Solver{
 			self.questions[qid.0].curr_answer_stack.push(new_top);
 		}
 
-		dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap());
+		//dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap());
 
 		let mut i = 0;
 		while i < limit{
 			let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
-			dbg!(i);
-			dbg!(a);
-			if let Some(logitem) = a.log.last(){
-				dbg!(logitem);	
-			}
 			//dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap().log.last().unwrap());
 			i = i + 1;
-			match dbg!(&self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state){
+			match &self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
 					self.next_a(qid);
 					continue;
@@ -375,7 +369,6 @@ impl Solver{
 	}
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
-		dbg!(self.questions.len());
 		let mut vq:Vec<StrategyItem> = 
 		self.questions
 			.iter()
@@ -385,20 +378,15 @@ impl Solver{
 					qid: QuestionId(i),
 					selector: SelectorStrategy::First(|x,y| true),
 					sf: StartFrom::Last,
-					limit:100000}).collect();
-		dbg!(self.step);
+					limit:1000}).collect();
 		vq.rotate_left(self.step % self.questions.len());	
-		dbg!(vq.len());
 		vq
 	}
 
 	fn find_answer_global(&mut self) -> Option<Answer>{
 		let bid = self.stack.last().unwrap().bid;
-		dbg!("");
 		let strategy = self.strategy();
-		dbg!("");
 		for si in strategy.iter(){
-			dbg!("");
 			if let Some(answer) = self.find_answer_local(si, bid){
 				return Some(answer);
 			}
@@ -449,7 +437,6 @@ impl Solver{
 		let a_tqf = &self.questions[qid.0].aformula;
 		let e_tqfs = &self.tqfs[a_tqf.0].next;
 
-		dbg!(e_tqfs.len());
 		if e_tqfs.len() == 0{
 			self.remove_solved_blocks();
 			return;
@@ -527,13 +514,12 @@ impl Solver{
 		while i < limit{
 			println!("================================ Step {} ================================", self.step);
 			i = i + 1;
-			dbg!(self.stack.len());
+			//dbg!(&self.psterms);
 			if self.stack.is_empty(){
 				println!("Refuted");
 				break;
 			}
 			if let Some(answer) = self.find_answer_global(){
-				dbg!("global");
 				self.transform(answer);
 			}else{
 				println!("Exhausted");

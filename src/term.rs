@@ -23,7 +23,14 @@ pub struct Symbol{
 	pub f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>
 }
 
-#[derive(Clone, Eq, PartialEq, Hash)]
+impl fmt::Debug for Symbol{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	write!(fmt,"symbol: {}, {}",self.uid, self.name)
+    }
+}
+
+
+#[derive(Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Term{
 	AVariable(SymbolId),
 	EVariable(SymbolId, BlockId),
@@ -41,8 +48,7 @@ pub struct BTerm{
 	pub deleted: bool,
 }
 
-
-
+#[derive(Debug)]
 pub struct PSTerms{
 	symbols: Vec<Symbol>,
 	terms: Vec<Term>,
@@ -136,7 +142,8 @@ impl PSTerms{
             	return *tid;
             }else{
             	let tid = TermId(self.terms.len());
-            	self.terms.push(term);
+            	self.terms.push(term.clone());
+            	self.index.insert(term,tid);
             	return tid;
             }
         }
