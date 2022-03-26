@@ -268,11 +268,12 @@ impl Solver{
 			self.questions[qid.0].curr_answer_stack.push(new_top);
 		}
 
-		//dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap());
+		//dbg!(&self.questions[qid.0].curr_answer_stack.last());
 
 		let mut i = 0;
 		while i < limit{
 			let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
+			//dbg!(&self.questions[qid.0].curr_answer_stack.last());
 			//dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap().log.last().unwrap());
 			i = i + 1;
 			match &self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{

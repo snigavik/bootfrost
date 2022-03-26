@@ -84,6 +84,7 @@ pub struct Answer{
 
 impl fmt::Debug for Answer{
     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	dbg!(self.log.last());
     	write!(fmt,"{}, {}, {}, {}, {}", self.lower, self.middle, self.upper, self.k, self.conj_len)
     }
 }
@@ -187,6 +188,7 @@ impl Answer{
 		if self.upper < blen-1{
 			self.middle = self.upper;
 			self.upper = blen-1;
+			self.k = 0;
 			true
 		}else{
 			false
