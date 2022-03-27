@@ -243,19 +243,6 @@ impl Answer{
 }
 
 
-// pub struct Answer{
-// 	pub amap: HashMap<TermId, TermId>,
-// 	pub log: Vec<LogItem>,
-// 	pub bid: BlockId, 
-// 	pub qid: QuestionId,
-// 	lower: usize,
-// 	middle: usize,
-// 	upper: usize,
-// 	k: usize,
-// 	pub conj_len: usize,
-// 	pub state: MatchingState,	
-// }
-
 pub struct AnswerDisplay<'a>{
 	pub answer: &'a Answer, 
 	pub psterms: &'a PSTerms,

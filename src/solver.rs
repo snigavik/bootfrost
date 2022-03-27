@@ -111,7 +111,8 @@ impl Solver{
 		}
 		print!(" ");
 		for (i,c) in tqf.conj.iter().enumerate(){
-			self.print_term(*c,context);
+			//self.print_term(*c,context);
+			print!("{}", TidDisplay{tid:*c, psterms: &self.psterms, context:Some(context), dm: DisplayMode::Plain});
 			if i < tqf.conj.len() - 1{
 				print!(",");
 			}

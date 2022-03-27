@@ -20,7 +20,8 @@ pub enum FunctorType{
 pub struct Symbol{
 	pub uid: usize,
 	pub name: String,
-	pub f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>
+	pub f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>,
+	pub position: Position,
 }
 
 impl fmt::Debug for Symbol{
@@ -74,9 +75,9 @@ impl Index<&SymbolId> for PSTerms{
 
 impl PSTerms{
 
-	pub fn add_ifunction(&mut self, name:String, f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>) -> SymbolId{
+	pub fn add_ifunction(&mut self, name:String, f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>, position: Position,) -> SymbolId{
 		let sid = self.symbols.len();
-		self.symbols.push(Symbol{uid:sid, name:name, f:f});
+		self.symbols.push(Symbol{uid:sid, name:name, f:f, position: position});
 
 		SymbolId(sid)
 	}
@@ -125,7 +126,7 @@ impl PSTerms{
 			}
 		}else{
 			let sid = SymbolId(self.symbols.len());
-			self.symbols.push(Symbol{uid: sid.0, name: pt.symbol.clone(), f: None});
+			self.symbols.push(Symbol{uid: sid.0, name: pt.symbol.clone(), f: None, position: pt.position});
 			fmap.insert(pt.symbol, sid);
 			let term = Term::SFunctor(sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 			let tid = TermId(self.terms.len());
@@ -175,7 +176,7 @@ impl PSTerms{
 			return *tid;
 		}else{
 			let sid = self.symbols.len();
-			self.symbols.push(Symbol{uid: sid, name: s.clone(), f: None});
+			self.symbols.push(Symbol{uid: sid, name: s.clone(), f: None, position: Position::Classic});
 			let term = Term::SConstant(SymbolId(sid));
 			let tid = TermId(self.terms.len());
 			self.terms.push(term.clone());
@@ -187,7 +188,7 @@ impl PSTerms{
 
 	pub fn add_plain_var(&mut self, v:String, q:Quantifier) -> TermId{
 		let sid = self.symbols.len();
-		self.symbols.push(Symbol{uid: sid, name: v, f: None});
+		self.symbols.push(Symbol{uid: sid, name: v, f: None, position: Position::Classic});
 		let term = match q{
 			Quantifier::Forall => {
 				Term::AVariable(SymbolId(sid))
@@ -256,7 +257,6 @@ impl PSTerms{
 		//self.symbols.get(sid.0)
 		&self.symbols[sid.0]
 	}
-
 
 	pub fn len(&self) -> usize{
 		self.terms.len()
@@ -357,16 +357,33 @@ impl fmt::Display for TidDisplay<'_>{
 				write!(fmt, "{}", s)
 			},
 			Term::SFunctor(sid, args) | Term::IFunctor(sid, args) => {
-				write!(fmt,"{}({})", 
-					SidDisplay{sid: sid, psterms: self.psterms, dm:DisplayMode::Plain},
-					args.iter().map(|a| 
-						TidDisplay{
-							tid: *a,
-							psterms: self.psterms,
-							context: self.context,
-							dm: self.dm,							
-						}.to_string()).collect::<Vec<String>>().join(",")
-				)
+				let sd = &SidDisplay{sid: sid, psterms: self.psterms, dm:DisplayMode::Plain}.to_string();
+				match self.psterms.get_symbol(&sid).position{
+					Position::Classic => {
+						write!(fmt,"{}({})", 
+							sd,
+							args.iter().map(|a| 
+								TidDisplay{
+									tid: *a,
+									psterms: self.psterms,
+									context: self.context,
+									dm: self.dm,							
+								}.to_string()).collect::<Vec<String>>().join(",")
+						)
+					},
+					Position::Infix => {
+						write!(fmt,"{}",
+							args.iter().map(|a| 
+								TidDisplay{
+									tid: *a,
+									psterms: self.psterms,
+									context: self.context,
+									dm: self.dm,							
+								}.to_string()).collect::<Vec<String>>().join(sd)
+						)						
+					}
+				}
+
 			},
 		}
 	}

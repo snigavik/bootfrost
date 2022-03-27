@@ -45,8 +45,8 @@ pterm: PlainTerm = {
 }
 
 infix_pterm: PlainTerm = {
-	<a1: pterm> "++" <a2: pterm> => PlainTerm::new("++".to_string(),vec![a1,a2]),
-	<a1: pterm> "+" <a2: pterm> => PlainTerm::new("+".to_string(),vec![a1,a2]),
+	<a1: pterm> "++" <a2: pterm> => PlainTerm::new_infix("++".to_string(),vec![a1,a2]),
+	<a1: pterm> "+" <a2: pterm> => PlainTerm::new_infix("+".to_string(),vec![a1,a2]),
 }
 
 gterm: PlainTerm = {

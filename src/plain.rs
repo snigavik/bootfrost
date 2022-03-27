@@ -6,12 +6,16 @@ use std::collections::HashMap;
 
 pub struct PlainTerm{
 	pub symbol: String,
-	pub args: Vec<PlainTerm>
+	pub args: Vec<PlainTerm>,
+	pub position: Position
 }
 
 impl PlainTerm{
 	pub fn new(symbol: String, args:Vec<PlainTerm>) -> PlainTerm{
-		PlainTerm{symbol: symbol, args: args}
+		PlainTerm{symbol: symbol, args: args, position: Position::Classic}
+	}
+	pub fn new_infix(symbol: String, args:Vec<PlainTerm>) -> PlainTerm{
+		PlainTerm{symbol: symbol, args: args, position: Position::Infix}
 	}
 
 	pub fn print(&self){
