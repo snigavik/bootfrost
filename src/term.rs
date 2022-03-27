@@ -362,24 +362,38 @@ impl fmt::Display for TidDisplay<'_>{
 					Position::Classic => {
 						write!(fmt,"{}({})", 
 							sd,
-							args.iter().map(|a| 
-								TidDisplay{
-									tid: *a,
-									psterms: self.psterms,
-									context: self.context,
-									dm: self.dm,							
-								}.to_string()).collect::<Vec<String>>().join(",")
+							TidsDisplay{
+								tids: &args,
+								psterms: self.psterms,
+								context: self.context,
+								dm: self.dm,
+								d: ", "
+							}.to_string()
+							// args.iter().map(|a| 
+							// 	TidDisplay{
+							// 		tid: *a,
+							// 		psterms: self.psterms,
+							// 		context: self.context,
+							// 		dm: self.dm,							
+							// 	}.to_string()).collect::<Vec<String>>().join(",")
 						)
 					},
 					Position::Infix => {
 						write!(fmt,"{}",
-							args.iter().map(|a| 
-								TidDisplay{
-									tid: *a,
-									psterms: self.psterms,
-									context: self.context,
-									dm: self.dm,							
-								}.to_string()).collect::<Vec<String>>().join(sd)
+							TidsDisplay{
+								tids: &args,
+								psterms: self.psterms,
+								context: self.context,
+								dm: self.dm,
+								d: sd,
+							}.to_string()
+							// args.iter().map(|a| 
+							// 	TidDisplay{
+							// 		tid: *a,
+							// 		psterms: self.psterms,
+							// 		context: self.context,
+							// 		dm: self.dm,							
+							// 	}.to_string()).collect::<Vec<String>>().join(sd)
 						)						
 					}
 				}
@@ -390,5 +404,26 @@ impl fmt::Display for TidDisplay<'_>{
 }
 
 
+pub struct TidsDisplay<'a>{
+	pub tids: &'a Vec<TermId>,
+	pub psterms: &'a PSTerms,
+	pub context: Option<&'a Context>,
+	pub dm: DisplayMode,
+	pub d: &'a str,
+}
+
+impl fmt::Display for TidsDisplay<'_>{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+		write!(fmt, "{}",
+			self.tids.iter().map(|a| 
+				TidDisplay{
+					tid: *a,
+					psterms: self.psterms,
+					context: self.context,
+					dm: self.dm,							
+				}.to_string()).collect::<Vec<String>>().join(self.d)  
+		)  	
+    }
+}
 
 

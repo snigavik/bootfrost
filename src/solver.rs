@@ -103,30 +103,39 @@ impl Solver{
 				print!("?");
 			}
 		}
-		for (i,v) in tqf.vars.iter().enumerate(){
-			self.print_term(*v,context);
-			if i < tqf.vars.len() - 1{
-				print!(",");
-			}
-		}
+
+		// vars
+		print!("{}", TidsDisplay{
+			tids: &tqf.vars,
+			psterms: &self.psterms,
+			context: Some(context),
+			dm: DisplayMode::Plain,
+			d: ",",
+		});
+
+		// conj
 		print!(" ");
-		for (i,c) in tqf.conj.iter().enumerate(){
-			//self.print_term(*c,context);
-			print!("{}", TidDisplay{tid:*c, psterms: &self.psterms, context:Some(context), dm: DisplayMode::Plain});
-			if i < tqf.conj.len() - 1{
-				print!(",");
-			}
-		}
+		print!("{}", TidsDisplay{
+			tids: &tqf.conj,
+			psterms: &self.psterms,
+			context: Some(context),
+			dm: DisplayMode::Plain,
+			d: ", ",
+		});
+
+		// commands
 		print!(" ");
 		if !tqf.commands.is_empty(){
 			print!("$ ");
-			for (i,c) in tqf.commands.iter().enumerate(){
-				self.print_term(*c,context);
-				if i < tqf.commands.len() - 1{
-					print!(",");
-				}
-			}			
+			print!("{}", TidsDisplay{
+				tids: &tqf.commands,
+				psterms: &self.psterms,
+				context: Some(context),
+				dm: DisplayMode::Plain,
+				d: ", ",
+			});			
 		}
+
 		println!("");
 		let mut new_tab = tab.clone();
 		new_tab.push_str("    ");
