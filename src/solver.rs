@@ -389,6 +389,7 @@ impl Solver{
 		let strategy = self.strategy();
 		for si in strategy.iter(){
 			if let Some(answer) = self.find_answer_local(si, bid){
+				println!("{}", AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
 				return Some(answer);
 			}
 		}

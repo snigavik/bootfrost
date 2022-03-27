@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 
 use crate::misc::*;
-//use crate::term::*;
+use crate::term::*;
 use std::fmt;
 
 
@@ -91,8 +91,6 @@ impl fmt::Debug for Answer{
 
 
 impl Answer{
-
-
 	pub fn new(bid: BlockId, qid: QuestionId, b_len: usize, q_len: usize) -> Self{
 		Self{
 			amap: HashMap::new(),
@@ -245,8 +243,38 @@ impl Answer{
 }
 
 
+// pub struct Answer{
+// 	pub amap: HashMap<TermId, TermId>,
+// 	pub log: Vec<LogItem>,
+// 	pub bid: BlockId, 
+// 	pub qid: QuestionId,
+// 	lower: usize,
+// 	middle: usize,
+// 	upper: usize,
+// 	k: usize,
+// 	pub conj_len: usize,
+// 	pub state: MatchingState,	
+// }
 
+pub struct AnswerDisplay<'a>{
+	pub answer: &'a Answer, 
+	pub psterms: &'a PSTerms,
+	pub dm: DisplayMode
+}
 
+impl fmt::Display for AnswerDisplay<'_>{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	
+    	write!(fmt, "{{");
+    	for (i,(k,v)) in self.answer.amap.iter().enumerate(){
+    		write!(fmt,"{} -> {}", TidDisplay{tid: *k, psterms:self.psterms, context: None, dm: self.dm}, TidDisplay{tid: *v, psterms:self.psterms, context: None, dm: self.dm});
+    		if i < self.answer.amap.len() - 1 {
+    			write!(fmt,", ");
+    		}
+    	}
+    	write!(fmt, "}}")
+    }
+}
 
 
 

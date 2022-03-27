@@ -274,46 +274,104 @@ impl PSTerms{
 
 //https://doc.rust-lang.org/rust-by-example/hello/print.html
 
+pub struct SidDisplay<'a>{
+	pub sid: SymbolId, 
+	pub psterms: &'a PSTerms,
+	pub dm: DisplayMode
+}
 
-// pub struct SymbolDisplay<'a>(pub &'a Symbol, pub &'a DisplayMode);
-// impl fmt::Display for AVariableSymbolDisplay<'_>{
-//     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
-//     	match self.1{
-//     		DisplayMode::Plain => write!(fmt, "{}", self.0.name),
-//     		DisplayMode::Full => write!(fmt, "{}.{}", self.0.name, self.0.uid),
-//     	}
-//     }
-// }
+impl fmt::Display for SidDisplay<'_>{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	let symbol = self.psterms.get_symbol(&self.sid);
+    	match self.dm{
+    		DisplayMode::Plain => write!(fmt, "{}", symbol.name),
+    		DisplayMode::PlainSid | DisplayMode::PlainSidTid => write!(fmt, "{}.{}", symbol.name, symbol.uid),
+    	}
+    }
+}
 
-
-// struct TermDisplay<'a>(&'a TermId, &'a PSTerms, Option<&'a Context>, &'a DisplayMode);
-// struct TermsDisplay<'a>(&'a Vec<TermId>, &'a PSTerms, Option<&'a Context>, &'a DisplayMode);
-
-
-// impl fmt::Display for TermDisplay<'_>{
-//     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
-// 		match &self.1[self.0]{
-// 			Term::AVariable(s, vd, vi) => { 
-// 				if let Some(context) = self.2{
-// 					write!(fmt,"{}",AVariableSymbolDisplay(&*s,self.3))
-// 				}else{
-// 					write!(fmt,"{}",AVariableSymbolDisplay(&*s,self.3))
-// 				}
-// 			},
-// 			_ => {
-// 				write!(fmt,"ok")
-// 			}
-// 		}
-// 	}
-// }
+pub struct TidDisplay<'a>{
+	pub tid: TermId,
+	pub psterms: &'a PSTerms,
+	pub context: Option<&'a Context>,
+	pub dm: DisplayMode
+}
 
 
+impl fmt::Display for TidDisplay<'_>{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+    	let term = self.psterms.get_term(&self.tid);
+		match term{
+			Term::AVariable(sid) => { 
+				if let Some(context) = self.context{
+					if let Some(new_tid) = context.get(&self.tid){
+						write!(fmt,"{}",
+							TidDisplay{
+								tid: *new_tid,
+								psterms: self.psterms,
+								context: Some(context),
+								dm: self.dm,
+							}
+						)
+					}else{
+						write!(fmt,"{}",SidDisplay{sid: sid, psterms: self.psterms, dm: self.dm})	
+					}
+				}else{
+					write!(fmt,"{}",SidDisplay{sid: sid, psterms: self.psterms, dm: self.dm})
+				}
+			},
+			Term::EVariable(sid, bid) => { 
+				if let Some(context) = self.context{
+					if let Some(new_tid) = context.get(&self.tid){
+						write!(fmt,"{}",
+							TidDisplay{
+								tid: *new_tid,
+								psterms: self.psterms,
+								context: Some(context),
+								dm: self.dm,
+							}
+						)
+					}else{
+						match self.dm{
+							DisplayMode::PlainSid | DisplayMode::PlainSidTid => write!(fmt,"{}.{}",SidDisplay{sid: sid, psterms: self.psterms, dm: self.dm}, bid.0),
+							_ => write!(fmt,"{}",SidDisplay{sid: sid, psterms: self.psterms, dm: self.dm}),
+						}
+					}
+				}else{
+					match self.dm{
+						DisplayMode::PlainSid | DisplayMode::PlainSidTid => write!(fmt,"{}.{}",SidDisplay{sid: sid, psterms: self.psterms, dm: self.dm}, bid.0),
+						_ => write!(fmt,"{}",SidDisplay{sid: sid, psterms: self.psterms, dm: self.dm}),
+					}					
+				}
+			},
+			Term::SConstant(sid) => {
+				write!(fmt,"{}", SidDisplay{sid:sid, psterms: self.psterms, dm: DisplayMode::Plain})
+			},
+			Term::Bool(b) => {
+				write!(fmt,"{}", b)
+			},
+			Term::Integer(i) => {
+				write!(fmt, "{}", i)
+			},
+			Term::String(s) => {
+				write!(fmt, "{}", s)
+			},
+			Term::SFunctor(sid, args) | Term::IFunctor(sid, args) => {
+				write!(fmt,"{}({})", 
+					SidDisplay{sid: sid, psterms: self.psterms, dm:DisplayMode::Plain},
+					args.iter().map(|a| 
+						TidDisplay{
+							tid: *a,
+							psterms: self.psterms,
+							context: self.context,
+							dm: self.dm,							
+						}.to_string()).collect::<Vec<String>>().join(",")
+				)
+			},
+		}
+	}
+}
 
-// impl fmt::Display for TermsDisplay<'_>{
-//     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
-//     	write!(fmt,"{}",self.0.iter().map(|x| TermDisplay(&x,self.1,self.2).to_string()).collect::<Vec<String>>().join(",")) 
-//     }
-// }
 
 
 

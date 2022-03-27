@@ -8,9 +8,12 @@ pub struct TermId(pub usize);
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct TqfId(pub usize);
+
 pub struct ConjunctIndex(pub usize);
+
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct QuestionId(pub usize);
+
 pub struct AnswerId(pub usize, pub usize);
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
@@ -22,10 +25,16 @@ pub enum Quantifier{
     Exists,
 }
 
-
+#[derive(Copy, Clone)]
 pub enum DisplayMode{
 	Plain,
-	Full,
+	PlainSid,
+	PlainSidTid
+}
+
+pub enum Position{
+	Classic,
+	Infix,
 }
 
 pub enum ProcessingResult{
