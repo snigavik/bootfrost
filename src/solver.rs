@@ -474,9 +474,15 @@ impl Solver{
 					}).collect();
 		self.stack.append(&mut new_blocks);
 		self.step = self.step + 1;
-		if !self.activate_top_block(){
-			self.remove_solved_blocks();
-		} 
+		
+		while self.stack.len() > 0{
+			if !self.activate_top_block(){
+				self.stack.pop();
+				self.remove_solved_blocks();
+			}else{
+				return;
+			}	 
+		}
 	}
 
 	fn activate_top_block(&mut self) -> bool{

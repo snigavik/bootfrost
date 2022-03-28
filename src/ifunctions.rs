@@ -36,6 +36,23 @@ fn minus(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	psterms.get_tid(Term::Integer(n1-n2)).unwrap()
 }
 
+fn multiply(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+
+	let arg0 = psterms.get_term(&args[0]);
+	let arg1 = psterms.get_term(&args[1]);
+
+	let (n1,n2) = if let (Term::Integer(_n1), Term::Integer(_n2)) = (arg0, arg1){
+		(_n1, _n2)
+	}else{
+		panic!("");
+	};
+
+	psterms.get_tid(Term::Integer(n1*n2)).unwrap()
+}
+
 fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	if args.len() != 2{
 		panic!("");
@@ -54,6 +71,22 @@ fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	psterms.get_tid(Term::String(res)).unwrap()
 }
 
+fn lessthan(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+
+	let arg0 = psterms.get_term(&args[0]);
+	let arg1 = psterms.get_term(&args[1]);
+
+	let (n1,n2) = if let (Term::Integer(_n1), Term::Integer(_n2)) = (arg0, arg1){
+		(_n1, _n2)
+	}else{
+		panic!("");
+	};
+
+	psterms.get_tid(Term::Bool(n1<n2)).unwrap()
+}
 
 
 
@@ -65,7 +98,9 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 	let fs = HashMap::from([
 		("+".to_string(), (plus as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
 		("-".to_string(), (minus as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix))
+		("*".to_string(), (multiply as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("<".to_string(), (lessthan as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
 	]);
 
 

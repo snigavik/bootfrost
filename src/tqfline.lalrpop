@@ -36,7 +36,7 @@ atoms: Vec<PlainTerm> = {
 atom: PlainTerm = {
 	<s: symbol> "(" ")" => PlainTerm::new(s.parse().unwrap(),vec![]),
 	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a),
-	<a1: pterm> <infatom:infatom> <a2: pterm> => PlainTerm::new(infatom,vec![a1,a2]),
+	<a1: pterm> <infatom:infatom> <a2: pterm> => PlainTerm::new_infix(infatom,vec![a1,a2]),
 }
 
 pterm: PlainTerm = {
@@ -45,8 +45,7 @@ pterm: PlainTerm = {
 }
 
 infix_pterm: PlainTerm = {
-	<a1: pterm> "++" <a2: pterm> => PlainTerm::new_infix("++".to_string(),vec![a1,a2]),
-	<a1: pterm> "+" <a2: pterm> => PlainTerm::new_infix("+".to_string(),vec![a1,a2]),
+	<a1: pterm> <infterm:infterm> <a2: pterm> => PlainTerm::new_infix(infterm,vec![a1,a2]),
 }
 
 gterm: PlainTerm = {
@@ -54,13 +53,20 @@ gterm: PlainTerm = {
 	<t: infix_pterm> => t,
 }
 
+infterm:String = {
+	"++" => "++".to_string(),
+	"+" => "+".to_string(),
+	"-" => "-".to_string(),
+	"*" => "*".to_string(),
+}
+
 infatom:String = {
 	">" => ">".to_string(),
-	"<" => ">".to_string(),
-	"==" => ">".to_string(),
-	">=" => ">".to_string(),
-	"<=" => ">".to_string(),
-	"!=" => ">".to_string(),
+	"<" => "<".to_string(),
+	"==" => "==".to_string(),
+	">=" => ">=".to_string(),
+	"<=" => "<=".to_string(),
+	"!=" => "!=".to_string(),
 }
 
 symbol: String = {
