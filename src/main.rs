@@ -19,5 +19,5 @@ fn main() {
 	let mut solver = Solver::parse("./formula.pcf");
 	solver.print();
 	println!("================");
-	solver.solver_loop(3);
+	solver.solver_loop(1000);
 }

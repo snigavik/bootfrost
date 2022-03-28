@@ -443,6 +443,17 @@ impl Solver{
 		}
 	}
 
+	fn activate_top_block_loop(&mut self){
+		while self.stack.len() > 0{
+			if !self.activate_top_block(){
+				self.remove_solved_blocks();
+			}else{
+				return;
+			}	 
+		}		
+	}
+
+
 	fn transform(&mut self, answer: Answer){
 		let qid = answer.qid;
 		let curr_context = &self.stack[self.questions[qid.0].fstack_i].context;	
@@ -452,6 +463,7 @@ impl Solver{
 
 		if e_tqfs.len() == 0{
 			self.remove_solved_blocks();
+			self.activate_top_block_loop();
 			return;
 		}
 
@@ -473,21 +485,22 @@ impl Solver{
 						activated: false,
 					}).collect();
 		self.stack.append(&mut new_blocks);
-		self.step = self.step + 1;
-		
-		while self.stack.len() > 0{
-			if !self.activate_top_block(){
-				self.stack.pop();
-				self.remove_solved_blocks();
-			}else{
-				return;
-			}	 
-		}
+		//self.step = self.step + 1;
+
+		self.activate_top_block_loop();
+		// while self.stack.len() > 0{
+		// 	if !self.activate_top_block(){
+		// 		self.remove_solved_blocks();
+		// 	}else{
+		// 		return;
+		// 	}	 
+		// }
 	}
 
 	fn activate_top_block(&mut self) -> bool{
 		let fstack_i = self.stack.len() - 1;
 		if let Some(top) = self.stack.last_mut(){
+			top.activated = true;
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
 			let new_conj = e_conj.iter().map(|a| processing(*a, &mut self.psterms, &top.context).unwrap());
@@ -521,7 +534,7 @@ impl Solver{
 							answers: vec![],
 						}).collect();
 			self.questions.append(&mut new_questions);
-			top.activated = true;
+			//top.activated = true;
 			return true;		
 		}else{
 			panic!("");
@@ -540,6 +553,7 @@ impl Solver{
 			}
 			if let Some(answer) = self.find_answer_global(){
 				self.transform(answer);
+				self.step = self.step + 1;
 			}else{
 				println!("Exhausted");
 				break;
