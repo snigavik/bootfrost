@@ -98,8 +98,6 @@ impl PSTerms{
 		if let Some(_sid) = fmap.get(&pt.symbol){
 			if let Some(sid) = self.symbols.get(_sid.0){
 				if let Some(..) = sid.f{
-					//let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
-					//psterms.add_plain_functor(pt, &mut vstack, &mut smap, &mut fmap)
 					let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
 						return *tid;
@@ -110,7 +108,6 @@ impl PSTerms{
 		            	return tid;						
 					}
 				}else{
-					//let term = Term::SFunctor(*_sid, pt.args.into_iter().map(|a| self.add_plain_functor(a, fmap)).collect());
 					let term = Term::SFunctor(*_sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
 						return *tid;
@@ -249,12 +246,10 @@ impl PSTerms{
 	}
 
 	pub fn get_term(&self, tid:&TermId) -> Term{
-		//self.terms.get(tid.0)
 		self.terms[tid.0].clone()
 	}
 
 	pub fn get_symbol(&self, sid:&SymbolId) -> &Symbol{
-		//self.symbols.get(sid.0)
 		&self.symbols[sid.0]
 	}
 
@@ -354,7 +349,7 @@ impl fmt::Display for TidDisplay<'_>{
 				write!(fmt, "{}", i)
 			},
 			Term::String(s) => {
-				write!(fmt, "{}", s)
+				write!(fmt, "\"{}\"", s)
 			},
 			Term::SFunctor(sid, args) | Term::IFunctor(sid, args) => {
 				let sd = &SidDisplay{sid: sid, psterms: self.psterms, dm:DisplayMode::Plain}.to_string();
