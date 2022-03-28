@@ -91,7 +91,7 @@ impl PSTerms{
 	}
 
 	pub fn new() -> PSTerms{
-		PSTerms{symbols: vec![], terms: vec![], index: HashMap::new()}
+		PSTerms{symbols: vec![], terms: vec![Term::Bool(false), Term::Bool(true)], index: HashMap::from([(Term::Bool(false),TermId(0)), (Term::Bool(true),TermId(1))])}
 	}
 
 	pub fn add_plain_functor(&mut self, pt:PlainTerm, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>) -> TermId{

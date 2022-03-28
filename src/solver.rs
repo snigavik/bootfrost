@@ -162,7 +162,8 @@ impl Solver{
 		let pf = crate::parser::parse(path);
 		//let mut psterms = PSTerms::new();
 		let mut vstack = vec![];
-		let mut smap = HashMap::new();
+		let mut smap = HashMap::from([("false".to_string(),TermId(0)), ("true".to_string(),TermId(1))]);
+
 		// let mut fmap = HashMap::new();
 		let mut tqfs = vec![];
 		let (mut psterms, mut fmap) = crate::ifunctions::init();
