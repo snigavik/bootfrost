@@ -63,9 +63,9 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 	let mut fmap = HashMap::new();
 
 	let fs = HashMap::from([
-		("+".to_string(), (plus, Position::Infix))
-		// ("-".to_string(), minus),
-		// ("++".to_string(), concat),
+		("+".to_string(), (plus as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("-".to_string(), (minus as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix))
 	]);
 
 
