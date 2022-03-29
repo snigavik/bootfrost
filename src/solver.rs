@@ -159,7 +159,7 @@ impl Solver{
 	}
 
 	pub fn parse(path: &str) -> Solver{
-		let pf = crate::parser::parse(path);
+		let pf = crate::parser::parse_file(path);
 		//let mut psterms = PSTerms::new();
 		let mut vstack = vec![];
 		let mut smap = HashMap::from([("false".to_string(),TermId(0)), ("true".to_string(),TermId(1))]);
