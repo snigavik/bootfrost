@@ -364,31 +364,20 @@ impl fmt::Display for TidDisplay<'_>{
 								dm: self.dm,
 								d: ", "
 							}.to_string()
-							// args.iter().map(|a| 
-							// 	TidDisplay{
-							// 		tid: *a,
-							// 		psterms: self.psterms,
-							// 		context: self.context,
-							// 		dm: self.dm,							
-							// 	}.to_string()).collect::<Vec<String>>().join(",")
 						)
 					},
 					Position::Infix => {
+						let mut sd1 = " ".to_string();
+						sd1.push_str(sd);
+						sd1.push_str(" ");
 						write!(fmt,"{}",
 							TidsDisplay{
 								tids: &args,
 								psterms: self.psterms,
 								context: self.context,
 								dm: self.dm,
-								d: sd,
+								d: &sd1,
 							}.to_string()
-							// args.iter().map(|a| 
-							// 	TidDisplay{
-							// 		tid: *a,
-							// 		psterms: self.psterms,
-							// 		context: self.context,
-							// 		dm: self.dm,							
-							// 	}.to_string()).collect::<Vec<String>>().join(sd)
 						)						
 					}
 				}

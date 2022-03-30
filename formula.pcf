@@ -1,7 +1,7 @@
 ? B(1), R(2), L(h(e)), M(k)
 	!x,y B(x), R(y)
-		? F(x + y)
-		? BB(x + 100)
+		? F(x+y)
+		? BB(x+100)
 	!x F(x)
 	!x BB(x)
 
