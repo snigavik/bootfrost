@@ -297,6 +297,7 @@ impl Solver{
 					continue;
 				},
 				MatchingState::Ready => {
+					let context = &self.stack[self.questions[qid.0].fstack_i].context;
 					match self.questions[qid.0].curr_answer_stack.last().unwrap().last().unwrap(){
 						LogItem::Matching{batom_i, qatom_i, ..} => {
 							let bterm = &self.base[*batom_i];
@@ -306,7 +307,7 @@ impl Solver{
 							}
 							let btid = bterm.term;
 							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-							let context = &self.stack[self.questions[qid.0].fstack_i].context;
+							
 							let mut curr_answer = &mut self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
 							if matching(&mut self.psterms, btid, qtid, context, curr_answer){
 								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
@@ -317,8 +318,10 @@ impl Solver{
 							}
 						},
 						LogItem::Interpretation{qatom_i} => {
+														
 							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-							let b = eval_term(&mut self.psterms, qtid);
+							let curr_answer = &self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
+							let b = processing(qtid, &mut self.psterms, context, Some(&curr_answer)).unwrap();
 							if self.psterms.check_value(&b){
 								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
 							}else{
@@ -503,7 +506,7 @@ impl Solver{
 			top.activated = true;
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
-			let new_conj = e_conj.iter().map(|a| processing(*a, &mut self.psterms, &top.context).unwrap());
+			let new_conj = e_conj.iter().map(|a| processing(*a, &mut self.psterms, &top.context, None).unwrap());
 			for a in new_conj{
 				if a == TermId(0){
 					return false;
@@ -564,12 +567,18 @@ impl Solver{
 }
 
 
-fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context) -> ProcessingResult{
+fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context, answer1: Option<&Answer>) -> ProcessingResult{
 	let t = &psterms.get_term(&tid);
 	match t{
 		Term::AVariable(..) => {
 			if let Some(new_tid) = context.get(&tid){
 				ProcessingResult::Existing(*new_tid)
+			}else if let Some(answer) = answer1{
+				if let Some(new_tid) = answer.get(&tid){
+					ProcessingResult::Existing(*new_tid)
+				}else{
+					panic!("");
+				}
 			}else{
 				panic!("");
 			}
@@ -577,6 +586,12 @@ fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context) -> Processin
 		Term::EVariable(..) => {
 			if let Some(new_tid) = context.get(&tid){
 				ProcessingResult::Existing(*new_tid)
+			}else if let Some(answer) = answer1{
+				if let Some(new_tid) = answer.get(&tid){
+					ProcessingResult::Existing(*new_tid)
+				}else{
+					ProcessingResult::Existing(tid)
+				}
 			}else{
 				ProcessingResult::Existing(tid)
 			}			
@@ -590,7 +605,7 @@ fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context) -> Processin
 				args
 					.iter()
 					.map(|arg| 
-						processing(*arg, psterms, context).unwrap())
+						processing(*arg, psterms, context, answer1).unwrap())
 					.collect());
 			psterms.get_tid(new_term)
 		},
@@ -601,11 +616,12 @@ fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context) -> Processin
 					&args
 						.iter()
 						.map(|arg| 
-							processing(*arg, psterms, context).unwrap())
+							processing(*arg, psterms, context, answer1).unwrap())
 						.collect(), 
 					psterms),
 				psterms,
-				context)
+				context,
+				answer1)
 		},
 	}
 }
@@ -615,16 +631,7 @@ fn run_command(psterms: &mut PSTerms,  tid:TermId){
 
 }
 
-fn eval_term(psterms: &mut PSTerms, tid:TermId) -> TermId{
-	let t = &psterms.get_term(&tid);
-	match t{
-		Term::IFunctor(sid, args) => {
-			let f = psterms.get_symbol(&sid).f.unwrap();
-			f(args, psterms)
-		},
-		_ => tid
-	}
-}
+// 
 
 fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer) -> bool{
 	if btid == qtid{
@@ -660,7 +667,7 @@ fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, 
 			},
 			Term::IFunctor(q_sid, q_args) => {
 				let p = psterms.len();
-				let new_qtid = eval_term(psterms, qtid);
+				let new_qtid = processing(qtid, psterms, context, Some(&curr_answer)).unwrap();
 				let m = matching(psterms, btid, new_qtid, context, curr_answer);
 				psterms.back_to(p);
 				m

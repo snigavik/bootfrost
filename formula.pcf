@@ -1,7 +1,6 @@
-? B(1), R(2), L(h(e)), M(k)
-	!x,y B(x), R(y)
-		? F(x+y)
-		? BB(x+100)
-	!x F(x)
-	!x BB(x)
+? B(10), B(20), B(4), B(2), M(2), M(3)
+	! x,y M(x), B(y), y < x
+		? Less(y,x)
+	!x Less(2,x)
+	
 
