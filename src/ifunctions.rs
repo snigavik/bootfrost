@@ -16,29 +16,17 @@ fn lteq(a:i64, b:i64) -> bool {a <= b}
 fn gteq(a:i64, b:i64) -> bool {a >= b}
 
 
-macro_rules! ifunction_1{
-	($f:tt) => {
-		|args: &Vec<TermId>, psterms: &mut PSTerms| -> TermId{
-			if args.len() != 2{
-				panic!("");
-			}
-
-			let arg0 = psterms.get_term(&args[0]);
-			let arg1 = psterms.get_term(&args[1]);
-
-			let (n1,n2) = if let (Term::Integer(_n1), Term::Integer(_n2)) = (arg0, arg1){
-				(_n1, _n2)
-			}else{
-				panic!("");
-			};
-
-			psterms.get_tid(Term::Integer($f(n1,n2))).unwrap()
-		}
+macro_rules! result_term{
+	($res:expr, bool) => {
+		Term::Bool($res)
+	};
+	($res:expr, i64) => {
+		Term::Integer($res)
 	}
 }
 
-macro_rules! ifunction_cmp{
-	($f:tt) => {
+macro_rules! ifunction_binary_integers{
+	($f:tt, $tp:tt) => {
 		|args: &Vec<TermId>, psterms: &mut PSTerms| -> TermId{
 			if args.len() != 2{
 				panic!("");
@@ -53,7 +41,7 @@ macro_rules! ifunction_cmp{
 				panic!("");
 			};
 
-			psterms.get_tid(Term::Bool($f(n1,n2))).unwrap()
+			psterms.get_tid(result_term!($f(n1,n2), $tp)).unwrap()
 		}
 	}
 }
@@ -85,15 +73,15 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 	let mut fmap = HashMap::new();
 
 	let fs = HashMap::from([
-		("+".to_string(), (ifunction_1!(plus) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("-".to_string(), (ifunction_1!(minus) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("*".to_string(), (ifunction_1!(multiply) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("==".to_string(), (ifunction_cmp!(eq) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("!=".to_string(), (ifunction_cmp!(noteq) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("<".to_string(), (ifunction_cmp!(lt) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		(">".to_string(), (ifunction_cmp!(gt) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("<=".to_string(), (ifunction_cmp!(lteq) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		(">=".to_string(), (ifunction_cmp!(gteq) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("+".to_string(), (ifunction_binary_integers!(plus, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("-".to_string(), (ifunction_binary_integers!(minus, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("*".to_string(), (ifunction_binary_integers!(multiply, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("==".to_string(), (ifunction_binary_integers!(eq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("<".to_string(), (ifunction_binary_integers!(lt, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		(">".to_string(), (ifunction_binary_integers!(gt, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
 		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
 	]);
 
