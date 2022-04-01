@@ -384,7 +384,11 @@ impl Solver{
 		// 			limit:1000}).collect();
 		// vq.rotate_left(self.step % self.questions.len());	
 		// vq
-		plain_shift_strategy(&self.questions, self.step)
+		
+		//plain_shift_strategy(&self.questions, self.step);
+
+		let curr_level = self.stack.iter().filter(|x| x.activated).count();
+		general_strategy(&self.questions, &self.tqfs, curr_level)
 	}
 
 	fn find_answer_global(&mut self) -> Option<Answer>{
@@ -537,7 +541,7 @@ impl Solver{
 	pub fn solver_loop(&mut self, limit:usize){
 		let mut i = 0;
 		while i < limit{
-			println!("================================ Step {} ================================", self.step);
+			println!("================================ Step {}, stack: {}  ================================", self.step, self.stack.len());
 			i = i + 1;
 			//dbg!(&self.psterms);
 			if self.stack.is_empty(){
