@@ -18,7 +18,7 @@ struct FBlock{
 	eid: TqfId,
 	context: Context,
 	pub bid: BlockId,
-	activated: bool,
+	pub activated: bool,
 }
 
 pub struct Solver{
@@ -184,6 +184,10 @@ impl Solver{
 		solver
 	}
 
+	fn level(&self) -> usize{
+		self.stack.iter().filter(|x| x.activated).count()
+	}
+
 	fn question_mut(&mut self, i:QuestionId) -> &mut Question{
 		if let Some(q) = self.questions.get_mut(i.0){
 			q
@@ -342,10 +346,12 @@ impl Solver{
 						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
 					}
 
-					let answer1 = self.questions[qid.0].answers.last().unwrap().clone();
+					let mut answer1 = self.questions[qid.0].answers.last().unwrap().clone();
 					match si.selector{
 						SelectorStrategy::First(f) => {
 							if f(&answer1, &self.psterms){
+								answer1.level = Some(self.stack.iter().filter(|x| x.activated).count());
+								self.questions.get_mut(qid.0).unwrap().used_answers.push(answer1.clone());
 								return Some(answer1)
 							}else{
 								continue;
@@ -518,6 +524,7 @@ impl Solver{
 							fstack_i: fstack_i,
 							curr_answer_stack: vec![],
 							answers: vec![],
+							used_answers: vec![],
 						}).collect();
 			self.questions.append(&mut new_questions);
 			//top.activated = true;

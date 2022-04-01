@@ -22,6 +22,7 @@ pub struct Question{
 	pub fstack_i:usize, // position in the stack where we can find corresponding context
 	pub curr_answer_stack: Vec<Answer>,
 	pub answers: Vec<Answer>,
+	pub used_answers: Vec<Answer>,
 }
 
 impl Question{
@@ -34,9 +35,21 @@ impl Question{
 		tqfs[self.aformula.0].next.len()
 	}
 
-	// pub fn steps(&self) -> &Vec<usize>{
-		
-	// }
+	pub fn last_level(&self, curr_level: usize) -> Option<usize>{
+		if self.used_answers.is_empty(){
+			None
+		}else{
+			Some(curr_level - self.used_answers.last().unwrap().level.unwrap())
+		}
+	}
+
+	pub fn used_count(&self) -> usize{
+		self.used_answers.len()
+	}
+
+	pub fn gs_state(&self, tqfs: &Vec<Tqf>, curr_level: usize) -> (usize, Option<usize>, usize){
+		(self.branches(tqfs), self.last_level(curr_level), self.used_count())
+	}
 }
 
 
