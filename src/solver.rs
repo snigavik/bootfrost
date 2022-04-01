@@ -8,23 +8,8 @@ use crate::question::*;
 use crate::context::*;
 use crate::answer::*;
 use crate::plain::*;
+use crate::strategies::*;
 
-struct StrategyItem{
-	pub qid: QuestionId,
-	selector: SelectorStrategy,
-	sf: StartFrom,
-	limit: usize,
-}
-
-enum SelectorStrategy{
-	First(fn(&Answer, &PSTerms) -> bool),
-	Best,
-}
-
-enum StartFrom{
-	Last,
-	Scratch,
-}
 
 
 struct FBlock{
@@ -279,13 +264,10 @@ impl Solver{
 			self.questions[qid.0].curr_answer_stack.push(new_top);
 		}
 
-		//dbg!(&self.questions[qid.0].curr_answer_stack.last());
 
 		let mut i = 0;
 		while i < limit{
 			let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
-			//dbg!(&self.questions[qid.0].curr_answer_stack.last());
-			//dbg!(&self.questions[qid.0].curr_answer_stack.last().unwrap().log.last().unwrap());
 			i = i + 1;
 			match &self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
@@ -384,18 +366,19 @@ impl Solver{
 	}
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
-		let mut vq:Vec<StrategyItem> = 
-		self.questions
-			.iter()
-			.enumerate()
-			.map(|(i,q)| 
-				StrategyItem{
-					qid: QuestionId(i),
-					selector: SelectorStrategy::First(|x,y| true),
-					sf: StartFrom::Last,
-					limit:1000}).collect();
-		vq.rotate_left(self.step % self.questions.len());	
-		vq
+		// let mut vq:Vec<StrategyItem> = 
+		// self.questions
+		// 	.iter()
+		// 	.enumerate()
+		// 	.map(|(i,q)| 
+		// 		StrategyItem{
+		// 			qid: QuestionId(i),
+		// 			selector: SelectorStrategy::First(|x,y| true),
+		// 			sf: StartFrom::Last,
+		// 			limit:1000}).collect();
+		// vq.rotate_left(self.step % self.questions.len());	
+		// vq
+		plain_shift_strategy(&self.questions, self.step)
 	}
 
 	fn find_answer_global(&mut self) -> Option<Answer>{

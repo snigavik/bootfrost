@@ -7,6 +7,7 @@ mod solver;
 mod plain;
 mod parser;
 mod ifunctions;
+mod strategies;
 
 use crate::parser::*;
 use crate::solver::*;

@@ -19,7 +19,7 @@ impl Tqf{
 pub struct Question{
 	pub bid: BlockId,
 	pub aformula: TqfId,
-	pub fstack_i:usize,
+	pub fstack_i:usize, // position in the stack where we can find corresponding context
 	pub curr_answer_stack: Vec<Answer>,
 	pub answers: Vec<Answer>,
 }
@@ -29,6 +29,14 @@ impl Question{
 		self.answers.retain(|q| q.bid != bid);
 		self.curr_answer_stack.retain(|q| q.bid != bid);
 	}
+
+	pub fn branches(&self, tqfs: &Vec<Tqf>) -> usize{
+		tqfs[self.aformula.0].next.len()
+	}
+
+	// pub fn steps(&self) -> &Vec<usize>{
+		
+	// }
 }
 
 

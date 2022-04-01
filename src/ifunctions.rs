@@ -2,7 +2,6 @@ use crate::term::*;
 use crate::misc::*;
 use std::collections::HashMap;
 
-use std::ops::Mul;
 
 fn plus(a:i64,b:i64) -> i64 {a + b}
 fn minus(a:i64,b:i64) -> i64 {a - b}
@@ -71,6 +70,7 @@ fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 	let mut psterms = PSTerms::new();
 	let mut fmap = HashMap::new();
+
 
 	let fs = HashMap::from([
 		("+".to_string(), (ifunction_binary_integers!(plus, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
