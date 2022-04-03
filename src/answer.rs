@@ -82,6 +82,22 @@ pub struct Answer{
 	pub state: MatchingState,	
 }
 
+impl PartialEq for Answer {
+    fn eq(&self, other: &Self) -> bool {
+        for (k, v) in self.amap.iter(){
+        	if let Some(v2) = other.amap.get(k){
+        		if v != v2{
+        			return false;
+        		}
+        	}else{
+        		return false;
+        	}
+        }
+        return true;
+    }
+}
+impl Eq for Answer {}
+
 
 impl fmt::Debug for Answer{
     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
