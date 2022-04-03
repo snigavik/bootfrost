@@ -69,7 +69,7 @@ impl Question{
 
 		let qn = q_len as f64;
 
-		let k = _k as f64;
+		let k = _k as f64 + 0.5;
 		
 		bn * k * (last / qn)
 	}
