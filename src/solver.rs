@@ -337,14 +337,24 @@ impl Solver{
 					}
 				},
 				MatchingState::Answer => {
-					let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
-					self.questions.get_mut(qid.0).unwrap().answers.push(nq);
+					// if let Some(_) = self.questions[qid.0].answers.iter().find(){
+					// 	continue;
+					// }
+					// let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
+					// self.questions.get_mut(qid.0).unwrap().answers.push(nq);
 
 					if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().conj_len == 0{
 						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Empty;	
 					}else{
 						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
 					}
+					
+
+					let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
+					if let Some(_) = self.questions[qid.0].answers.iter().find(|x| *x == &nq){
+						continue;
+					}					
+					self.questions.get_mut(qid.0).unwrap().answers.push(nq);
 
 					let mut answer1 = self.questions[qid.0].answers.last().unwrap().clone();
 					match si.selector{
