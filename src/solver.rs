@@ -1,6 +1,8 @@
 
 use std::collections::BTreeMap;
 use std::collections::HashMap;
+use std::ops::Index;
+
 
 use crate::misc::*;
 use crate::term::*;
@@ -9,6 +11,74 @@ use crate::context::*;
 use crate::answer::*;
 use crate::plain::*;
 use crate::strategies::*;
+
+
+struct Base{
+	pub base: Vec<BTerm>,
+	index: HashMap<TermId, usize>,
+}
+
+impl Base{
+	pub fn new() -> Base{
+		Base{base: vec![], index: HashMap::new()}
+	}
+
+	pub fn len(&self) -> usize{
+		self.base.len()
+	}
+
+	pub fn is_empty(&self) -> bool{
+		self.base.is_empty()
+	}
+
+	pub fn push(&mut self, tid:TermId, bid: BlockId){
+		self.index.insert(tid, self.base.len());
+		self.base.push(BTerm{term: tid, bid: bid, deleted: false})
+	}
+
+	pub fn push_and_check(&mut self, tid:TermId, bid:BlockId){
+		if let Some(i) = self.index.get(&tid){
+			if self.base[*i].deleted{
+				self.push(tid, bid);
+			}
+		}else{
+			self.push(tid, bid);
+		}
+	}
+
+	pub fn remove(&mut self, bid:BlockId){
+		while let Some(last) = self.base.last(){
+			if last.bid == bid{
+				if let Some(bt) = self.base.pop(){
+					self.index.remove(&bt.term);
+				}else{
+					panic!("");
+				}
+			}else{
+				break;
+			}
+		}		
+	}
+
+	pub fn deleted(&self, i:usize) -> bool{
+		self.base[i].deleted
+	}
+
+	pub fn contains_key(&self, tid: &TermId) -> bool{
+		self.index.contains_key(tid)
+	}
+
+
+}
+
+impl Index<usize> for Base{
+	type Output = BTerm;
+
+	fn index (&self, i:usize) -> &Self::Output{
+		&self.base[i]
+	}
+}
+
 
 
 
@@ -23,8 +93,7 @@ struct FBlock{
 
 pub struct Solver{
 	psterms: PSTerms,
-	base: Vec<BTerm>,
-	base_index: HashMap<TermId, usize>,
+	base: Base,
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
 	stack: Vec<FBlock>,
@@ -131,7 +200,7 @@ impl Solver{
 	}
 
 	pub fn print(&self){
-		for (i,b) in self.base.iter().enumerate(){
+		for (i,b) in self.base.base.iter().enumerate(){
 			self.print_term(b.term, &Context::new_empty());
 			if i < self.base.len() - 1{
 				print!(",");
@@ -171,8 +240,7 @@ impl Solver{
 
 		let mut solver = Solver{
 			psterms: psterms,
-			base: vec![],
-			base_index: HashMap::new(),
+			base: Base::new(),
 			tqfs: tqfs,
 			questions: vec![],
 			stack: fblocks,
@@ -214,7 +282,7 @@ impl Solver{
 			question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Ready;
 			match q_term{
 				Term::SFunctor(..) => {
-					if self.base.len() == 0{
+					if self.base.is_empty(){
 						question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Exhausted;
 						false
 					}else{
@@ -337,11 +405,6 @@ impl Solver{
 					}
 				},
 				MatchingState::Answer => {
-					// if let Some(_) = self.questions[qid.0].answers.iter().find(){
-					// 	continue;
-					// }
-					// let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
-					// self.questions.get_mut(qid.0).unwrap().answers.push(nq);
 
 					if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().conj_len == 0{
 						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Empty;	
@@ -382,18 +445,6 @@ impl Solver{
 	}
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
-		// let mut vq:Vec<StrategyItem> = 
-		// self.questions
-		// 	.iter()
-		// 	.enumerate()
-		// 	.map(|(i,q)| 
-		// 		StrategyItem{
-		// 			qid: QuestionId(i),
-		// 			selector: SelectorStrategy::First(|x,y| true),
-		// 			sf: StartFrom::Last,
-		// 			limit:1000}).collect();
-		// vq.rotate_left(self.step % self.questions.len());	
-		// vq
 		
 		//plain_shift_strategy(&self.questions, self.step);
 
@@ -416,17 +467,7 @@ impl Solver{
 	fn remove_top_block(&mut self){
 		if let Some(top) = self.stack.pop(){
 			if top.activated{
-				while let Some(last) = self.base.last(){
-					if last.bid == top.bid{
-						if let Some(bt) = self.base.pop(){
-							self.base_index.remove(&bt.term);
-						}else{
-							panic!("");
-						}
-					}else{
-						break;
-					}
-				}
+				self.base.remove(top.bid);
 
 				self.questions.retain(|q| q.bid != top.bid);
 
@@ -515,15 +556,7 @@ impl Solver{
 					return false;
 				}
 
-				if let Some(i) = self.base_index.get(&a){
-					if self.base[*i].deleted{
-						self.base_index.insert(a, self.base.len());
-						self.base.push(BTerm{term: a, bid: top.bid, deleted: false})
-					}
-				}else{
-					self.base_index.insert(a, self.base.len());
-					self.base.push(BTerm{term: a, bid: top.bid, deleted: false})
-				}
+				self.base.push_and_check(a,top.bid);
 			}	
 
 			// add questions
@@ -569,6 +602,27 @@ impl Solver{
 		}
 	}
 }
+
+
+fn question_mut(questions: &mut Vec<Question>, qid: QuestionId) -> &mut Question{
+	if let Some(q) = questions.get_mut(qid.0){
+		q
+	}else{
+		panic!("");
+	}
+}
+
+fn set_state(question: &mut Question, state: MatchingState){
+	question.curr_answer_stack.last_mut().unwrap().state = state;
+}
+
+
+
+
+
+
+
+
 
 
 fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context, answer1: Option<&Answer>) -> ProcessingResult{

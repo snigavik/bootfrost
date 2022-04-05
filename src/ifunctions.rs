@@ -58,8 +58,9 @@ fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	}else{
 		panic!("");
 	};
-	let mut res = n1.clone();
-	res.push_str(&n2);
+	// let mut res = n1.clone();
+	// res.push_str(&n2);
+	let res = format!("{}{}",n1,n2);
 	psterms.get_tid(Term::String(res)).unwrap()
 }
 
