@@ -58,12 +58,29 @@ fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	}else{
 		panic!("");
 	};
-	// let mut res = n1.clone();
-	// res.push_str(&n2);
+
 	let res = format!("{}{}",n1,n2);
 	psterms.get_tid(Term::String(res)).unwrap()
 }
 
+fn replace(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
+	if args.len() != 3{
+		panic!("");
+	}
+
+	let arg0 = psterms.get_term(&args[0]);
+	let arg1 = psterms.get_term(&args[1]);
+	let arg2 = psterms.get_term(&args[2]);
+
+	let (n1,n2,n3) = if let (Term::String(_n1), Term::String(_n2), Term::String(_n3)) = (arg0, arg1, arg2){
+		(_n1, _n2, _n3)
+	}else{
+		panic!("");
+	};
+	
+	let res = str::replace(&n1, &n2,&n3);
+	psterms.get_tid(Term::String(res)).unwrap()
+}
 
 
 
@@ -84,6 +101,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
 		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
 		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
+		("replace".to_string(), (replace as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Classic)),
 	]);
 
 

@@ -1,13 +1,4 @@
-? B(2), R(1)
-	! x B(x)
-		? B(x * 2)
-	! x R(x)
-		? BB(x + 1)
-		? DD(x + 1)
-	! BB(2)
-		? M(e)
-	!y DD(y)
-		? M(e)
-	!x B(x), x == 256, M(e)
-	
-
+? B("a"), B("b"), A("m")
+	! x, y B(x), A(y)
+		? N(replace("apple", x, y))
+	! N("mpple")
