@@ -164,7 +164,8 @@ impl PSTerms{
             	return *tid;
             }else{
             	let tid = TermId(self.terms.len());
-            	self.terms.push(term);
+            	self.terms.push(term.clone());
+            	self.index.insert(term,tid);
             	return tid;
             }
         }
