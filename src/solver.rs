@@ -321,128 +321,128 @@ impl Solver{
 		question.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
 	}
 
-	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
-		let qid = si.qid;
-		dbg!(si.qid.0);
-		let limit = si.limit;
-		if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
-			if top.bid != bid{
-				let mut new_top = top.clone();
-				new_top.bid = bid;
-				self.questions[qid.0].curr_answer_stack.push(new_top);
-			}
-		}else{
-			let new_top = Answer::new(bid, qid, self.base.len(), self.tqf(self.questions[qid.0].aformula).conj.len());
-			self.questions[qid.0].curr_answer_stack.push(new_top);
-		}
+	// fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
+	// 	let qid = si.qid;
+	// 	dbg!(si.qid.0);
+	// 	let limit = si.limit;
+	// 	if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
+	// 		if top.bid != bid{
+	// 			let mut new_top = top.clone();
+	// 			new_top.bid = bid;
+	// 			self.questions[qid.0].curr_answer_stack.push(new_top);
+	// 		}
+	// 	}else{
+	// 		let new_top = Answer::new(bid, qid, self.base.len(), self.tqf(self.questions[qid.0].aformula).conj.len());
+	// 		self.questions[qid.0].curr_answer_stack.push(new_top);
+	// 	}
 
 
-		let mut i = 0;
-		while i < limit{
-			let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
-			i = i + 1;
-			match &self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{
-				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
-					self.next_a(qid);
-					continue;
-				},
-				MatchingState::NextB | MatchingState::Fail => {
-					self.next_b(qid);
-					continue;
-				},
-				MatchingState::Ready => {
-					let context = &self.stack[self.questions[qid.0].fstack_i].context;
-					match self.questions[qid.0].curr_answer_stack.last().unwrap().last().unwrap(){
-						LogItem::Matching{batom_i, qatom_i, ..} => {
-							let bterm = &self.base[*batom_i];
-							if bterm.deleted{
-								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
-								continue;
-							}
-							let btid = bterm.term;
-							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
+	// 	let mut i = 0;
+	// 	while i < limit{
+	// 		let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
+	// 		i = i + 1;
+	// 		match &self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{
+	// 			MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
+	// 				self.next_a(qid);
+	// 				continue;
+	// 			},
+	// 			MatchingState::NextB | MatchingState::Fail => {
+	// 				self.next_b(qid);
+	// 				continue;
+	// 			},
+	// 			MatchingState::Ready => {
+	// 				let context = &self.stack[self.questions[qid.0].fstack_i].context;
+	// 				match self.questions[qid.0].curr_answer_stack.last().unwrap().last().unwrap(){
+	// 					LogItem::Matching{batom_i, qatom_i, ..} => {
+	// 						let bterm = &self.base[*batom_i];
+	// 						if bterm.deleted{
+	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
+	// 							continue;
+	// 						}
+	// 						let btid = bterm.term;
+	// 						let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
 							
-							let mut curr_answer = &mut self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
-							if matching(&mut self.psterms, btid, qtid, context, curr_answer){
-								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
-								continue;
-							}else{
-								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
-								continue;								
-							}
-						},
-						LogItem::Interpretation{qatom_i} => {
+	// 						let mut curr_answer = &mut self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
+	// 						if matching(btid, qtid, context, curr_answer, self){
+	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
+	// 							continue;
+	// 						}else{
+	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
+	// 							continue;								
+	// 						}
+	// 					},
+	// 					LogItem::Interpretation{qatom_i} => {
 														
-							let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-							let curr_answer = &self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
-							let b = processing(qtid, &mut self.psterms, context, Some(&curr_answer)).unwrap();
-							if self.psterms.check_value(&b){
-								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
-							}else{
-								self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
-							}
-							continue;
-						},
-					}
-				},
-				MatchingState::Rollback => {
-					if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().len() > 0{
-						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
-						continue;
-					}else{
-						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextK;
-						continue;
-					}
-				},
-				MatchingState::NextK => {
-					self.next_k(qid);
-				},
-				MatchingState::Exhausted => {
-					if self.next_bounds(qid){
-						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Zero;
-					}else{
-						break;
-					}
-				},
-				MatchingState::Answer => {
+	// 						let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
+	// 						let curr_answer = &self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
+	// 						let b = processing(qtid, context, Some(&curr_answer), self).unwrap();
+	// 						if self.psterms.check_value(&b){
+	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
+	// 						}else{
+	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
+	// 						}
+	// 						continue;
+	// 					},
+	// 				}
+	// 			},
+	// 			MatchingState::Rollback => {
+	// 				if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().len() > 0{
+	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
+	// 					continue;
+	// 				}else{
+	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextK;
+	// 					continue;
+	// 				}
+	// 			},
+	// 			MatchingState::NextK => {
+	// 				self.next_k(qid);
+	// 			},
+	// 			MatchingState::Exhausted => {
+	// 				if self.next_bounds(qid){
+	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Zero;
+	// 				}else{
+	// 					break;
+	// 				}
+	// 			},
+	// 			MatchingState::Answer => {
 
-					if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().conj_len == 0{
-						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Empty;	
-					}else{
-						self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
-					}
+	// 				if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().conj_len == 0{
+	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Empty;	
+	// 				}else{
+	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
+	// 				}
 					
 
-					let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
-					if let Some(_) = self.questions[qid.0].answers.iter().find(|x| *x == &nq){
-						continue;
-					}					
-					self.questions.get_mut(qid.0).unwrap().answers.push(nq);
+	// 				let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
+	// 				if let Some(_) = self.questions[qid.0].answers.iter().find(|x| *x == &nq){
+	// 					continue;
+	// 				}					
+	// 				self.questions.get_mut(qid.0).unwrap().answers.push(nq);
 
-					let mut answer1 = self.questions[qid.0].answers.last().unwrap().clone();
-					match si.selector{
-						SelectorStrategy::First(f) => {
-							if f(&answer1, &self.psterms){
-								answer1.level = Some(self.stack.iter().filter(|x| x.activated).count());
-								self.questions.get_mut(qid.0).unwrap().used_answers.push(answer1.clone());
-								return Some(answer1)
-							}else{
-								continue;
-							}
-						},
-						SelectorStrategy::Best => {
-							continue;
-						}
-					}
-				},
-				MatchingState::Empty => {
-					break;
-				}
-			}
+	// 				let mut answer1 = self.questions[qid.0].answers.last().unwrap().clone();
+	// 				match si.selector{
+	// 					SelectorStrategy::First(f) => {
+	// 						if f(&answer1, &self.psterms){
+	// 							answer1.level = Some(self.stack.iter().filter(|x| x.activated).count());
+	// 							self.questions.get_mut(qid.0).unwrap().used_answers.push(answer1.clone());
+	// 							return Some(answer1)
+	// 						}else{
+	// 							continue;
+	// 						}
+	// 					},
+	// 					SelectorStrategy::Best => {
+	// 						continue;
+	// 					}
+	// 				}
+	// 			},
+	// 			MatchingState::Empty => {
+	// 				break;
+	// 			}
+	// 		}
 
-		}
-		None //		 
-	}
+	// 	}
+	// 	None //		 
+	// }
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
 		
@@ -550,7 +550,7 @@ impl Solver{
 			top.activated = true;
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
-			let new_conj = e_conj.iter().map(|a| processing(*a, &mut self.psterms, &top.context, None).unwrap());
+			let new_conj = e_conj.iter().map(|a| processing(*a, &top.context, None, &mut self).unwrap());
 			for a in new_conj{
 				if a == TermId(0){
 					return false;
@@ -625,8 +625,9 @@ fn set_state(question: &mut Question, state: MatchingState){
 
 
 
-fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context, answer1: Option<&Answer>) -> ProcessingResult{
-	let t = &psterms.get_term(&tid);
+fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, solver: &mut Solver) -> ProcessingResult{
+	// let mut psterms = &mut solver.psterms;
+	let t = &solver.psterms.get_term(&tid);
 	match t{
 		Term::AVariable(..) => {
 			if let Some(new_tid) = context.get(&tid){
@@ -663,23 +664,23 @@ fn processing(tid:TermId, psterms: &mut PSTerms, context: &Context, answer1: Opt
 				args
 					.iter()
 					.map(|arg| 
-						processing(*arg, psterms, context, answer1).unwrap())
+						processing(*arg, context, answer1, solver).unwrap())
 					.collect());
-			psterms.get_tid(new_term)
+			solver.psterms.get_tid(new_term)
 		},
 		Term::IFunctor(sid, args) => {
-			let f = psterms.get_symbol(&sid).f.unwrap();
+			let f = solver.psterms.get_symbol(&sid).f.unwrap();
 			processing(
 				f(
 					&args
 						.iter()
 						.map(|arg| 
-							processing(*arg, psterms, context, answer1).unwrap())
+							processing(*arg, context, answer1, solver).unwrap())
 						.collect(), 
-					psterms),
-				psterms,
+					&mut solver.psterms),
 				context,
-				answer1)
+				answer1,
+				solver)
 		},
 	}
 }
@@ -691,18 +692,20 @@ fn run_command(psterms: &mut PSTerms,  tid:TermId){
 
 // 
 
-fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer) -> bool{
+fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer, solver: &mut Solver) -> bool{
+	// let mut psterms = &mut solver.psterms;
+	
 	if btid == qtid{
 		true
 	}else{
-		let bterm = psterms.get_term(&btid);
-		let qterm = psterms.get_term(&qtid);
+		let bterm = solver.psterms.get_term(&btid);
+		let qterm = solver.psterms.get_term(&qtid);
 		match qterm{
 			Term::AVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(psterms, btid, *new_qtid, context, curr_answer)
+					matching(btid, *new_qtid, context, curr_answer, solver)
 				}else if let Some(new_qtid) = curr_answer.get(&qtid){
-					matching(psterms, btid, *new_qtid, context, curr_answer)
+					matching(btid, *new_qtid, context, curr_answer, solver)
 				}else{
 					curr_answer.push(qtid, btid);
 					true
@@ -710,7 +713,7 @@ fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, 
 			},
 			Term::EVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(psterms, btid, *new_qtid, context, curr_answer)
+					matching(btid, *new_qtid, context, curr_answer, solver)
 				}else{
 					false
 				}
@@ -718,16 +721,16 @@ fn matching(psterms: &mut PSTerms, btid:TermId, qtid:TermId, context: &Context, 
 			Term::SFunctor(q_sid, q_args) => {
 				match bterm{
 					Term::SFunctor(b_sid,b_args) if q_sid == b_sid => {
-						q_args.iter().zip(b_args.iter()).all(|pair| matching(psterms, *pair.1, *pair.0, context, curr_answer))
+						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, solver))
 					},
 					_ => false,
 				}
 			},
 			Term::IFunctor(q_sid, q_args) => {
-				let p = psterms.len();
-				let new_qtid = processing(qtid, psterms, context, Some(&curr_answer)).unwrap();
-				let m = matching(psterms, btid, new_qtid, context, curr_answer);
-				psterms.back_to(p);
+				let p = solver.psterms.len();
+				let new_qtid = processing(qtid, context, Some(&curr_answer), solver).unwrap();
+				let m = matching(btid, new_qtid, context, curr_answer, solver);
+				solver.psterms.back_to(p);
 				m
 			},
 			_ => {
