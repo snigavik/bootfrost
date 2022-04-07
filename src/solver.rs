@@ -11,73 +11,9 @@ use crate::context::*;
 use crate::answer::*;
 use crate::plain::*;
 use crate::strategies::*;
+use crate::base::*;
 
 
-struct Base{
-	pub base: Vec<BTerm>,
-	index: HashMap<TermId, usize>,
-}
-
-impl Base{
-	pub fn new() -> Base{
-		Base{base: vec![], index: HashMap::new()}
-	}
-
-	pub fn len(&self) -> usize{
-		self.base.len()
-	}
-
-	pub fn is_empty(&self) -> bool{
-		self.base.is_empty()
-	}
-
-	pub fn push(&mut self, tid:TermId, bid: BlockId){
-		self.index.insert(tid, self.base.len());
-		self.base.push(BTerm{term: tid, bid: bid, deleted: false})
-	}
-
-	pub fn push_and_check(&mut self, tid:TermId, bid:BlockId){
-		if let Some(i) = self.index.get(&tid){
-			if self.base[*i].deleted{
-				self.push(tid, bid);
-			}
-		}else{
-			self.push(tid, bid);
-		}
-	}
-
-	pub fn remove(&mut self, bid:BlockId){
-		while let Some(last) = self.base.last(){
-			if last.bid == bid{
-				if let Some(bt) = self.base.pop(){
-					self.index.remove(&bt.term);
-				}else{
-					panic!("");
-				}
-			}else{
-				break;
-			}
-		}		
-	}
-
-	pub fn deleted(&self, i:usize) -> bool{
-		self.base[i].deleted
-	}
-
-	pub fn contains_key(&self, tid: &TermId) -> bool{
-		self.index.contains_key(tid)
-	}
-
-
-}
-
-impl Index<usize> for Base{
-	type Output = BTerm;
-
-	fn index (&self, i:usize) -> &Self::Output{
-		&self.base[i]
-	}
-}
 
 
 
@@ -272,54 +208,54 @@ impl Solver{
 		}
 	}
 
-	fn next_a(&mut self, qid: QuestionId) -> bool{
-		let mut question = self.questions.get_mut(qid.0).unwrap();
-		let state_len = question.curr_answer_stack.last_mut().unwrap().len();
-		let conj_len = question.curr_answer_stack.last_mut().unwrap().conj_len;
-		if state_len < conj_len{
-			let x = &self.tqfs[question.aformula.0].conj[state_len];
-			let q_term = self.psterms.get_term(x);
-			question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Ready;
-			match q_term{
-				Term::SFunctor(..) => {
-					if self.base.is_empty(){
-						question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Exhausted;
-						false
-					}else{
-						let b = question.curr_answer_stack.last().unwrap().get_b(state_len);
-						question.curr_answer_stack.last_mut().unwrap().push_satom(state_len, b);
-						true
-					}
-				},
-				Term::IFunctor(..) => {
-					question.curr_answer_stack.last_mut().unwrap().push_iatom(state_len);
-					true
-				},
-				_ => {
-					panic!("");
-				}
-			}
-		}else{
-			question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Answer;
-			false
-		}	
-	}
+	// fn next_a(&mut self, qid: QuestionId) -> bool{
+	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
+	// 	let state_len = question.curr_answer_stack.last_mut().unwrap().len();
+	// 	let conj_len = question.curr_answer_stack.last_mut().unwrap().conj_len;
+	// 	if state_len < conj_len{
+	// 		let x = &self.tqfs[question.aformula.0].conj[state_len];
+	// 		let q_term = self.psterms.get_term(x);
+	// 		question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Ready;
+	// 		match q_term{
+	// 			Term::SFunctor(..) => {
+	// 				if self.base.is_empty(){
+	// 					question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Exhausted;
+	// 					false
+	// 				}else{
+	// 					let b = question.curr_answer_stack.last().unwrap().get_b(state_len);
+	// 					question.curr_answer_stack.last_mut().unwrap().push_satom(state_len, b);
+	// 					true
+	// 				}
+	// 			},
+	// 			Term::IFunctor(..) => {
+	// 				question.curr_answer_stack.last_mut().unwrap().push_iatom(state_len);
+	// 				true
+	// 			},
+	// 			_ => {
+	// 				panic!("");
+	// 			}
+	// 		}
+	// 	}else{
+	// 		question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Answer;
+	// 		false
+	// 	}	
+	// }
 
-	fn next_b(&mut self, qid: QuestionId){
-		let mut question = self.questions.get_mut(qid.0).unwrap();
-		question.curr_answer_stack.last_mut().unwrap().next_b();
-	}
+	// fn next_b(&mut self, qid: QuestionId){
+	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
+	// 	question.curr_answer_stack.last_mut().unwrap().next_b();
+	// }
 
-	fn next_k(&mut self, qid: QuestionId){
-		let mut question = self.questions.get_mut(qid.0).unwrap();
-		question.curr_answer_stack.last_mut().unwrap().next_k();
-	}
+	// fn next_k(&mut self, qid: QuestionId){
+	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
+	// 	question.curr_answer_stack.last_mut().unwrap().next_k();
+	// }
 
-	fn next_bounds(&mut self, qid: QuestionId) -> bool{
-		let mut question = self.questions.get_mut(qid.0).unwrap();
-		let blen = self.base.len();
-		question.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
-	}
+	// fn next_bounds(&mut self, qid: QuestionId) -> bool{
+	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
+	// 	let blen = self.base.len();
+	// 	question.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
+	// }
 
 	// fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
 	// 	let qid = si.qid;

@@ -1,6 +1,7 @@
 use crate::misc::*;
 use crate::answer::*;
-use crate::solver::*;
+use crate::base::*;
+use crate::term::*;
 
 pub struct Tqf{
 	pub quantifier: Quantifier,
@@ -76,8 +77,55 @@ impl Question{
 	}
 
 
-	// ----
-	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId, tqfs: &Vec<Tqfs>, base: &Base) -> Option<Answer>{
+	// ---- ---- ---- ----
+	fn next_a(&mut self, qid: QuestionId, psterms: &mut PSTerms, tqfs: &Vec<Tqf>, base: &Base) -> bool{
+		let state_len = self.curr_answer_stack.last_mut().unwrap().len();
+		let conj_len = self.curr_answer_stack.last_mut().unwrap().conj_len;
+		if state_len < conj_len{
+			let x = &tqfs[self.aformula.0].conj[state_len];
+			let q_term = psterms.get_term(x);
+			self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Ready;
+			match q_term{
+				Term::SFunctor(..) => {
+					if base.is_empty(){
+						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Exhausted;
+						false
+					}else{
+						let b = self.curr_answer_stack.last().unwrap().get_b(state_len);
+						self.curr_answer_stack.last_mut().unwrap().push_satom(state_len, b);
+						true
+					}
+				},
+				Term::IFunctor(..) => {
+					self.curr_answer_stack.last_mut().unwrap().push_iatom(state_len);
+					true
+				},
+				_ => {
+					panic!("");
+				}
+			}
+		}else{
+			self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Answer;
+			false
+		}	
+	}
+
+	fn next_b(&mut self, qid: QuestionId){
+		self.curr_answer_stack.last_mut().unwrap().next_b();
+	}
+
+	fn next_k(&mut self, qid: QuestionId){
+		self.curr_answer_stack.last_mut().unwrap().next_k();
+	}
+
+	fn next_bounds(&mut self, qid: QuestionId, base: &Base) -> bool{
+		let mut question = self.questions.get_mut(qid.0).unwrap();
+		let blen = base.len();
+		self.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
+	}
+
+
+	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId, tqfs: &Vec<Tqf>, base: &Base) -> Option<Answer>{
 		let limit = si.limit;
 		if let Some(top) = self.curr_answer_stack.last(){
 			if top.bid != bid{

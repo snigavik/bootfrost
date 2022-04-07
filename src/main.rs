@@ -8,6 +8,7 @@ mod plain;
 mod parser;
 mod ifunctions;
 mod strategies;
+mod base;
 
 use crate::parser::*;
 use crate::solver::*;
