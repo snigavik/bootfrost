@@ -2,6 +2,8 @@ use crate::misc::*;
 use crate::answer::*;
 use crate::base::*;
 use crate::term::*;
+use crate::strategies::*;
+use crate::solver::*;
 
 pub struct Tqf{
 	pub quantifier: Quantifier,
@@ -19,6 +21,7 @@ impl Tqf{
 
 
 pub struct Question{
+	pub qid: QuestionId,
 	pub bid: BlockId,
 	pub aformula: TqfId,
 	pub fstack_i:usize, // position in the stack where we can find corresponding context
@@ -78,26 +81,27 @@ impl Question{
 
 
 	// ---- ---- ---- ----
-	fn next_a(&mut self, qid: QuestionId, psterms: &mut PSTerms, tqfs: &Vec<Tqf>, base: &Base) -> bool{
-		let state_len = self.curr_answer_stack.last_mut().unwrap().len();
-		let conj_len = self.curr_answer_stack.last_mut().unwrap().conj_len;
+	fn next_a(&mut self, psterms: &mut PSTerms, tqfs: &Vec<Tqf>, base: &Base) -> bool{
+		let curr_answer = self.curr_answer_stack.last_mut().unwrap(); 
+		let state_len = curr_answer.len();
+		let conj_len = curr_answer.conj_len;
 		if state_len < conj_len{
 			let x = &tqfs[self.aformula.0].conj[state_len];
 			let q_term = psterms.get_term(x);
-			self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Ready;
+			curr_answer.state = MatchingState::Ready;
 			match q_term{
 				Term::SFunctor(..) => {
 					if base.is_empty(){
-						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Exhausted;
+						curr_answer.state = MatchingState::Exhausted;
 						false
 					}else{
-						let b = self.curr_answer_stack.last().unwrap().get_b(state_len);
-						self.curr_answer_stack.last_mut().unwrap().push_satom(state_len, b);
+						let b = curr_answer.get_b(state_len);
+						curr_answer.push_satom(state_len, b);
 						true
 					}
 				},
 				Term::IFunctor(..) => {
-					self.curr_answer_stack.last_mut().unwrap().push_iatom(state_len);
+					curr_answer.push_iatom(state_len);
 					true
 				},
 				_ => {
@@ -105,27 +109,34 @@ impl Question{
 				}
 			}
 		}else{
-			self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Answer;
+			curr_answer.state = MatchingState::Answer;
 			false
 		}	
 	}
 
-	fn next_b(&mut self, qid: QuestionId){
-		self.curr_answer_stack.last_mut().unwrap().next_b();
-	}
+	// fn next_b(&mut self){
+	// 	self.curr_answer_stack.last_mut().unwrap().next_b();
+	// }
 
-	fn next_k(&mut self, qid: QuestionId){
-		self.curr_answer_stack.last_mut().unwrap().next_k();
-	}
+	// fn next_k(&mut self){
+	// 	self.curr_answer_stack.last_mut().unwrap().next_k();
+	// }
 
-	fn next_bounds(&mut self, qid: QuestionId, base: &Base) -> bool{
-		let mut question = self.questions.get_mut(qid.0).unwrap();
-		let blen = base.len();
-		self.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
-	}
+	// fn next_bounds(&mut self, base: &Base) -> bool{
+	// 	let blen = base.len();
+	// 	self.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
+	// }
 
 
-	fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId, tqfs: &Vec<Tqf>, base: &Base) -> Option<Answer>{
+	pub fn find_answer_local(
+		&mut self, 
+		si: &StrategyItem, 
+		bid: BlockId, 
+		psterms: &mut PSTerms, 
+		tqfs: &Vec<Tqf>, 
+		base: &Base,
+		stack: &Vec<FBlock>) -> Option<Answer>{
+
 		let limit = si.limit;
 		if let Some(top) = self.curr_answer_stack.last(){
 			if top.bid != bid{
@@ -134,98 +145,100 @@ impl Question{
 				self.curr_answer_stack.push(new_top);
 			}
 		}else{
-			let new_top = Answer::new(bid, qid, base.len(), tqfs[aformula.0].conj.len());
+			let new_top = Answer::new(bid, self.qid, base.len(), tqfs[self.aformula.0].conj.len());
 			self.curr_answer_stack.push(new_top);
 		}
 
+		let curr_answer = self.curr_answer_stack.last_mut().unwrap();
 
 		let mut i = 0;
 		while i < limit{
-			let a = &self.curr_answer_stack.last().unwrap();
+			// let a = &self.curr_answer_stack.last().unwrap();
 			i = i + 1;
-			match &self.curr_answer_stack.last_mut().unwrap().state{
+			//match &self.curr_answer_stack.last_mut().unwrap().state{
+			match &curr_answer.state{
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
-					self.next_a(qid);
+					self.next_a(psterms, tqfs, base);
 					continue;
 				},
 				MatchingState::NextB | MatchingState::Fail => {
-					self.next_b(qid);
+					curr_answer.next_b();
 					continue;
 				},
 				MatchingState::Ready => {
-					let context = &self.stack[self.questions[qid.0].fstack_i].context;
-					match self.curr_answer_stack.last().unwrap().last().unwrap(){
+					let context = &stack[self.fstack_i].context;
+					match curr_answer.last().unwrap(){
 						LogItem::Matching{batom_i, qatom_i, ..} => {
-							let bterm = &self.base[*batom_i];
+							let bterm = &base[*batom_i];
 							if bterm.deleted{
-								self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
+								curr_answer.state = MatchingState::Fail;
 								continue;
 							}
 							let btid = bterm.term;
-							let qtid = tqfs[aformula.0].conj[*qatom_i];
+							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
 							
-							let mut curr_answer = &mut self.curr_answer_stack.last_mut().unwrap();
-							if matching(btid, qtid, context, curr_answer, self){
-								self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
+							//let mut curr_answer = &mut self.curr_answer_stack.last_mut().unwrap();
+							if matching(btid, qtid, context, curr_answer, psterms){
+								curr_answer.state = MatchingState::Success;
 								continue;
 							}else{
-								self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
+								curr_answer.state = MatchingState::Fail;
 								continue;								
 							}
 						},
 						LogItem::Interpretation{qatom_i} => {
 														
-							let qtid = tqfs[aformula.0].conj[*qatom_i];
-							let curr_answer = &self.curr_answer_stack.last_mut().unwrap();
-							let b = processing(qtid, context, Some(&curr_answer), self).unwrap();
-							if self.psterms.check_value(&b){
-								self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
+							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
+							//let curr_answer = &self.curr_answer_stack.last_mut().unwrap();
+							let b = processing(qtid, context, Some(&curr_answer), psterms).unwrap();
+							if psterms.check_value(&b){
+								curr_answer.state = MatchingState::Success;
 							}else{
-								self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
+								curr_answer.state = MatchingState::Fail;
 							}
 							continue;
 						},
 					}
 				},
 				MatchingState::Rollback => {
-					if self.curr_answer_stack.last_mut().unwrap().len() > 0{
-						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
+					if curr_answer.len() > 0{
+						curr_answer.state = MatchingState::NextB;
 						continue;
 					}else{
-						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::NextK;
+						curr_answer.state = MatchingState::NextK;
 						continue;
 					}
 				},
 				MatchingState::NextK => {
-					self.next_k(qid);
+					curr_answer.next_k();
 				},
 				MatchingState::Exhausted => {
-					if self.next_bounds(qid){
-						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Zero;
+					if curr_answer.shift_bounds(base.len()){
+						curr_answer.state = MatchingState::Zero;
 					}else{
 						break;
 					}
 				},
 				MatchingState::Answer => {
 
-					if self.curr_answer_stack.last_mut().unwrap().conj_len == 0{
-						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::Empty;	
+					if curr_answer.conj_len == 0{
+						curr_answer.state = MatchingState::Empty;	
 					}else{
-						self.curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
+						curr_answer.state = MatchingState::NextB;
 					}
 					
 
-					let nq =self.curr_answer_stack.last_mut().unwrap().clone();
-					if let Some(_) = self.answers.iter().find(|x| *x == &nq){
+					let na = curr_answer.clone();
+					if let Some(_) = self.answers.iter().find(|x| *x == &na){
 						continue;
 					}					
-					self.answers.push(nq);
+					self.answers.push(na);
 
 					let mut answer1 = self.answers.last().unwrap().clone();
 					match si.selector{
 						SelectorStrategy::First(f) => {
-							if f(&answer1, &self.psterms){
-								answer1.level = Some(self.stack.iter().filter(|x| x.activated).count());
+							if f(&answer1, &psterms){
+								answer1.level = Some(stack.iter().filter(|x| x.activated).count());
 								self.used_answers.push(answer1.clone());
 								return Some(answer1)
 							}else{

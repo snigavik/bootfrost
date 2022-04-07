@@ -18,11 +18,11 @@ use crate::base::*;
 
 
 
-struct FBlock{
+pub struct FBlock{
 	qid: QuestionId,
 	aid: AnswerId,
 	eid: TqfId,
-	context: Context,
+	pub context: Context,
 	pub bid: BlockId,
 	pub activated: bool,
 }
@@ -392,7 +392,7 @@ impl Solver{
 		let bid = self.stack.last().unwrap().bid;
 		let strategy = self.strategy();
 		for si in strategy.iter(){
-			if let Some(answer) = self.find_answer_local(si, bid){
+			if let Some(answer) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &self.base, &self.stack){
 				println!("{}", AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
 				return Some(answer);
 			}
@@ -486,7 +486,7 @@ impl Solver{
 			top.activated = true;
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
-			let new_conj = e_conj.iter().map(|a| processing(*a, &top.context, None, &mut self).unwrap());
+			let new_conj = e_conj.iter().map(|a| processing(*a, &top.context, None, &mut self.psterms).unwrap());
 			for a in new_conj{
 				if a == TermId(0){
 					return false;
@@ -497,11 +497,14 @@ impl Solver{
 
 			// add questions
 			let a_tqfs = &e_tqf.next;
+			let q_len = self.questions.len();
 			let mut new_questions = 
 				a_tqfs
 					.iter()
-					.map(|af| 
+					.enumerate()
+					.map(|(i,af)| 
 						Question{
+							qid: QuestionId(q_len + i),
 							bid: top.bid,
 							aformula: *af,
 							fstack_i: fstack_i,
@@ -561,9 +564,9 @@ fn set_state(question: &mut Question, state: MatchingState){
 
 
 
-fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, solver: &mut Solver) -> ProcessingResult{
+pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, psterms: &mut PSTerms) -> ProcessingResult{
 	// let mut psterms = &mut solver.psterms;
-	let t = &solver.psterms.get_term(&tid);
+	let t = &psterms.get_term(&tid);
 	match t{
 		Term::AVariable(..) => {
 			if let Some(new_tid) = context.get(&tid){
@@ -600,23 +603,23 @@ fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, solver: &
 				args
 					.iter()
 					.map(|arg| 
-						processing(*arg, context, answer1, solver).unwrap())
+						processing(*arg, context, answer1, psterms).unwrap())
 					.collect());
-			solver.psterms.get_tid(new_term)
+			psterms.get_tid(new_term)
 		},
 		Term::IFunctor(sid, args) => {
-			let f = solver.psterms.get_symbol(&sid).f.unwrap();
+			let f = psterms.get_symbol(&sid).f.unwrap();
 			processing(
 				f(
 					&args
 						.iter()
 						.map(|arg| 
-							processing(*arg, context, answer1, solver).unwrap())
+							processing(*arg, context, answer1, psterms).unwrap())
 						.collect(), 
-					&mut solver.psterms),
+					psterms),
 				context,
 				answer1,
-				solver)
+				psterms)
 		},
 	}
 }
@@ -628,20 +631,20 @@ fn run_command(psterms: &mut PSTerms,  tid:TermId){
 
 // 
 
-fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer, solver: &mut Solver) -> bool{
+pub fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer, psterms: &mut PSTerms) -> bool{
 	// let mut psterms = &mut solver.psterms;
 	
 	if btid == qtid{
 		true
 	}else{
-		let bterm = solver.psterms.get_term(&btid);
-		let qterm = solver.psterms.get_term(&qtid);
+		let bterm = psterms.get_term(&btid);
+		let qterm = psterms.get_term(&qtid);
 		match qterm{
 			Term::AVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, solver)
+					matching(btid, *new_qtid, context, curr_answer, psterms)
 				}else if let Some(new_qtid) = curr_answer.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, solver)
+					matching(btid, *new_qtid, context, curr_answer, psterms)
 				}else{
 					curr_answer.push(qtid, btid);
 					true
@@ -649,7 +652,7 @@ fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answe
 			},
 			Term::EVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, solver)
+					matching(btid, *new_qtid, context, curr_answer, psterms)
 				}else{
 					false
 				}
@@ -657,16 +660,16 @@ fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answe
 			Term::SFunctor(q_sid, q_args) => {
 				match bterm{
 					Term::SFunctor(b_sid,b_args) if q_sid == b_sid => {
-						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, solver))
+						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms))
 					},
 					_ => false,
 				}
 			},
 			Term::IFunctor(q_sid, q_args) => {
-				let p = solver.psterms.len();
-				let new_qtid = processing(qtid, context, Some(&curr_answer), solver).unwrap();
-				let m = matching(btid, new_qtid, context, curr_answer, solver);
-				solver.psterms.back_to(p);
+				let p = psterms.len();
+				let new_qtid = processing(qtid, context, Some(&curr_answer), psterms).unwrap();
+				let m = matching(btid, new_qtid, context, curr_answer, psterms);
+				psterms.back_to(p);
 				m
 			},
 			_ => {
