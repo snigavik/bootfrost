@@ -150,11 +150,10 @@ impl Solver{
 
 	pub fn parse(path: &str) -> Solver{
 		let pf = crate::parser::parse_file(path);
-		//let mut psterms = PSTerms::new();
+
 		let mut vstack = vec![];
 		let mut smap = HashMap::from([("false".to_string(),TermId(0)), ("true".to_string(),TermId(1))]);
 
-		// let mut fmap = HashMap::new();
 		let mut tqfs = vec![];
 		let (mut psterms, mut fmap) = crate::ifunctions::init();
 
@@ -208,177 +207,6 @@ impl Solver{
 		}
 	}
 
-	// fn next_a(&mut self, qid: QuestionId) -> bool{
-	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
-	// 	let state_len = question.curr_answer_stack.last_mut().unwrap().len();
-	// 	let conj_len = question.curr_answer_stack.last_mut().unwrap().conj_len;
-	// 	if state_len < conj_len{
-	// 		let x = &self.tqfs[question.aformula.0].conj[state_len];
-	// 		let q_term = self.psterms.get_term(x);
-	// 		question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Ready;
-	// 		match q_term{
-	// 			Term::SFunctor(..) => {
-	// 				if self.base.is_empty(){
-	// 					question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Exhausted;
-	// 					false
-	// 				}else{
-	// 					let b = question.curr_answer_stack.last().unwrap().get_b(state_len);
-	// 					question.curr_answer_stack.last_mut().unwrap().push_satom(state_len, b);
-	// 					true
-	// 				}
-	// 			},
-	// 			Term::IFunctor(..) => {
-	// 				question.curr_answer_stack.last_mut().unwrap().push_iatom(state_len);
-	// 				true
-	// 			},
-	// 			_ => {
-	// 				panic!("");
-	// 			}
-	// 		}
-	// 	}else{
-	// 		question.curr_answer_stack.last_mut().unwrap().state = MatchingState::Answer;
-	// 		false
-	// 	}	
-	// }
-
-	// fn next_b(&mut self, qid: QuestionId){
-	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
-	// 	question.curr_answer_stack.last_mut().unwrap().next_b();
-	// }
-
-	// fn next_k(&mut self, qid: QuestionId){
-	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
-	// 	question.curr_answer_stack.last_mut().unwrap().next_k();
-	// }
-
-	// fn next_bounds(&mut self, qid: QuestionId) -> bool{
-	// 	let mut question = self.questions.get_mut(qid.0).unwrap();
-	// 	let blen = self.base.len();
-	// 	question.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
-	// }
-
-	// fn find_answer_local(&mut self, si: &StrategyItem, bid: BlockId) -> Option<Answer>{
-	// 	let qid = si.qid;
-	// 	dbg!(si.qid.0);
-	// 	let limit = si.limit;
-	// 	if let Some(top) = self.questions[qid.0].curr_answer_stack.last(){
-	// 		if top.bid != bid{
-	// 			let mut new_top = top.clone();
-	// 			new_top.bid = bid;
-	// 			self.questions[qid.0].curr_answer_stack.push(new_top);
-	// 		}
-	// 	}else{
-	// 		let new_top = Answer::new(bid, qid, self.base.len(), self.tqf(self.questions[qid.0].aformula).conj.len());
-	// 		self.questions[qid.0].curr_answer_stack.push(new_top);
-	// 	}
-
-
-	// 	let mut i = 0;
-	// 	while i < limit{
-	// 		let a = &self.questions[qid.0].curr_answer_stack.last().unwrap();
-	// 		i = i + 1;
-	// 		match &self.questions[qid.0].curr_answer_stack.last_mut().unwrap().state{
-	// 			MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
-	// 				self.next_a(qid);
-	// 				continue;
-	// 			},
-	// 			MatchingState::NextB | MatchingState::Fail => {
-	// 				self.next_b(qid);
-	// 				continue;
-	// 			},
-	// 			MatchingState::Ready => {
-	// 				let context = &self.stack[self.questions[qid.0].fstack_i].context;
-	// 				match self.questions[qid.0].curr_answer_stack.last().unwrap().last().unwrap(){
-	// 					LogItem::Matching{batom_i, qatom_i, ..} => {
-	// 						let bterm = &self.base[*batom_i];
-	// 						if bterm.deleted{
-	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
-	// 							continue;
-	// 						}
-	// 						let btid = bterm.term;
-	// 						let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-							
-	// 						let mut curr_answer = &mut self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
-	// 						if matching(btid, qtid, context, curr_answer, self){
-	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
-	// 							continue;
-	// 						}else{
-	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
-	// 							continue;								
-	// 						}
-	// 					},
-	// 					LogItem::Interpretation{qatom_i} => {
-														
-	// 						let qtid = self.tqf(self.questions[qid.0].aformula).conj[*qatom_i];
-	// 						let curr_answer = &self.questions.get_mut(qid.0).unwrap().curr_answer_stack.last_mut().unwrap();
-	// 						let b = processing(qtid, context, Some(&curr_answer), self).unwrap();
-	// 						if self.psterms.check_value(&b){
-	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Success;
-	// 						}else{
-	// 							self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Fail;
-	// 						}
-	// 						continue;
-	// 					},
-	// 				}
-	// 			},
-	// 			MatchingState::Rollback => {
-	// 				if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().len() > 0{
-	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
-	// 					continue;
-	// 				}else{
-	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextK;
-	// 					continue;
-	// 				}
-	// 			},
-	// 			MatchingState::NextK => {
-	// 				self.next_k(qid);
-	// 			},
-	// 			MatchingState::Exhausted => {
-	// 				if self.next_bounds(qid){
-	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Zero;
-	// 				}else{
-	// 					break;
-	// 				}
-	// 			},
-	// 			MatchingState::Answer => {
-
-	// 				if self.questions[qid.0].curr_answer_stack.last_mut().unwrap().conj_len == 0{
-	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::Empty;	
-	// 				}else{
-	// 					self.question_mut(qid).curr_answer_stack.last_mut().unwrap().state = MatchingState::NextB;
-	// 				}
-					
-
-	// 				let nq =self.questions[qid.0].curr_answer_stack.last_mut().unwrap().clone();
-	// 				if let Some(_) = self.questions[qid.0].answers.iter().find(|x| *x == &nq){
-	// 					continue;
-	// 				}					
-	// 				self.questions.get_mut(qid.0).unwrap().answers.push(nq);
-
-	// 				let mut answer1 = self.questions[qid.0].answers.last().unwrap().clone();
-	// 				match si.selector{
-	// 					SelectorStrategy::First(f) => {
-	// 						if f(&answer1, &self.psterms){
-	// 							answer1.level = Some(self.stack.iter().filter(|x| x.activated).count());
-	// 							self.questions.get_mut(qid.0).unwrap().used_answers.push(answer1.clone());
-	// 							return Some(answer1)
-	// 						}else{
-	// 							continue;
-	// 						}
-	// 					},
-	// 					SelectorStrategy::Best => {
-	// 						continue;
-	// 					}
-	// 				}
-	// 			},
-	// 			MatchingState::Empty => {
-	// 				break;
-	// 			}
-	// 		}
-
-	// 	}
-	// 	None //		 
-	// }
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
 		
@@ -468,16 +296,8 @@ impl Solver{
 						activated: false,
 					}).collect();
 		self.stack.append(&mut new_blocks);
-		//self.step = self.step + 1;
 
 		self.activate_top_block_loop();
-		// while self.stack.len() > 0{
-		// 	if !self.activate_top_block(){
-		// 		self.remove_solved_blocks();
-		// 	}else{
-		// 		return;
-		// 	}	 
-		// }
 	}
 
 	fn activate_top_block(&mut self) -> bool{
@@ -513,7 +333,6 @@ impl Solver{
 							used_answers: vec![],
 						}).collect();
 			self.questions.append(&mut new_questions);
-			//top.activated = true;
 			return true;		
 		}else{
 			panic!("");
@@ -565,7 +384,6 @@ fn set_state(question: &mut Question, state: MatchingState){
 
 
 pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, psterms: &mut PSTerms) -> ProcessingResult{
-	// let mut psterms = &mut solver.psterms;
 	let t = &psterms.get_term(&tid);
 	match t{
 		Term::AVariable(..) => {
@@ -632,7 +450,6 @@ fn run_command(psterms: &mut PSTerms,  tid:TermId){
 // 
 
 pub fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer, psterms: &mut PSTerms) -> bool{
-	// let mut psterms = &mut solver.psterms;
 	
 	if btid == qtid{
 		true

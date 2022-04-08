@@ -80,53 +80,6 @@ impl Question{
 	}
 
 
-	// ---- ---- ---- ----
-	fn next_a(&mut self, psterms: &mut PSTerms, tqfs: &Vec<Tqf>, base: &Base) -> bool{
-		let curr_answer = self.curr_answer_stack.last_mut().unwrap(); 
-		let state_len = curr_answer.len();
-		let conj_len = curr_answer.conj_len;
-		if state_len < conj_len{
-			let x = &tqfs[self.aformula.0].conj[state_len];
-			let q_term = psterms.get_term(x);
-			curr_answer.state = MatchingState::Ready;
-			match q_term{
-				Term::SFunctor(..) => {
-					if base.is_empty(){
-						curr_answer.state = MatchingState::Exhausted;
-						false
-					}else{
-						let b = curr_answer.get_b(state_len);
-						curr_answer.push_satom(state_len, b);
-						true
-					}
-				},
-				Term::IFunctor(..) => {
-					curr_answer.push_iatom(state_len);
-					true
-				},
-				_ => {
-					panic!("");
-				}
-			}
-		}else{
-			curr_answer.state = MatchingState::Answer;
-			false
-		}	
-	}
-
-	// fn next_b(&mut self){
-	// 	self.curr_answer_stack.last_mut().unwrap().next_b();
-	// }
-
-	// fn next_k(&mut self){
-	// 	self.curr_answer_stack.last_mut().unwrap().next_k();
-	// }
-
-	// fn next_bounds(&mut self, base: &Base) -> bool{
-	// 	let blen = base.len();
-	// 	self.curr_answer_stack.last_mut().unwrap().shift_bounds(blen)
-	// }
-
 
 	pub fn find_answer_local(
 		&mut self, 
@@ -149,16 +102,14 @@ impl Question{
 			self.curr_answer_stack.push(new_top);
 		}
 
-		let curr_answer = self.curr_answer_stack.last_mut().unwrap();
+		let mut curr_answer = self.curr_answer_stack.pop().unwrap();
 
 		let mut i = 0;
 		while i < limit{
-			// let a = &self.curr_answer_stack.last().unwrap();
 			i = i + 1;
-			//match &self.curr_answer_stack.last_mut().unwrap().state{
 			match &curr_answer.state{
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
-					self.next_a(psterms, tqfs, base);
+					curr_answer.next_a(psterms, &tqfs[self.aformula.0], base);
 					continue;
 				},
 				MatchingState::NextB | MatchingState::Fail => {
@@ -177,8 +128,7 @@ impl Question{
 							let btid = bterm.term;
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
 							
-							//let mut curr_answer = &mut self.curr_answer_stack.last_mut().unwrap();
-							if matching(btid, qtid, context, curr_answer, psterms){
+							if matching(btid, qtid, context, &mut curr_answer, psterms){
 								curr_answer.state = MatchingState::Success;
 								continue;
 							}else{
@@ -189,7 +139,7 @@ impl Question{
 						LogItem::Interpretation{qatom_i} => {
 														
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
-							//let curr_answer = &self.curr_answer_stack.last_mut().unwrap();
+							
 							let b = processing(qtid, context, Some(&curr_answer), psterms).unwrap();
 							if psterms.check_value(&b){
 								curr_answer.state = MatchingState::Success;
@@ -240,6 +190,7 @@ impl Question{
 							if f(&answer1, &psterms){
 								answer1.level = Some(stack.iter().filter(|x| x.activated).count());
 								self.used_answers.push(answer1.clone());
+								self.curr_answer_stack.push(curr_answer);
 								return Some(answer1)
 							}else{
 								continue;
@@ -256,6 +207,7 @@ impl Question{
 			}
 
 		}
+		self.curr_answer_stack.push(curr_answer);
 		None //		 
 	}	
 }

@@ -1,4 +1,6 @@
 ? B("a"), B("b"), A("m")
-	! x, y B(x), A(y)
+	!x,y B(x), A(y)
 		? N(replace("apple", x, y))
-	! N("mpple")
+	!x N("mpple"), B(x)
+		? R(x)
+	! R("b")

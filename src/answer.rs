@@ -3,6 +3,9 @@ use std::collections::HashMap;
 
 use crate::misc::*;
 use crate::term::*;
+use crate::question::*;
+use crate::base::*;
+
 use std::fmt;
 
 
@@ -259,7 +262,36 @@ impl Answer{
 		}
 	}
 
-
+	pub fn next_a(&mut self, psterms: &mut PSTerms, tqf: &Tqf, base: &Base) -> bool{
+		let state_len = self.len();
+		if state_len < self.conj_len{
+			let x = tqf.conj[state_len];
+			let q_term = psterms.get_term(&x);
+			self.state = MatchingState::Ready;
+			match q_term{
+				Term::SFunctor(..) => {
+					if base.is_empty(){
+						self.state = MatchingState::Exhausted;
+						false
+					}else{
+						let b = self.get_b(state_len);
+						self.push_satom(state_len, b);
+						true
+					}
+				},
+				Term::IFunctor(..) => {
+					self.push_iatom(state_len);
+					true
+				},
+				_ => {
+					panic!("");
+				}
+			}
+		}else{
+			self.state = MatchingState::Answer;
+			false
+		}	
+	}
 
 			
 }
