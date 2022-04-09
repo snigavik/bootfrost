@@ -318,7 +318,12 @@ impl Solver{
 				base: &mut self.base,
 			};
 
-			let new_conj = e_conj.iter().map(|a| processing(*a, &top.context, None, &mut env).unwrap());
+			let new_conj: Vec<TermId> = e_conj
+				.iter()
+				.map(|a| 
+					processing(*a, &top.context, None, &mut env).unwrap())
+				.collect();
+
 			for a in new_conj{
 				if a == TermId(0){
 					return false;
