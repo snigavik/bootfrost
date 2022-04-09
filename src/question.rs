@@ -4,6 +4,7 @@ use crate::base::*;
 use crate::term::*;
 use crate::strategies::*;
 use crate::solver::*;
+use crate::environment::*;
 
 pub struct Tqf{
 	pub quantifier: Quantifier,
@@ -87,7 +88,7 @@ impl Question{
 		bid: BlockId, 
 		psterms: &mut PSTerms, 
 		tqfs: &Vec<Tqf>, 
-		base: &Base,
+		base: &mut Base,
 		stack: &Vec<FBlock>) -> Option<Answer>{
 
 		let limit = si.limit;
@@ -128,7 +129,12 @@ impl Question{
 							let btid = bterm.term;
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
 							
-							if matching(btid, qtid, context, &mut curr_answer, psterms){
+							let mut env = PEnv{
+								psterms: psterms,
+								base: base,
+							};	
+
+							if matching(btid, qtid, context, &mut curr_answer, &mut env){
 								curr_answer.state = MatchingState::Success;
 								continue;
 							}else{
@@ -140,7 +146,12 @@ impl Question{
 														
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
 							
-							let b = processing(qtid, context, Some(&curr_answer), psterms).unwrap();
+							let mut env = PEnv{
+								psterms: psterms,
+								base: base,
+							};
+
+							let b = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();
 							if psterms.check_value(&b){
 								curr_answer.state = MatchingState::Success;
 							}else{

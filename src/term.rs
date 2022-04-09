@@ -9,6 +9,7 @@ use std::hash::{Hash, Hasher};
 use crate::misc::*;
 use crate::context::*;
 use crate::plain::*;
+use crate::environment::*;
 
 
 pub enum FunctorType{
@@ -20,7 +21,7 @@ pub enum FunctorType{
 pub struct Symbol{
 	pub uid: usize,
 	pub name: String,
-	pub f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>,
+	pub f: Option<fn(&Vec<TermId>, &mut PEnv) -> TermId>,
 	pub position: Position,
 }
 
@@ -75,7 +76,7 @@ impl Index<&SymbolId> for PSTerms{
 
 impl PSTerms{
 
-	pub fn add_ifunction(&mut self, name:String, f: Option<fn(&Vec<TermId>, &mut PSTerms) -> TermId>, position: Position,) -> SymbolId{
+	pub fn add_ifunction(&mut self, name:String, f: Option<fn(&Vec<TermId>, &mut PEnv) -> TermId>, position: Position,) -> SymbolId{
 		let sid = self.symbols.len();
 		self.symbols.push(Symbol{uid:sid, name:name, f:f, position: position});
 

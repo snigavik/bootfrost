@@ -1,6 +1,8 @@
 use crate::term::*;
 use crate::misc::*;
+use crate::environment::*;
 use std::collections::HashMap;
+
 
 
 fn plus(a:i64,b:i64) -> i64 {a + b}
@@ -26,13 +28,13 @@ macro_rules! result_term{
 
 macro_rules! ifunction_binary_integers{
 	($f:tt, $tp:tt) => {
-		|args: &Vec<TermId>, psterms: &mut PSTerms| -> TermId{
+		|args: &Vec<TermId>, env: &mut PEnv| -> TermId{
 			if args.len() != 2{
 				panic!("");
 			}
 
-			let arg0 = psterms.get_term(&args[0]);
-			let arg1 = psterms.get_term(&args[1]);
+			let arg0 = env.psterms.get_term(&args[0]);
+			let arg1 = env.psterms.get_term(&args[1]);
 
 			let (n1,n2) = if let (Term::Integer(_n1), Term::Integer(_n2)) = (arg0, arg1){
 				(_n1, _n2)
@@ -40,18 +42,18 @@ macro_rules! ifunction_binary_integers{
 				panic!("");
 			};
 
-			psterms.get_tid(result_term!($f(n1,n2), $tp)).unwrap()
+			env.psterms.get_tid(result_term!($f(n1,n2), $tp)).unwrap()
 		}
 	}
 }
 
-fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
+fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 2{
 		panic!("");
 	}
 
-	let arg0 = psterms.get_term(&args[0]);
-	let arg1 = psterms.get_term(&args[1]);
+	let arg0 = env.psterms.get_term(&args[0]);
+	let arg1 = env.psterms.get_term(&args[1]);
 
 	let (n1,n2) = if let (Term::String(_n1), Term::String(_n2)) = (arg0, arg1){
 		(_n1, _n2)
@@ -60,17 +62,17 @@ fn concat(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	};
 
 	let res = format!("{}{}",n1,n2);
-	psterms.get_tid(Term::String(res)).unwrap()
+	env.psterms.get_tid(Term::String(res)).unwrap()
 }
 
-fn replace(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
+fn replace(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 3{
 		panic!("");
 	}
 
-	let arg0 = psterms.get_term(&args[0]);
-	let arg1 = psterms.get_term(&args[1]);
-	let arg2 = psterms.get_term(&args[2]);
+	let arg0 = env.psterms.get_term(&args[0]);
+	let arg1 = env.psterms.get_term(&args[1]);
+	let arg2 = env.psterms.get_term(&args[2]);
 
 	let (n1,n2,n3) = if let (Term::String(_n1), Term::String(_n2), Term::String(_n3)) = (arg0, arg1, arg2){
 		(_n1, _n2, _n3)
@@ -79,7 +81,7 @@ fn replace(args: &Vec<TermId>, psterms: &mut PSTerms) -> TermId{
 	};
 	
 	let res = str::replace(&n1, &n2,&n3);
-	psterms.get_tid(Term::String(res)).unwrap()
+	env.psterms.get_tid(Term::String(res)).unwrap()
 }
 
 
@@ -91,17 +93,17 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 
 
 	let fs = HashMap::from([
-		("+".to_string(), (ifunction_binary_integers!(plus, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("-".to_string(), (ifunction_binary_integers!(minus, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("*".to_string(), (ifunction_binary_integers!(multiply, i64) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("==".to_string(), (ifunction_binary_integers!(eq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("<".to_string(), (ifunction_binary_integers!(lt, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		(">".to_string(), (ifunction_binary_integers!(gt, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Infix)),
-		("replace".to_string(), (replace as fn(&Vec<TermId>, &mut PSTerms) -> TermId, Position::Classic)),
+		("+".to_string(), (ifunction_binary_integers!(plus, i64) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("-".to_string(), (ifunction_binary_integers!(minus, i64) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("*".to_string(), (ifunction_binary_integers!(multiply, i64) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("==".to_string(), (ifunction_binary_integers!(eq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("<".to_string(), (ifunction_binary_integers!(lt, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		(">".to_string(), (ifunction_binary_integers!(gt, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
+		("replace".to_string(), (replace as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Classic)),
 	]);
 
 

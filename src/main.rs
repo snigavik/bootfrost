@@ -9,6 +9,7 @@ mod parser;
 mod ifunctions;
 mod strategies;
 mod base;
+mod environment;
 
 use crate::parser::*;
 use crate::solver::*;
