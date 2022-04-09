@@ -84,6 +84,12 @@ fn replace(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::String(res)).unwrap()
 }
 
+fn blen(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 0{
+		panic!("");
+	}	
+	env.psterms.get_tid(Term::Integer(env.base.len().try_into().unwrap())).unwrap()	
+}
 
 
 // ====
@@ -104,6 +110,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
 		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
 		("replace".to_string(), (replace as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Classic)),
+		("blen".to_string(), (blen as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Classic)),
 	]);
 
 

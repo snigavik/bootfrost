@@ -7,15 +7,16 @@ use std::collections::HashMap;
 pub struct PlainTerm{
 	pub symbol: String,
 	pub args: Vec<PlainTerm>,
-	pub position: Position
+	pub position: Position,
+	pub complex: bool,
 }
 
 impl PlainTerm{
-	pub fn new(symbol: String, args:Vec<PlainTerm>) -> PlainTerm{
-		PlainTerm{symbol: symbol, args: args, position: Position::Classic}
+	pub fn new(symbol: String, args:Vec<PlainTerm>, complex: bool) -> PlainTerm{
+		PlainTerm{symbol: symbol, args: args, position: Position::Classic, complex: complex}
 	}
 	pub fn new_infix(symbol: String, args:Vec<PlainTerm>) -> PlainTerm{
-		PlainTerm{symbol: symbol, args: args, position: Position::Infix}
+		PlainTerm{symbol: symbol, args: args, position: Position::Infix, complex: true}
 	}
 
 	pub fn print(&self){
@@ -81,7 +82,8 @@ pub fn plain_to_term(pt: PlainTerm, psterms: &mut PSTerms, vstack: &mut Vec<Hash
 	if let Some(m) = vstack.iter().rev().find(|&vs| vs.contains_key(&pt.symbol)){
 		*m.get(&pt.symbol).unwrap()
 	}else{
-		if pt.args.is_empty(){
+		// if pt.args.is_empty(){
+		if !pt.complex{
 			if let Some(tid) = smap.get(&pt.symbol){
 				*tid
 			}else{

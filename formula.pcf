@@ -1,6 +1,4 @@
-? B("a"), B("b"), A("m")
-	!x,y B(x), A(y)
-		? N(replace("apple", x, y))
-	!x N("mpple"), B(x)
-		? R(x)
-	! R("b")
+? B(1), B(2)
+	!x B(x)
+		? R(x), L(blen()), B(x + 1)
+	! blen() > 10

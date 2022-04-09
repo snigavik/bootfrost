@@ -23,8 +23,8 @@ terms: Vec<PlainTerm> = {
 }
 
 vars: Vec<PlainTerm> = {
-	<t: symbol> => vec!(PlainTerm::new(t,vec![])),
-	<t: symbol> "," <ts: vars> => { let mut ts = ts; ts.insert(0, PlainTerm::new(t,vec![])); ts }		
+	<t: symbol> => vec!(PlainTerm::new(t,vec![], false)),
+	<t: symbol> "," <ts: vars> => { let mut ts = ts; ts.insert(0, PlainTerm::new(t,vec![], false)); ts }		
 }
 
 atoms: Vec<PlainTerm> = {
@@ -34,14 +34,15 @@ atoms: Vec<PlainTerm> = {
 
 
 atom: PlainTerm = {
-	<s: symbol> "(" ")" => PlainTerm::new(s.parse().unwrap(),vec![]),
-	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a),
+	<s: symbol> "(" ")" => PlainTerm::new(s.parse().unwrap(),vec![], true),
+	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a, true),
 	<a1: pterm> <infatom:infatom> <a2: pterm> => PlainTerm::new_infix(infatom,vec![a1,a2]),
 }
 
 pterm: PlainTerm = {
-	<s: symbol> => PlainTerm::new(s.parse().unwrap(),vec![]),
-	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a),
+	<s: symbol> => PlainTerm::new(s.parse().unwrap(),vec![], false),
+	<s: symbol> "(" ")" => PlainTerm::new(s.parse().unwrap(),vec![], true),
+	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a, true),
 }
 
 infix_pterm: PlainTerm = {
