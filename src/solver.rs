@@ -284,6 +284,7 @@ impl Solver{
 		let mut env = PEnv{
 			psterms: &mut self.psterms,
 			base: &mut self.base,
+			answer: &answer,
 		};
 		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
 		
@@ -316,6 +317,7 @@ impl Solver{
 			let mut env = PEnv{
 				psterms: &mut self.psterms,
 				base: &mut self.base,
+				answer: &self.questions[top.qid.0].answers[top.aid.0],
 			};
 
 			let new_conj: Vec<TermId> = e_conj
@@ -466,19 +468,25 @@ pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, env: 
 
 // 
 
-pub fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut Answer, env: &mut PEnv) -> bool{
+pub fn matching(
+	btid:TermId, 
+	qtid:TermId, 
+	context: &Context, 
+	curr_answer: &mut Answer, 
+	psterms: &mut PSTerms, 
+	base: &mut Base) -> bool{
 	
 	if btid == qtid{
 		true
 	}else{
-		let bterm = env.psterms.get_term(&btid);
-		let qterm = env.psterms.get_term(&qtid);
+		let bterm = psterms.get_term(&btid);
+		let qterm = psterms.get_term(&qtid);
 		match qterm{
 			Term::AVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, env)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base)
 				}else if let Some(new_qtid) = curr_answer.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, env)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base)
 				}else{
 					curr_answer.push(qtid, btid);
 					true
@@ -486,7 +494,7 @@ pub fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut A
 			},
 			Term::EVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, env)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base)
 				}else{
 					false
 				}
@@ -494,16 +502,23 @@ pub fn matching(btid:TermId, qtid:TermId, context: &Context, curr_answer: &mut A
 			Term::SFunctor(q_sid, q_args) => {
 				match bterm{
 					Term::SFunctor(b_sid,b_args) if q_sid == b_sid => {
-						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, env))
+						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms, base))
 					},
 					_ => false,
 				}
 			},
 			Term::IFunctor(q_sid, q_args) => {
-				let p = env.psterms.len();
-				let new_qtid = processing(qtid, context, Some(&curr_answer), env).unwrap();
-				let m = matching(btid, new_qtid, context, curr_answer, env);
-				env.psterms.back_to(p);
+				let p = psterms.len();
+				
+				let mut env = PEnv{
+					psterms: psterms,
+					base: base,
+					answer: &curr_answer,
+				};	
+							
+				let new_qtid = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();
+				let m = matching(btid, new_qtid, context, curr_answer, psterms, base);
+				psterms.back_to(p);
 				m
 			},
 			_ => {

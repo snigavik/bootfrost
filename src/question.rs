@@ -129,12 +129,13 @@ impl Question{
 							let btid = bterm.term;
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
 							
-							let mut env = PEnv{
-								psterms: psterms,
-								base: base,
-							};	
+							// let mut env = PEnv{
+							// 	psterms: psterms,
+							// 	base: base,
+							// 	answer: &curr_answer,
+							// };	
 
-							if matching(btid, qtid, context, &mut curr_answer, &mut env){
+							if matching(btid, qtid, context, &mut curr_answer, psterms, base){
 								curr_answer.state = MatchingState::Success;
 								continue;
 							}else{
@@ -149,6 +150,7 @@ impl Question{
 							let mut env = PEnv{
 								psterms: psterms,
 								base: base,
+								answer: &curr_answer,
 							};
 
 							let b = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();
