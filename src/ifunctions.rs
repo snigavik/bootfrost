@@ -3,7 +3,7 @@ use crate::misc::*;
 use crate::environment::*;
 use std::collections::HashMap;
 
-
+type IFunction = fn(&Vec<TermId>, &mut PEnv) -> TermId;
 
 fn plus(a:i64,b:i64) -> i64 {a + b}
 fn minus(a:i64,b:i64) -> i64 {a - b}
@@ -99,18 +99,18 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 
 
 	let fs = HashMap::from([
-		("+".to_string(), (ifunction_binary_integers!(plus, i64) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("-".to_string(), (ifunction_binary_integers!(minus, i64) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("*".to_string(), (ifunction_binary_integers!(multiply, i64) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("==".to_string(), (ifunction_binary_integers!(eq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("<".to_string(), (ifunction_binary_integers!(lt, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		(">".to_string(), (ifunction_binary_integers!(gt, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("++".to_string(), (concat as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Infix)),
-		("replace".to_string(), (replace as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Classic)),
-		("blen".to_string(), (blen as fn(&Vec<TermId>, &mut PEnv) -> TermId, Position::Classic)),
+		("+".to_string(), (ifunction_binary_integers!(plus, i64) as IFunction, Position::Infix)),
+		("-".to_string(), (ifunction_binary_integers!(minus, i64) as IFunction, Position::Infix)),
+		("*".to_string(), (ifunction_binary_integers!(multiply, i64) as IFunction, Position::Infix)),
+		("==".to_string(), (ifunction_binary_integers!(eq, bool) as IFunction, Position::Infix)),
+		("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as IFunction, Position::Infix)),
+		("<".to_string(), (ifunction_binary_integers!(lt, bool) as IFunction, Position::Infix)),
+		(">".to_string(), (ifunction_binary_integers!(gt, bool) as IFunction, Position::Infix)),
+		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as IFunction, Position::Infix)),
+		(">=".to_string(), (ifunction_binary_integers!(gteq, bool) as IFunction, Position::Infix)),
+		("++".to_string(), (concat as IFunction, Position::Infix)),
+		("replace".to_string(), (replace as IFunction, Position::Classic)),
+		("blen".to_string(), (blen as IFunction, Position::Classic)),
 	]);
 
 
