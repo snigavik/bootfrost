@@ -2,6 +2,8 @@ use crate::term::*;
 use crate::answer::*;
 use crate::misc::*;
 use crate::environment::*;
+use std::fs;
+
 use std::collections::HashMap;
 
 type IFunction = fn(&Vec<TermId>, &mut PEnv) -> TermId;
@@ -119,6 +121,26 @@ fn remove(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::Bool(true)).unwrap()	
 }
 
+fn read_file_to_string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let n1 = if let Term::String(_n1) = arg0{
+		_n1
+	}else{
+		panic!("");
+	};
+	
+	let res = fs::read_to_string(&n1)
+        .expect("Something went wrong reading the file");
+
+	env.psterms.get_tid(Term::String(res)).unwrap()
+}
+
+
 
 // ====
 pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
@@ -140,6 +162,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("replace".to_string(), (replace as IFunction, Position::Classic)),
 		("blen".to_string(), (blen as IFunction, Position::Classic)),
 		("remove".to_string(), (remove as IFunction, Position::Classic)),
+		("rfts".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 	]);
 
 
