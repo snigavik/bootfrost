@@ -24,6 +24,10 @@ impl Base{
 		self.base.is_empty()
 	}
 
+	pub fn get_mut(&mut self, i:usize) -> Option<&mut BTerm>{
+		self.base.get_mut(i)
+	}
+
 	pub fn push(&mut self, tid:TermId, bid: BlockId){
 		self.index.insert(tid, self.base.len());
 		self.base.push(BTerm{term: tid, bid: bid, deleted: false})

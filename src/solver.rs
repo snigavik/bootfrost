@@ -138,7 +138,13 @@ impl Solver{
 
 	pub fn print(&self){
 		for (i,b) in self.base.base.iter().enumerate(){
-			self.print_term(b.term, &Context::new_empty());
+			if !b.deleted{
+				self.print_term(b.term, &Context::new_empty());
+			}else{
+				print!("[");
+				self.print_term(b.term, &Context::new_empty());
+				print!("]");
+			}
 			if i < self.base.len() - 1{
 				print!(",");
 			}			
@@ -309,22 +315,35 @@ impl Solver{
 
 	fn activate_top_block(&mut self) -> bool{
 		let fstack_i = self.stack.len() - 1;
+		let level = self.level();
 		if let Some(top) = self.stack.last_mut(){
 			top.activated = true;
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
 			
-			let mut env = PEnv{
-				psterms: &mut self.psterms,
-				base: &mut self.base,
-				answer: &self.questions[top.qid.0].answers[top.aid.0],
-			};
 
-			let new_conj: Vec<TermId> = e_conj
-				.iter()
-				.map(|a| 
-					processing(*a, &top.context, None, &mut env).unwrap())
-				.collect();
+			// let mut env = PEnv{
+			// 	psterms: &mut self.psterms,
+			// 	base: &mut self.base,
+			// 	answer: &self.questions[top.qid.0].answers[top.aid.0],
+			// };
+
+
+			let new_conj: Vec<TermId> = if level > 0{
+				let mut env = PEnv{
+					psterms: &mut self.psterms,
+					base: &mut self.base,
+					answer: &self.questions[top.qid.0].answers[top.aid.0],
+				};				
+			// let new_conj: Vec<TermId> = e_conj
+				e_conj
+					.iter()
+					.map(|a| 
+						processing(*a, &top.context, None, &mut env).unwrap())
+					.collect()
+			}else{
+				e_conj.clone()
+			};
 
 			for a in new_conj{
 				if a == TermId(0){

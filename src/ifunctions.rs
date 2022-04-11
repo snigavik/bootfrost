@@ -1,4 +1,5 @@
 use crate::term::*;
+use crate::answer::*;
 use crate::misc::*;
 use crate::environment::*;
 use std::collections::HashMap;
@@ -91,6 +92,33 @@ fn blen(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::Integer(env.base.len().try_into().unwrap())).unwrap()	
 }
 
+fn remove(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let i = if let Term::Integer(i) = arg0{
+		i
+	}else{
+		panic!("");
+	};
+
+	let b = if let LogItem::Matching{batom_i: b, ..} = env.answer.log[i as usize]{
+		b
+	}else{
+		panic!("");
+	};
+
+	if let Some(bt) = env.base.get_mut(b){
+		bt.deleted = true;
+	}else{
+		panic!("");
+	}
+	env.psterms.get_tid(Term::Bool(true)).unwrap()	
+}
+
 
 // ====
 pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
@@ -111,6 +139,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("++".to_string(), (concat as IFunction, Position::Infix)),
 		("replace".to_string(), (replace as IFunction, Position::Classic)),
 		("blen".to_string(), (blen as IFunction, Position::Classic)),
+		("remove".to_string(), (remove as IFunction, Position::Classic)),
 	]);
 
 
