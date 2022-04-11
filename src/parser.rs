@@ -1,6 +1,4 @@
-use crate::question::*;
-use crate::term::*;
-use crate::misc::*;
+
 use crate::plain::*;
 
 
@@ -26,7 +24,7 @@ pub struct PfLine{
 
 impl PfLine{
 	pub fn new(line: String) -> PfLine{
-		let mut s = line.clone();
+		let s = line.clone();
 		let mut indent = 0;
         
         for c in line.chars(){

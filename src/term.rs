@@ -1,9 +1,8 @@
 
 use std::fmt;
-use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::ops::Index;
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
 
 
 use crate::misc::*;

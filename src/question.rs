@@ -67,7 +67,7 @@ impl Question{
 		let bn = _bn as f64;
 
 		let last = if let Some(m) = _last{
-			(m as f64)
+			m as f64
 		}else{
 			//1.0/(q_len as f64)	
 			0.5

@@ -1,7 +1,5 @@
 
-use std::collections::BTreeMap;
 use std::collections::HashMap;
-use std::ops::Index;
 
 
 use crate::misc::*;
@@ -166,7 +164,7 @@ impl Solver{
 
 		let tid = plain_to_tqf(pf, &mut psterms, &mut vstack, &mut smap, &mut fmap, &mut tqfs);
 
-		let mut fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
+		let fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
 			FBlock{
 				qid:QuestionId(1000000000), 
 				aid: AnswerId(1000000000, 1000000000),
@@ -526,7 +524,7 @@ pub fn matching(
 					_ => false,
 				}
 			},
-			Term::IFunctor(q_sid, q_args) => {
+			Term::IFunctor(..) => {
 				let p = psterms.len();
 				
 				let mut env = PEnv{

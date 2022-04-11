@@ -1,7 +1,7 @@
 use crate::misc::*;
 use crate::term::*;
 use crate::question::*;
-use crate::context::*;
+
 use crate::answer::*;
 
 
@@ -28,10 +28,10 @@ pub fn plain_shift_strategy(questions: &Vec<Question>, step: usize) -> Vec<Strat
 	questions
 		.iter()
 		.enumerate()
-		.map(|(i,q)| 
+		.map(|(i,_q)| 
 			StrategyItem{
 				qid: QuestionId(i),
-				selector: SelectorStrategy::First(|x,y| true),
+				selector: SelectorStrategy::First(|_,_| true),
 				sf: StartFrom::Last,
 				limit:1000}).collect();
 	vq.rotate_left(step % questions.len());	
@@ -46,17 +46,17 @@ pub fn general_strategy(questions: &Vec<Question>, tqfs: &Vec<Tqf>, curr_level: 
 		.map(|(i,q)| (QuestionId(i), q.gs_rate(tqfs, curr_level, questions.len())))
 		.collect::<Vec<(QuestionId, f64)>>();
 
-	let disp1 = state.iter().map(|(q,x)| x.to_string()).collect::<Vec<String>>().join(", ");
+	let disp1 = state.iter().map(|(_q,x)| x.to_string()).collect::<Vec<String>>().join(", ");
 	println!("{}", disp1);
 
 	state.sort_by(|a,b| (a.1).partial_cmp(&b.1).unwrap());
 		
 	let vq: Vec<StrategyItem> = state
 		.iter()
-		.map(|(qid, r)|
+		.map(|(qid, _r)|
 			StrategyItem{
 				qid: *qid,
-				selector: SelectorStrategy::First(|x,y| true),
+				selector: SelectorStrategy::First(|_,_| true),
 				sf: StartFrom::Last,
 				limit:1000,
 			}).collect();
