@@ -156,22 +156,6 @@ impl Solver{
 		self.stack.iter().filter(|x| x.activated).count()
 	}
 
-	fn question_mut(&mut self, i:QuestionId) -> &mut Question{
-		if let Some(q) = self.questions.get_mut(i.0){
-			q
-		}else{
-			panic!("");
-		}
-	}
-
-	fn tqf(&self, i: TqfId) -> &Tqf{
-		if let Some(tqf) = self.tqfs.get(i.0){
-			tqf
-		}else{
-			panic!("")
-		}
-	}
-
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
 		
@@ -244,7 +228,7 @@ impl Solver{
 		}
 
 		let commands = &self.tqfs[a_tqf.0].commands;
-		// commands.iter().for_each(|c| run_command(&mut self.psterms, *c));
+
 		let mut env = PEnv{
 			psterms: &mut self.psterms,
 			base: &mut self.base,
@@ -358,25 +342,6 @@ impl Solver{
 }
 
 
-fn question_mut(questions: &mut Vec<Question>, qid: QuestionId) -> &mut Question{
-	if let Some(q) = questions.get_mut(qid.0){
-		q
-	}else{
-		panic!("");
-	}
-}
-
-fn set_state(question: &mut Question, state: MatchingState){
-	question.curr_answer_stack.last_mut().unwrap().state = state;
-}
-
-
-
-
-
-
-
-
 
 
 pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, env: &mut PEnv) -> ProcessingResult{
@@ -438,12 +403,6 @@ pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, env: 
 	}
 }
 
-
-// fn run_command(tid:TermId){
-
-// }
-
-// 
 
 pub fn matching(
 	btid:TermId, 
