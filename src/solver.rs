@@ -12,9 +12,17 @@ use crate::strategies::*;
 use crate::base::*;
 use crate::environment::*;
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum SolverResultType{
+	Refuted,
+	Exhausted,
+	LimitReached,
+}
 
-
-
+pub struct SolverResult{
+	pub t: SolverResultType,
+	pub steps: usize,
+}
 
 
 pub struct FBlock{
@@ -319,7 +327,7 @@ impl Solver{
 		}
 	}
 
-	pub fn solver_loop(&mut self, limit:usize){
+	pub fn solver_loop(&mut self, limit:usize) -> SolverResult{
 		let mut i = 0;
 		while i < limit{
 			println!("================================ Step {}, stack: {}  ================================", self.step, self.stack.len());
@@ -327,17 +335,19 @@ impl Solver{
 			//dbg!(&self.psterms);
 			if self.stack.is_empty(){
 				println!("Refuted");
-				break;
+				return SolverResult{t: SolverResultType::Refuted, steps: i};
 			}
 			if let Some(answer) = self.find_answer_global(){
 				self.transform(answer);
 				self.step = self.step + 1;
 			}else{
 				println!("Exhausted");
-				break;
+				return SolverResult{t: SolverResultType::Exhausted, steps: i};
 			}
 			self.print();
 		}
+		println!("LimitReached");
+		return SolverResult{t: SolverResultType::LimitReached, steps: i};
 	}
 }
 
