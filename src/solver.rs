@@ -38,49 +38,6 @@ pub struct Solver{
 
 impl Solver{
 
-	pub fn print_term(&self, tid: TermId, context: &Context){
-		if let Some(new_tid) = context.get(&tid){
-			self.print_term(*new_tid, context);
-		}else{
-			let t = self.psterms.get_term(&tid);
-			match t{
-				Term::AVariable(sid) => {
-					let s = self.psterms.get_symbol(&sid);
-					print!("{}.{}", s.name, s.uid);
-				},
-				Term::EVariable(sid, bid) => {
-					let s = self.psterms.get_symbol(&sid);
-					print!("{}.{}.{}", s.name, s.uid, bid.0);
-				},
-				Term::SConstant(sid) => {
-					let s = self.psterms.get_symbol(&sid);
-					print!("{}", s.name);
-				},
-				Term::Bool(b) => {
-					print!("{}",b);
-				},
-				Term::Integer(i) => {
-					print!("{}",i);
-				},
-				Term::String(s) => {
-					print!("{}",s);
-				},
-				Term::SFunctor(sid, args) | Term::IFunctor(sid, args) => {
-					let s = self.psterms.get_symbol(&sid);
-					print!("{}", s.name);
-					print!("(");
-					for (i,a) in args.iter().enumerate(){
-						self.print_term(*a,context);
-						if i < args.len() - 1{
-							print!(",");
-						}
-					}
-					print!(")");
-				}
-			}
-		}
-	}
-
 	pub fn print_tqf(&self, tid: TqfId, tab:String, context: &Context){
 		let tqf = &self.tqfs[tid.0];
 		print!("{}", tab);
@@ -136,16 +93,19 @@ impl Solver{
 
 	pub fn print(&self){
 		for (i,b) in self.base.base.iter().enumerate(){
-			if !b.deleted{
-				self.print_term(b.term, &Context::new_empty());
-			}else{
-				print!("[");
-				self.print_term(b.term, &Context::new_empty());
-				print!("]");
-			}
-			if i < self.base.len() - 1{
-				print!(",");
-			}			
+			if b.deleted{ print!("[");}
+
+			print!("{}", TidDisplay{
+				tid: b.term,
+				psterms: &self.psterms,
+				context: None,
+				dm: DisplayMode::Plain,
+			});	
+
+
+			if b.deleted{ print!("]");}			
+			if i < self.base.len() - 1{ print!(",");}
+			
 		}
 		println!("");
 		for q in &self.questions{
