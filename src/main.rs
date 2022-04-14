@@ -23,7 +23,7 @@ use bootfrost::solver::*;
 // lalrpop_mod!(pub tqfline); // synthesized by LALRPOP
 
 fn main() {
-	let mut solver = Solver::parse_file("./problems/formula.pcf");
+	let mut solver = Solver::parse_file("./problems/solverfunction.pcf");
 	solver.print();
 	println!("================");
 	solver.solver_loop(150);

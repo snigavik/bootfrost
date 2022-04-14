@@ -1,0 +1,4 @@
+? B("5")
+	!x B(x), solve(replace(rfts("./problems/subformula.pcf"), "$a", x))
+		? R(x)
+	! R("5")
