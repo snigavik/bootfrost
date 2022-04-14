@@ -1,6 +1,7 @@
 use crate::term::*;
 use crate::answer::*;
 use crate::misc::*;
+use crate::solver::*;
 use crate::environment::*;
 use std::fs;
 
@@ -138,6 +139,33 @@ fn read_file_to_string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
         .expect("Something went wrong reading the file");
 
 	env.psterms.get_tid(Term::String(res)).unwrap()
+}
+
+fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let n1 = if let Term::String(_n1) = arg0{
+		_n1
+	}else{
+		panic!("");
+	};
+	
+	// let res = fs::read_to_string(&n1)
+        // .expect("Something went wrong reading the file");
+
+    let mut solver = Solver::parse_string(&n1);
+    let res = solver.solver_loop(150);
+    let r = if SolverResultType::Refuted == res.t{
+    	true
+    }else{
+    	false
+    };
+
+	env.psterms.get_tid(Term::Bool(r)).unwrap()
 }
 
 
