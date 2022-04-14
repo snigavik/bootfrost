@@ -154,8 +154,6 @@ fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 		panic!("");
 	};
 	
-	// let res = fs::read_to_string(&n1)
-        // .expect("Something went wrong reading the file");
 
     let mut solver = Solver::parse_string(&n1);
     let res = solver.solver_loop(150);
@@ -167,6 +165,22 @@ fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 
 	env.psterms.get_tid(Term::Bool(r)).unwrap()
 }
+
+fn string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let res = match arg0{
+		Term::Integer(i) => i.to_string(),
+		_ => "hello".to_string()
+	};
+
+	env.psterms.get_tid(Term::String(res)).unwrap()
+}
+
 
 
 
@@ -192,6 +206,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("remove".to_string(), (remove as IFunction, Position::Classic)),
 		("rfts".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
+		("string".to_string(), (string as IFunction, Position::Classic)),
 	]);
 
 

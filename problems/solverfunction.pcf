@@ -1,4 +1,4 @@
-? B("5")
-	!x B(x), solve(replace(rfts("./problems/subformula.pcf"), "$a", x))
-		? R(x)
-	! R("5")
+? B(1)
+	!x B(x)
+		? B(x + 1)
+	!x B(x), solve(replace(rfts("./problems/subformula.pcf"), "$a", string(x)))
