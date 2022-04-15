@@ -1,4 +1,4 @@
-// use std::ops::Index;
+
 use std::collections::HashMap;
 
 use crate::misc::*;
@@ -54,19 +54,6 @@ pub enum LogItem{
 		qatom_i: usize, 
 	},
 }
-
-// impl fmt::Debug for LogItem{
-//     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
-//     	match self{
-//     		LogItem::Matching{qatom_i, batom_i, avars} =>{
-//     			write!(fmt,"qi: {}, bi: {}", qatom_i, batom_i)
-//     		},
-//     		LogItem::Interpretation{qatom_i} => {
-//     			write!(fmt,"qi: {}", qatom_i)		
-//     		} 
-//     	}
-//     }
-// }
 
 
 

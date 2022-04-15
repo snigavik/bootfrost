@@ -122,17 +122,16 @@ impl Solver{
 	}
 
 	pub fn parse_file(path: &str) -> Solver{
-		let pf = crate::parser::parse_file(path);
+		let pf = crate::parser::parser::parse_file(path);
 		Solver::from_pf(pf)
 	}
 
 	pub fn parse_string(s: &str) -> Solver{
-		let pf = crate::parser::parse_string(s);
+		let pf = crate::parser::parser::parse_string(s);
 		Solver::from_pf(pf)
 	}
 
 	pub fn from_pf(pf: PlainFormula) -> Solver{
-		// let pf = crate::parser::parse_file(path);
 
 		let mut vstack = vec![];
 		let mut smap = HashMap::from([("false".to_string(),TermId(0)), ("true".to_string(),TermId(1))]);
