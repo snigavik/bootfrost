@@ -89,7 +89,7 @@ impl Question{
 		psterms: &mut PSTerms, 
 		tqfs: &Vec<Tqf>, 
 		base: &mut Base,
-		stack: &Vec<FBlock>) -> Option<Answer>{
+		stack: &Vec<FBlock>) -> Option<(Answer, usize)>{
 
 		let limit = si.limit;
 		if let Some(top) = self.curr_answer_stack.last(){
@@ -127,13 +127,7 @@ impl Question{
 								continue;
 							}
 							let btid = bterm.term;
-							let qtid = tqfs[self.aformula.0].conj[*qatom_i];
-							
-							// let mut env = PEnv{
-							// 	psterms: psterms,
-							// 	base: base,
-							// 	answer: &curr_answer,
-							// };	
+							let qtid = tqfs[self.aformula.0].conj[*qatom_i];	
 
 							if matching(btid, qtid, context, &mut curr_answer, psterms, base){
 								curr_answer.state = MatchingState::Success;
@@ -194,7 +188,8 @@ impl Question{
 					let na = curr_answer.clone();
 					if let Some(_) = self.answers.iter().find(|x| *x == &na){
 						continue;
-					}					
+					}				
+					let aid = self.answers.len();	
 					self.answers.push(na);
 
 					let mut answer1 = self.answers.last().unwrap().clone();
@@ -204,7 +199,7 @@ impl Question{
 								answer1.level = Some(stack.iter().filter(|x| x.activated).count());
 								self.used_answers.push(answer1.clone());
 								self.curr_answer_stack.push(curr_answer);
-								return Some(answer1)
+								return Some((answer1, aid))
 							}else{
 								continue;
 							}

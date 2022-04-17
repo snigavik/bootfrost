@@ -182,13 +182,13 @@ impl Solver{
 		general_strategy(&self.questions, &self.tqfs, curr_level)
 	}
 
-	fn find_answer_global(&mut self) -> Option<Answer>{
+	fn find_answer_global(&mut self) -> Option<(Answer, usize)>{
 		let bid = self.stack.last().unwrap().bid;
 		let strategy = self.strategy();
 		for si in strategy.iter(){
-			if let Some(answer) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, &self.stack){
+			if let Some((answer, aid_i)) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, &self.stack){
 				println!("{}", AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
-				return Some(answer);
+				return Some((answer, aid_i));
 			}
 		}
 		None
@@ -231,7 +231,7 @@ impl Solver{
 	}
 
 
-	fn transform(&mut self, answer: Answer){
+	fn transform(&mut self, answer: Answer, aid_i: usize){
 		let qid = answer.qid;
 		let curr_context = &self.stack[self.questions[qid.0].fstack_i].context;	
 		let origin_bid = self.stack[self.questions[qid.0].fstack_i].bid;	
@@ -261,7 +261,7 @@ impl Solver{
 				.map(|(i,ef)|
 					FBlock{
 						qid: qid,
-						aid: AnswerId(qid.0, 100000),
+						aid: AnswerId(qid.0, aid_i),
 						eid: *ef,
 						context: Context::new(&curr_context, &answer, &self.tqfs[ef.0].vars, &mut self.psterms, origin_bid),
 						bid: BlockId(self.bid.0 + i),
@@ -279,22 +279,15 @@ impl Solver{
 			top.activated = true;
 			let e_tqf = &self.tqfs[top.eid.0];
 			let e_conj = &e_tqf.conj;
-			
-
-			// let mut env = PEnv{
-			// 	psterms: &mut self.psterms,
-			// 	base: &mut self.base,
-			// 	answer: &self.questions[top.qid.0].answers[top.aid.0],
-			// };
-
+		
 
 			let new_conj: Vec<TermId> = if level > 0{
 				let mut env = PEnv{
 					psterms: &mut self.psterms,
 					base: &mut self.base,
-					answer: &self.questions[top.qid.0].answers[top.aid.0],
+					answer: &self.questions[top.qid.0].answers[top.aid.1],
 				};				
-			// let new_conj: Vec<TermId> = e_conj
+
 				e_conj
 					.iter()
 					.map(|a| 
@@ -346,8 +339,8 @@ impl Solver{
 				println!("Refuted");
 				return SolverResult{t: SolverResultType::Refuted, steps: i};
 			}
-			if let Some(answer) = self.find_answer_global(){
-				self.transform(answer);
+			if let Some((answer, aid_i)) = self.find_answer_global(){
+				self.transform(answer, aid_i);
 				self.step = self.step + 1;
 			}else{
 				println!("Exhausted");

@@ -1,0 +1,19 @@
+? 	I1(St), ~
+	Euo("tn"),Eo("mv"),Eo("ro"),Eo("st"),Eo("pu"), ~
+	dG(St,"mv",Mo),dG(St,"pu",Pu),dG(St,"ro",Ro),dG(Mo,"pu",Pu),dG(Mo,"st",St),dG(Mo,"tn",Ro), ~
+	dG(Pu,"mv",Mo),dG(Pu,"tn",Ro),dG(Pu,"st",St),dG(Ro,"pu",Pu),dG(Ro,"st",St),dG(Ro,"mv",Mo), ~
+	I2(St), ~
+	dH(St,"mv",Mo),dH(St,"pu",Pu),dH(St,"ro",Ro),dH(Mo,"pu",Pu),dH(Mo,"st",St),dH(Mo,"tn",Ro), ~
+	dH(Pu,"mv",Mo),dH(Pu,"tn",Ro),dH(Ro,"pu",Pu),dH(Ro,"st",St),dH(Ro,"mv",Mo)
+
+	! qGs,qGt,qHs,qHt,e I1(qGs), I2(qHs), dG(qGs,e,qGt), dH(qHs,e,qHt)
+		? N(qGs,qHs)
+	! qGs,qGt,qHs,qHt,e N(qGs,qHs), dG(qGs,e,qGt), dH(qHs,e,qHt)
+		? N(qGt,qHt)
+	! qGs,qGt,qHs,qHt,e N(qGs,qHs), dG(qGs,e,qGt), dH(qHs,e,qHt), Euo(e)
+		? P(qGs,qHt)
+	! qGs,qHt,q1t,e P(qGs,qHt), dG(qGs,e,q1t), Eo(e)
+		?
+			! y,q2t dH(qHt,y,q2t), y & e
+				? Uo(qHt,y)
+	! q,e Uo(q,e)
