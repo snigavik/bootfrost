@@ -62,6 +62,7 @@ infterm:String = {
 }
 
 infatom:String = {
+	"&" => "&".to_string(),
 	">" => ">".to_string(),
 	"<" => "<".to_string(),
 	"==" => "==".to_string(),

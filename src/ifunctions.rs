@@ -182,6 +182,15 @@ fn string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 }
 
 
+fn notequal(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+	let res = args[0] == args[1];
+
+	env.psterms.get_tid(Term::Bool(!res)).unwrap()
+}
+
 
 
 // ====
@@ -207,6 +216,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("rfts".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
 		("string".to_string(), (string as IFunction, Position::Classic)),
+		("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 
 

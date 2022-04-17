@@ -12,4 +12,4 @@ mod base;
 mod environment;
 
 #[macro_use] extern crate lalrpop_util;
-lalrpop_mod!(pub tqfline); // synthesized by LALRPOP
+// lalrpop_mod!(pub tqfline, "/parser/tqfline.rs"); // synthesized by LALRPOP
