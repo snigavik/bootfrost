@@ -24,6 +24,12 @@ pub struct SolverResult{
 	pub steps: usize,
 }
 
+struct BranchBlock{
+	aid: AnswerId,
+	eindex: usize,
+	pub context: Context,
+	pub bid: BlockId,
+}
 
 pub struct FBlock{
 	qid: QuestionId,
@@ -40,6 +46,7 @@ pub struct Solver{
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
 	stack: Vec<FBlock>,
+	bstack: Vec<BranchBlock>
 	bid: BlockId,
 	step: usize,
 }
@@ -115,7 +122,7 @@ impl Solver{
 			if i < self.base.len() - 1{ print!(",");}
 			
 		}
-		println!("");
+		println!("\n");
 		for q in &self.questions{
 			self.print_tqf(q.aformula, "".to_string(), &self.stack[q.fstack_i].context);
 		}
@@ -187,7 +194,7 @@ impl Solver{
 		let strategy = self.strategy();
 		for si in strategy.iter(){
 			if let Some((answer, aid_i)) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, &self.stack){
-				println!("{}", AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
+				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
 				return Some((answer, aid_i));
 			}
 		}
@@ -230,47 +237,6 @@ impl Solver{
 		}		
 	}
 
-
-	fn transform(&mut self, answer: Answer, aid_i: usize){
-		let qid = answer.qid;
-		let curr_context = &self.stack[self.questions[qid.0].fstack_i].context;	
-		let origin_bid = self.stack[self.questions[qid.0].fstack_i].bid;	
-		let a_tqf = &self.questions[qid.0].aformula;
-		let e_tqfs = &self.tqfs[a_tqf.0].next;
-
-		if e_tqfs.len() == 0{
-			self.remove_solved_blocks();
-			self.activate_top_block_loop();
-			return;
-		}
-
-		let commands = &self.tqfs[a_tqf.0].commands;
-
-		let mut env = PEnv{
-			psterms: &mut self.psterms,
-			base: &mut self.base,
-			answer: &answer,
-		};
-		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
-		
-
-		let mut new_blocks: Vec<FBlock> = 
-			e_tqfs
-				.iter()
-				.enumerate()
-				.map(|(i,ef)|
-					FBlock{
-						qid: qid,
-						aid: AnswerId(qid.0, aid_i),
-						eid: *ef,
-						context: Context::new(&curr_context, &answer, &self.tqfs[ef.0].vars, &mut self.psterms, origin_bid),
-						bid: BlockId(self.bid.0 + i),
-						activated: false,
-					}).collect();
-		self.stack.append(&mut new_blocks);
-
-		self.activate_top_block_loop();
-	}
 
 	fn activate_top_block(&mut self) -> bool{
 		let fstack_i = self.stack.len() - 1;
@@ -328,6 +294,58 @@ impl Solver{
 			panic!("");
 		}
 	}
+
+
+	fn transform(&mut self, answer: Answer, aid_i: usize){
+		let qid = answer.qid;
+		let curr_context = &self.stack[self.questions[qid.0].fstack_i].context;	
+		let origin_bid = self.stack[self.questions[qid.0].fstack_i].bid;	
+		let a_tqf = &self.questions[qid.0].aformula;
+		let e_tqfs = &self.tqfs[a_tqf.0].next;
+
+		if e_tqfs.len() == 0{
+			self.remove_solved_blocks();
+			self.activate_top_block_loop();
+			return;
+		}
+
+		let commands = &self.tqfs[a_tqf.0].commands;
+
+		let mut env = PEnv{
+			psterms: &mut self.psterms,
+			base: &mut self.base,
+			answer: &answer,
+		};
+		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
+		
+
+		let mut new_blocks: Vec<FBlock> = 
+			e_tqfs
+				.iter()
+				.enumerate()
+				.map(|(i,ef)|
+					FBlock{
+						qid: qid,
+						aid: AnswerId(qid.0, aid_i),
+						eid: *ef,
+						context: Context::new(&curr_context, &answer, &self.tqfs[ef.0].vars, &mut self.psterms, origin_bid),
+						bid: BlockId(self.bid.0 + i),
+						activated: false,
+					}).collect();
+		self.stack.append(&mut new_blocks);
+
+		self.activate_top_block_loop();
+	}
+	pub fn next_branch() -> bool{
+		// aid: AnswerId,
+		// eindex: usize,
+		// pub context: Context,
+		// pub bid: BlockId,
+		true
+
+	}
+
+
 
 	pub fn solver_loop(&mut self, limit:usize) -> SolverResult{
 		let mut i = 0;
