@@ -25,10 +25,11 @@ pub struct SolverResult{
 }
 
 struct BranchBlock{
-	aid: AnswerId,
-	eindex: usize,
+	pub aid: AnswerId,
+	pub eindex: usize,
 	pub context: Context,
 	pub bid: BlockId,
+	pub enabled: bool,
 }
 
 pub struct FBlock{
@@ -46,7 +47,7 @@ pub struct Solver{
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
 	stack: Vec<FBlock>,
-	bstack: Vec<BranchBlock>
+	bstack: Vec<BranchBlock>,
 	bid: BlockId,
 	step: usize,
 }
@@ -168,6 +169,7 @@ impl Solver{
 			tqfs: tqfs,
 			questions: vec![],
 			stack: fblocks,
+			bstack: vec![],
 			bid: BlockId(bid),
 			step:0,
 		};
@@ -336,6 +338,87 @@ impl Solver{
 
 		self.activate_top_block_loop();
 	}
+
+
+
+	// ================
+	fn disable_block(&mut self){
+		if let Some(top) = self.bstack.last_mut(){
+			if top.enabled{
+				self.base.remove(top.bid);
+
+				self.questions.retain(|q| q.bid != top.bid);
+
+				self.questions.iter_mut().for_each(|q| q.remove_answers(top.bid));
+
+				top.enabled = false;
+			}else{
+				panic!("");
+			}
+		}else{
+			panic!("");
+		}
+	}
+
+	fn enable_block(&mut self) -> bool{
+		let fstack_i = self.bstack.len() - 1;
+		let level = self.bstack.len();
+		if let Some(top) = self.bstack.last_mut(){
+			top.enabled = true;
+			let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
+			let etqf = &self.tqfs[eid.0];
+			let econj = &etqf.conj;
+		
+
+			let new_conj: Vec<TermId> = if level > 1{
+				let mut env = PEnv{
+					psterms: &mut self.psterms,
+					base: &mut self.base,
+					answer: &self.questions[top.aid.0].answers[top.aid.1],
+				};				
+
+				econj
+					.iter()
+					.map(|a| 
+						processing(*a, &top.context, None, &mut env).unwrap())
+					.collect()
+			}else{
+				econj.clone()
+			};
+
+			for a in new_conj{
+				if a == TermId(0){
+					return false;
+				}
+
+				self.base.push_and_check(a,top.bid);
+			}	
+
+			// add questions
+			let a_tqfs = &etqf.next;
+			let q_len = self.questions.len();
+			let mut new_questions = 
+				a_tqfs
+					.iter()
+					.enumerate()
+					.map(|(i,af)| 
+						Question{
+							qid: QuestionId(q_len + i),
+							bid: top.bid,
+							aformula: *af,
+							fstack_i: fstack_i,
+							curr_answer_stack: vec![],
+							answers: vec![],
+							used_answers: vec![],
+						}).collect();
+			self.questions.append(&mut new_questions);
+			return true;		
+		}else{
+			panic!("");
+		}
+		true
+	}
+
 	pub fn next_branch() -> bool{
 		// aid: AnswerId,
 		// eindex: usize,
