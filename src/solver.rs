@@ -351,6 +351,14 @@ impl Solver{
 
 				self.questions.iter_mut().for_each(|q| q.remove_answers(top.bid));
 
+				let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
+				let etqf = &self.tqfs[eid.0];
+				let evars = &etqf.vars;
+
+				top.context.pop_evars(evars);
+
+				// psterms.back_to(...);
+
 				top.enabled = false;
 			}else{
 				panic!("");
@@ -368,7 +376,9 @@ impl Solver{
 			let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
 			let etqf = &self.tqfs[eid.0];
 			let econj = &etqf.conj;
-		
+			let evars = &etqf.vars;
+
+			top.context.push_evars(evars, &mut self.psterms, top.bid);
 
 			let new_conj: Vec<TermId> = if level > 1{
 				let mut env = PEnv{
@@ -419,13 +429,23 @@ impl Solver{
 		true
 	}
 
-	pub fn next_branch() -> bool{
+	pub fn next_block(&mut self) -> bool{
 		// aid: AnswerId,
 		// eindex: usize,
 		// pub context: Context,
 		// pub bid: BlockId,
-		true
-
+		if let Some(top) = self.bstack.last_mut(){
+			let e_tqfs = &self.tqfs[self.questions[top.aid.0].aformula.0].next;
+			let esize = e_tqfs.len();
+			if top.eindex < esize - 1{
+				top.eindex = top.eindex + 1;
+				true
+			}else{
+				false
+			}
+		}else{
+			panic!("");
+		}
 	}
 
 

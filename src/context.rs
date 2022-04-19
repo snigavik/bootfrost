@@ -7,7 +7,7 @@ use crate::answer::*;
 
 #[derive(Clone)]
 pub struct Context{
-	pub map: HashMap<TermId, TermId>
+	pub map: HashMap<TermId, TermId>,
 }
 
 impl Context{
@@ -26,8 +26,28 @@ impl Context{
 		Context{map: new_map}
 	}
 
+	pub fn new2(prev_context: &Context, answer:&Answer) -> Self{
+		let mut new_map = prev_context.map.clone();
+		new_map.extend(answer.amap.clone().into_iter());
+
+		Context{map: new_map}
+	}	
+
 	pub fn get(&self, tid:&TermId) -> Option<&TermId>{
 		self.map.get(tid)
+	}
+
+	pub fn push_evars(&mut self, e_list: &Vec<TermId>, psterms: &mut PSTerms, bid:BlockId){
+		for e in e_list.iter(){
+			let e2 = psterms.new_e(*e, bid);
+			self.map.insert(*e,e2);
+		}
+	}
+
+	pub fn pop_evars(&mut self, e_list: &Vec<TermId>){
+		for e in e_list.iter(){
+			self.map.remove(e);
+		}
 	}
 }
 
