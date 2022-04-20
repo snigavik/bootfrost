@@ -380,6 +380,7 @@ impl Solver{
 	}
 
 	pub fn remove_branch(&mut self){
+		dbg!("remove branch");
 		while let Some(..) = self.bstack.last(){
 			self.disable_block();
 			if !self.next_block(){
@@ -397,7 +398,6 @@ impl Solver{
 		while i < limit{
 			println!("================================ Step {}, stack: {}  ================================", self.step, self.bstack.len());
 			i = i + 1;
-			//dbg!(&self.psterms);
 			if self.bstack.is_empty(){
 				println!("Refuted");
 				return SolverResult{t: SolverResultType::Refuted, steps: i};

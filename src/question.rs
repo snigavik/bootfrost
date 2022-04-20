@@ -48,8 +48,6 @@ impl Question{
 		if self.used_answers.is_empty(){
 			None
 		}else{
-			dbg!(self.used_answers.last().unwrap().level);
-			dbg!(curr_level);
 			Some(curr_level - self.used_answers.last().unwrap().level.unwrap())
 		}
 	}

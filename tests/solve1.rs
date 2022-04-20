@@ -21,3 +21,10 @@ fn test3(){
 	let r = solver.solver_loop(150);
 	assert_eq!(SolverResultType::Refuted, r.t);
 }
+
+#[test]
+fn test4(){
+	let mut solver = Solver::parse_file("./problems/branch1.pcf");
+	let r = solver.solver_loop(150);
+	assert_eq!(SolverResultType::Refuted, r.t);
+}
