@@ -24,8 +24,9 @@ pub struct SolverResult{
 	pub steps: usize,
 }
 
-struct BranchBlock{
+pub struct BranchBlock{
 	pub aid: AnswerId,
+	pub atqf: TqfId,
 	pub eindex: usize,
 	pub context: Context,
 	pub bid: BlockId,
@@ -125,7 +126,7 @@ impl Solver{
 		}
 		println!("\n");
 		for q in &self.questions{
-			self.print_tqf(q.aformula, "".to_string(), &self.stack[q.fstack_i].context);
+			self.print_tqf(q.aformula, "".to_string(), &self.bstack[q.fstack_i].context);
 		}
 	}
 
@@ -149,18 +150,29 @@ impl Solver{
 
 		let tid = plain_to_tqf(pf, &mut psterms, &mut vstack, &mut smap, &mut fmap, &mut tqfs);
 
-		let fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
-			FBlock{
-				qid:QuestionId(1000000000), 
-				aid: AnswerId(1000000000, 1000000000),
-				eid: *eid,
-				context: Context::new_empty(),
-				bid: BlockId(i),
-				activated: false,
-			}
-		).collect();
+		// let fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
+		// 	FBlock{
+		// 		qid:QuestionId(1000000000), 
+		// 		aid: AnswerId(1000000000, 1000000000),
+		// 		eid: *eid,
+		// 		context: Context::new_empty(),
+		// 		bid: BlockId(i),
+		// 		activated: false,
+		// 	}
+		// ).collect();
 
-		let bid = fblocks.len();
+		// let bid = fblocks.len();
+
+		// self.bid = BlockId(1);
+
+		let first_block: BranchBlock = BranchBlock{
+			aid: AnswerId(1000000000, 1000000000),
+			atqf: tid,
+			eindex: 0,
+			context: Context::new_empty(),
+			bid: BlockId(1),
+			enabled: false,
+		};
 
 
 		let mut solver = Solver{
@@ -168,18 +180,21 @@ impl Solver{
 			base: Base::new(),
 			tqfs: tqfs,
 			questions: vec![],
-			stack: fblocks,
-			bstack: vec![],
-			bid: BlockId(bid),
+			// stack: fblocks,
+			stack: vec![],
+			bstack: vec![first_block],
+			bid: BlockId(0),
 			step:0,
 		};
 
-		solver.activate_top_block();
+		//solver.activate_top_block();
+		solver.enable_block();
 		solver
 	}
 
 	fn level(&self) -> usize{
-		self.stack.iter().filter(|x| x.activated).count()
+		// self.stack.iter().filter(|x| x.activated).count()
+		self.bstack.len() - 1
 	}
 
 
@@ -187,17 +202,19 @@ impl Solver{
 		
 		//plain_shift_strategy(&self.questions, self.step);
 
-		let curr_level = self.stack.iter().filter(|x| x.activated).count();
+		// let curr_level = self.stack.iter().filter(|x| x.activated).count();
+		let curr_level = self.bstack.len() - 1;
 		general_strategy(&self.questions, &self.tqfs, curr_level)
 	}
 
-	fn find_answer_global(&mut self) -> Option<(Answer, usize)>{
-		let bid = self.stack.last().unwrap().bid;
+	fn find_answer_global(&mut self) -> Option<AnswerId>{
+		// let bid = self.stack.last().unwrap().bid;
+		let bid = self.bstack.last().unwrap().bid;
 		let strategy = self.strategy();
 		for si in strategy.iter(){
-			if let Some((answer, aid_i)) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, &self.stack){
-				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
-				return Some((answer, aid_i));
+			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack.last().unwrap().context){
+				//println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
+				return Some(aid);
 			}
 		}
 		None
@@ -342,6 +359,46 @@ impl Solver{
 
 
 	// ================
+
+	fn transform2(&mut self, aid:AnswerId){
+		// let qid = aid.0;
+		let answer = &self.questions[aid.0].answers[aid.1];
+		let curr_context = &self.bstack[self.questions[aid.0].fstack_i].context;	
+		let origin_bid = self.bstack[self.questions[aid.0].fstack_i].bid;	
+		let a_tqf = &self.questions[aid.0].aformula;
+		let e_tqfs = &self.tqfs[a_tqf.0].next;
+		let atqf = self.questions[aid.0].aformula;
+
+		if e_tqfs.len() == 0{
+			self.remove_branch();
+			self.enable_block_loop();
+			return;
+		}
+
+		let commands = &self.tqfs[a_tqf.0].commands;
+
+		let mut env = PEnv{
+			psterms: &mut self.psterms,
+			base: &mut self.base,
+			answer: &answer,
+		};
+		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
+
+		self.bid = BlockId(self.bid.0 + 1);
+
+		let mut new_block: BranchBlock = BranchBlock{
+			aid: aid,
+			atqf: atqf,
+			eindex: 0,
+			context: Context::new2(&curr_context, &answer),
+			bid: self.bid,
+			enabled: false,
+		};
+
+		self.bstack.push(new_block);
+		self.enable_block();
+	}
+
 	fn disable_block(&mut self){
 		if let Some(top) = self.bstack.last_mut(){
 			if top.enabled{
@@ -368,12 +425,24 @@ impl Solver{
 		}
 	}
 
+	fn enable_block_loop(&mut self){
+		while self.bstack.len() > 0{
+			if !self.enable_block(){
+				self.remove_branch();
+			}else{
+				return;
+			}	 
+		}		
+	}
+
+
 	fn enable_block(&mut self) -> bool{
 		let fstack_i = self.bstack.len() - 1;
 		let level = self.bstack.len();
 		if let Some(top) = self.bstack.last_mut(){
 			top.enabled = true;
-			let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
+			// let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
+			let eid = &self.tqfs[top.atqf.0].next[top.eindex];
 			let etqf = &self.tqfs[eid.0];
 			let econj = &etqf.conj;
 			let evars = &etqf.vars;
@@ -430,15 +499,13 @@ impl Solver{
 	}
 
 	pub fn next_block(&mut self) -> bool{
-		// aid: AnswerId,
-		// eindex: usize,
-		// pub context: Context,
-		// pub bid: BlockId,
 		if let Some(top) = self.bstack.last_mut(){
 			let e_tqfs = &self.tqfs[self.questions[top.aid.0].aformula.0].next;
 			let esize = e_tqfs.len();
 			if top.eindex < esize - 1{
 				top.eindex = top.eindex + 1;
+				self.bid = BlockId(self.bid.0 + 1); 
+				top.bid = self.bid;
 				true
 			}else{
 				false
@@ -448,20 +515,31 @@ impl Solver{
 		}
 	}
 
+	pub fn remove_branch(&mut self){
+		self.disable_block();
+		while let Some(..) = self.stack.last(){
+			if !self.next_block(){
+				self.bstack.pop();
+			}else{
+				break;
+			}
+		}
+	}
+
 
 
 	pub fn solver_loop(&mut self, limit:usize) -> SolverResult{
 		let mut i = 0;
 		while i < limit{
-			println!("================================ Step {}, stack: {}  ================================", self.step, self.stack.len());
+			println!("================================ Step {}, stack: {}  ================================", self.step, self.bstack.len());
 			i = i + 1;
 			//dbg!(&self.psterms);
-			if self.stack.is_empty(){
+			if self.bstack.is_empty(){
 				println!("Refuted");
 				return SolverResult{t: SolverResultType::Refuted, steps: i};
 			}
-			if let Some((answer, aid_i)) = self.find_answer_global(){
-				self.transform(answer, aid_i);
+			if let Some(aid) = self.find_answer_global(){
+				self.transform2(aid);
 				self.step = self.step + 1;
 			}else{
 				println!("Exhausted");

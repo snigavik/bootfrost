@@ -5,6 +5,7 @@ use crate::term::*;
 use crate::strategies::*;
 use crate::solver::*;
 use crate::environment::*;
+use crate::context::*;
 
 pub struct Tqf{
 	pub quantifier: Quantifier,
@@ -89,7 +90,9 @@ impl Question{
 		psterms: &mut PSTerms, 
 		tqfs: &Vec<Tqf>, 
 		base: &mut Base,
-		stack: &Vec<FBlock>) -> Option<(Answer, usize)>{
+		// stack: &Vec<FBlock>) -> Option<AnswerId>{
+		level: usize,
+		context: &Context) -> Option<AnswerId>{	
 
 		let limit = si.limit;
 		if let Some(top) = self.curr_answer_stack.last(){
@@ -118,7 +121,7 @@ impl Question{
 					continue;
 				},
 				MatchingState::Ready => {
-					let context = &stack[self.fstack_i].context;
+					//let context = &stack[self.fstack_i].context;
 					match curr_answer.last().unwrap(){
 						LogItem::Matching{batom_i, qatom_i, ..} => {
 							let bterm = &base[*batom_i];
@@ -196,10 +199,11 @@ impl Question{
 					match si.selector{
 						SelectorStrategy::First(f) => {
 							if f(&answer1, &psterms){
-								answer1.level = Some(stack.iter().filter(|x| x.activated).count());
+								answer1.level = Some(level); //Some(stack.iter().filter(|x| x.activated).count());
 								self.used_answers.push(answer1.clone());
 								self.curr_answer_stack.push(curr_answer);
-								return Some((answer1, aid))
+								// return Some((answer1, aid))
+								return Some(AnswerId(self.qid.0, self.answers.len()-1))
 							}else{
 								continue;
 							}
