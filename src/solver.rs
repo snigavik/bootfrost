@@ -212,8 +212,10 @@ impl Solver{
 		let bid = self.bstack.last().unwrap().bid;
 		let strategy = self.strategy();
 		for si in strategy.iter(){
-			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack.last().unwrap().context){
-				//println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
+			let fstack_i = self.questions[si.qid.0].fstack_i;
+			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context){
+				let answer = &self.questions[aid.0].answers[aid.1];
+				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
 				return Some(aid);
 			}
 		}
@@ -408,7 +410,8 @@ impl Solver{
 
 				self.questions.iter_mut().for_each(|q| q.remove_answers(top.bid));
 
-				let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
+				// let eid = &self.tqfs[self.questions[top.aid.0].aformula.0].next[top.eindex];
+				let eid = &self.tqfs[top.atqf.0].next[top.eindex];
 				let etqf = &self.tqfs[eid.0];
 				let evars = &etqf.vars;
 
@@ -500,7 +503,8 @@ impl Solver{
 
 	pub fn next_block(&mut self) -> bool{
 		if let Some(top) = self.bstack.last_mut(){
-			let e_tqfs = &self.tqfs[self.questions[top.aid.0].aformula.0].next;
+			// let e_tqfs = &self.tqfs[self.questions[top.aid.0].aformula.0].next;
+			let e_tqfs = &self.tqfs[top.atqf.0].next;
 			let esize = e_tqfs.len();
 			if top.eindex < esize - 1{
 				top.eindex = top.eindex + 1;
@@ -516,10 +520,14 @@ impl Solver{
 	}
 
 	pub fn remove_branch(&mut self){
-		self.disable_block();
-		while let Some(..) = self.stack.last(){
+		dbg!("remove branch");
+		// self.disable_block();
+		while let Some(..) = self.bstack.last(){
+			self.disable_block();
 			if !self.next_block(){
 				self.bstack.pop();
+				dbg!(self.bstack.len());
+				dbg!(self.base.len());
 			}else{
 				break;
 			}
