@@ -30,6 +30,7 @@ pub struct BranchBlock{
 	pub eindex: usize,
 	pub context: Context,
 	pub bid: BlockId,
+	pub psterms_car: usize,
 	pub enabled: bool,
 }
 
@@ -171,6 +172,7 @@ impl Solver{
 			eindex: 0,
 			context: Context::new_empty(),
 			bid: BlockId(1),
+			psterms_car: psterms.len(),
 			enabled: false,
 		};
 
@@ -253,6 +255,7 @@ impl Solver{
 			eindex: 0,
 			context: Context::new(&curr_context, &answer),
 			bid: self.bid,
+			psterms_car:self.psterms.len(),
 			enabled: false,
 		};
 
@@ -275,7 +278,7 @@ impl Solver{
 
 				top.context.pop_evars(evars);
 
-				// psterms.back_to(...);
+				self.psterms.back_to(top.psterms_car);
 
 				top.enabled = false;
 			}else{
@@ -302,6 +305,7 @@ impl Solver{
 		let level = self.bstack.len();
 		if let Some(top) = self.bstack.last_mut(){
 			top.enabled = true;
+			top.psterms_car = self.psterms.len();
 			let eid = &self.tqfs[top.atqf.0].next[top.eindex];
 			let etqf = &self.tqfs[eid.0];
 			let econj = &etqf.conj;
