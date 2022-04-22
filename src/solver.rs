@@ -1,4 +1,6 @@
 
+use crate::strategies::strategies::StrategyItem;
+use crate::strategies::strategies::general_strategy;
 use std::collections::HashMap;
 
 
@@ -10,7 +12,7 @@ use crate::answer::*;
 use crate::plain::*;
 use crate::strategies::*;
 use crate::base::*;
-use crate::environment::*;
+use crate::strategies::environment::*;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum SolverResultType{
@@ -34,21 +36,12 @@ pub struct BranchBlock{
 	pub enabled: bool,
 }
 
-pub struct FBlock{
-	qid: QuestionId,
-	aid: AnswerId,
-	eid: TqfId,
-	pub context: Context,
-	pub bid: BlockId,
-	pub activated: bool,
-}
 
 pub struct Solver{
 	psterms: PSTerms,
 	base: Base,
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
-	stack: Vec<FBlock>,
 	bstack: Vec<BranchBlock>,
 	bid: BlockId,
 	step: usize,
@@ -147,24 +140,9 @@ impl Solver{
 		let mut smap = HashMap::from([("false".to_string(),TermId(0)), ("true".to_string(),TermId(1))]);
 
 		let mut tqfs = vec![];
-		let (mut psterms, mut fmap) = crate::ifunctions::init();
+		let (mut psterms, mut fmap) = crate::strategies::ifunctions::init();
 
 		let tid = plain_to_tqf(pf, &mut psterms, &mut vstack, &mut smap, &mut fmap, &mut tqfs);
-
-		// let fblocks: Vec<FBlock> = tqfs[tid.0].next.iter().enumerate().map(|(i,eid)|
-		// 	FBlock{
-		// 		qid:QuestionId(1000000000), 
-		// 		aid: AnswerId(1000000000, 1000000000),
-		// 		eid: *eid,
-		// 		context: Context::new_empty(),
-		// 		bid: BlockId(i),
-		// 		activated: false,
-		// 	}
-		// ).collect();
-
-		// let bid = fblocks.len();
-
-		// self.bid = BlockId(1);
 
 		let first_block: BranchBlock = BranchBlock{
 			aid: AnswerId(1000000000, 1000000000),
@@ -182,20 +160,16 @@ impl Solver{
 			base: Base::new(),
 			tqfs: tqfs,
 			questions: vec![],
-			// stack: fblocks,
-			stack: vec![],
 			bstack: vec![first_block],
 			bid: BlockId(0),
 			step:0,
 		};
 
-		//solver.activate_top_block();
 		solver.enable_block();
 		solver
 	}
 
 	fn level(&self) -> usize{
-		// self.stack.iter().filter(|x| x.activated).count()
 		self.bstack.len() - 1
 	}
 
@@ -204,7 +178,6 @@ impl Solver{
 		
 		//plain_shift_strategy(&self.questions, self.step);
 
-		// let curr_level = self.stack.iter().filter(|x| x.activated).count();
 		let curr_level = self.bstack.len() - 1;
 		general_strategy(&self.questions, &self.tqfs, curr_level)
 	}
@@ -533,7 +506,6 @@ pub fn matching(
 				m
 			},
 			_ => {
-				//panic!("");
 				false
 			}
 		}

@@ -6,9 +6,8 @@ mod question;
 pub mod solver;
 mod plain;
 mod parser;
-mod ifunctions;
 mod strategies;
 mod base;
-mod environment;
+
 
 #[macro_use] extern crate lalrpop_util;

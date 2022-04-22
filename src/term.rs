@@ -1,4 +1,5 @@
 
+use crate::strategies::environment::PEnv;
 use std::fmt;
 use std::collections::HashMap;
 use std::ops::Index;
@@ -8,7 +9,7 @@ use std::hash::Hash;
 use crate::misc::*;
 use crate::context::*;
 use crate::plain::*;
-use crate::environment::*;
+use crate::strategies::environment::*;
 
 
 pub enum FunctorType{

@@ -2,8 +2,10 @@ use crate::term::*;
 use crate::answer::*;
 use crate::misc::*;
 use crate::solver::*;
-use crate::environment::*;
+use crate::strategies::environment::*;
 use std::fs;
+
+
 
 use std::collections::HashMap;
 
