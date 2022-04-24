@@ -1,5 +1,6 @@
 use crate::strategies::strategies::StrategyItem;
 use crate::strategies::strategies::SelectorStrategy;
+use crate::strategies::attributes::*;
 use crate::strategies::environment::PEnv;
 use crate::misc::*;
 use crate::answer::*;
@@ -92,7 +93,8 @@ impl Question{
 		tqfs: &Vec<Tqf>, 
 		base: &mut Base,
 		level: usize,
-		context: &Context) -> Option<AnswerId>{	
+		context: &Context,
+		attributes: &mut Attributes) -> Option<AnswerId>{	
 
 		let limit = si.limit;
 		if let Some(top) = self.curr_answer_stack.last(){
@@ -131,7 +133,7 @@ impl Question{
 							let btid = bterm.term;
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];	
 
-							if matching(btid, qtid, context, &mut curr_answer, psterms, base){
+							if matching(btid, qtid, context, &mut curr_answer, psterms, base, attributes){
 								curr_answer.state = MatchingState::Success;
 								continue;
 							}else{
@@ -147,6 +149,7 @@ impl Question{
 								psterms: psterms,
 								base: base,
 								answer: &curr_answer,
+								attributes: attributes,
 							};
 
 							let b = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();

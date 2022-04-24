@@ -13,6 +13,7 @@ use crate::plain::*;
 use crate::strategies::*;
 use crate::base::*;
 use crate::strategies::environment::*;
+use crate::strategies::attributes::*;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum SolverResultType{
@@ -45,6 +46,7 @@ pub struct Solver{
 	bstack: Vec<BranchBlock>,
 	bid: BlockId,
 	step: usize,
+	attributes: Attributes,
 }
 
 impl Solver{
@@ -163,6 +165,7 @@ impl Solver{
 			bstack: vec![first_block],
 			bid: BlockId(0),
 			step:0,
+			attributes: Attributes::new(),
 		};
 
 		solver.enable_block();
@@ -187,7 +190,7 @@ impl Solver{
 		let strategy = self.strategy();
 		for si in strategy.iter(){
 			let fstack_i = self.questions[si.qid.0].fstack_i;
-			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context){
+			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context, &mut self.attributes){
 				let answer = &self.questions[aid.0].answers[aid.1];
 				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
 				return Some(aid);
@@ -217,6 +220,7 @@ impl Solver{
 			psterms: &mut self.psterms,
 			base: &mut self.base,
 			answer: &answer,
+			attributes: &mut self.attributes,
 		};
 		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
 
@@ -291,6 +295,7 @@ impl Solver{
 					psterms: &mut self.psterms,
 					base: &mut self.base,
 					answer: &self.questions[top.aid.0].answers[top.aid.1],
+					attributes: &mut self.attributes,
 				};				
 
 				econj
@@ -458,7 +463,8 @@ pub fn matching(
 	context: &Context, 
 	curr_answer: &mut Answer, 
 	psterms: &mut PSTerms, 
-	base: &mut Base) -> bool{
+	base: &mut Base,
+	attributes: &mut Attributes) -> bool{
 	
 	if btid == qtid{
 		true
@@ -468,9 +474,9 @@ pub fn matching(
 		match qterm{
 			Term::AVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, psterms, base)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes)
 				}else if let Some(new_qtid) = curr_answer.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, psterms, base)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes)
 				}else{
 					curr_answer.push(qtid, btid);
 					true
@@ -478,7 +484,7 @@ pub fn matching(
 			},
 			Term::EVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, psterms, base)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes)
 				}else{
 					false
 				}
@@ -486,7 +492,7 @@ pub fn matching(
 			Term::SFunctor(q_sid, q_args) => {
 				match bterm{
 					Term::SFunctor(b_sid,b_args) if q_sid == b_sid => {
-						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms, base))
+						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms, base, attributes))
 					},
 					_ => false,
 				}
@@ -498,10 +504,11 @@ pub fn matching(
 					psterms: psterms,
 					base: base,
 					answer: &curr_answer,
+					attributes: attributes,
 				};	
 							
 				let new_qtid = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();
-				let m = matching(btid, new_qtid, context, curr_answer, psterms, base);
+				let m = matching(btid, new_qtid, context, curr_answer, psterms, base, attributes);
 				psterms.back_to(p);
 				m
 			},
