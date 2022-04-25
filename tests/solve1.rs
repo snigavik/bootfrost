@@ -28,3 +28,10 @@ fn test4(){
 	let r = solver.solver_loop(150);
 	assert_eq!(SolverResultType::Refuted, r.t);
 }
+
+#[test]
+fn test5(){
+	let mut solver = Solver::parse_file("./problems/remove.pcf");
+	let r = solver.solver_loop(150);
+	assert_eq!(SolverResultType::Refuted, r.t);
+}

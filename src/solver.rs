@@ -106,7 +106,8 @@ impl Solver{
 
 	pub fn print(&self){
 		for (i,b) in self.base.base.iter().enumerate(){
-			if b.deleted{ print!("[");}
+			let deleted = self.attributes.check(KeyObject::BaseIndex(i), AttributeName("deleted".to_string()), AttributeValue("true".to_string()));
+			if deleted{ print!("[");}
 
 			print!("{}", TidDisplay{
 				tid: b.term,
@@ -116,7 +117,7 @@ impl Solver{
 			});	
 
 
-			if b.deleted{ print!("]");}			
+			if deleted{ print!("]");}			
 			if i < self.base.len() - 1{ print!(",");}
 			
 		}

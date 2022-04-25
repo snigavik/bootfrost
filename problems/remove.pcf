@@ -1,0 +1,6 @@
+? A(f(e)), B(1)
+	!x,y A(f(x)), B(y) $ remove_fact(1)
+		? A(g(x)), B (y + 1)
+	!y B(y), y < 5
+		! M(y)
+	! B(10)
