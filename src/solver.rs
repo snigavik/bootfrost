@@ -253,6 +253,8 @@ impl Solver{
 
 				self.questions.iter_mut().for_each(|q| q.remove_answers(top.bid));
 
+				self.attributes.remove_bid(top.bid);
+
 				let eid = &self.tqfs[top.atqf.0].next[top.eindex];
 				let etqf = &self.tqfs[eid.0];
 				let evars = &etqf.vars;
