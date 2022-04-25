@@ -126,14 +126,16 @@ impl Question{
 					match curr_answer.last().unwrap(){
 						LogItem::Matching{batom_i, qatom_i, ..} => {
 							let bterm = &base[*batom_i];
-							if bterm.deleted{
+							// if bterm.deleted{
+							if attributes.check(KeyObject::BaseIndex(*batom_i), AttributeName("deleted".to_string()), AttributeValue("true".to_string())){
+								
 								curr_answer.state = MatchingState::Fail;
 								continue;
 							}
 							let btid = bterm.term;
 							let qtid = tqfs[self.aformula.0].conj[*qatom_i];	
 
-							if matching(btid, qtid, context, &mut curr_answer, psterms, base, attributes){
+							if matching(btid, qtid, context, &mut curr_answer, psterms, base, attributes, bid){
 								curr_answer.state = MatchingState::Success;
 								continue;
 							}else{
@@ -150,6 +152,7 @@ impl Question{
 								base: base,
 								answer: &curr_answer,
 								attributes: attributes,
+								bid: bid,
 							};
 
 							let b = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();

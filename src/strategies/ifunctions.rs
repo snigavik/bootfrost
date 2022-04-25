@@ -3,6 +3,7 @@ use crate::answer::*;
 use crate::misc::*;
 use crate::solver::*;
 use crate::strategies::environment::*;
+use crate::strategies::attributes::*;
 use std::fs;
 
 
@@ -97,7 +98,7 @@ fn blen(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::Integer(env.base.len().try_into().unwrap())).unwrap()	
 }
 
-fn remove(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+fn remove_fact(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 1{
 		panic!("");
 	}
@@ -116,11 +117,8 @@ fn remove(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 		panic!("");
 	};
 
-	if let Some(bt) = env.base.get_mut(b){
-		bt.deleted = true;
-	}else{
-		panic!("");
-	}
+	env.attributes.set_attribute(KeyObject::BaseIndex(b), AttributeName("deleted".to_string()), AttributeValue("true".to_string()), env.bid);
+
 	env.psterms.get_tid(Term::Bool(true)).unwrap()	
 }
 
@@ -214,7 +212,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("++".to_string(), (concat as IFunction, Position::Infix)),
 		("replace".to_string(), (replace as IFunction, Position::Classic)),
 		("blen".to_string(), (blen as IFunction, Position::Classic)),
-		("remove".to_string(), (remove as IFunction, Position::Classic)),
+		("remove_fact".to_string(), (remove_fact as IFunction, Position::Classic)),
 		("rfts".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
 		("string".to_string(), (string as IFunction, Position::Classic)),

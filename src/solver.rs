@@ -216,15 +216,18 @@ impl Solver{
 
 		let commands = &self.tqfs[a_tqf.0].commands;
 
+		self.bid = BlockId(self.bid.0 + 1);
+
 		let mut env = PEnv{
 			psterms: &mut self.psterms,
 			base: &mut self.base,
 			answer: &answer,
 			attributes: &mut self.attributes,
+			bid: self.bid,
 		};
 		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
 
-		self.bid = BlockId(self.bid.0 + 1);
+		
 
 		let mut new_block: BranchBlock = BranchBlock{
 			aid: aid,
@@ -296,6 +299,7 @@ impl Solver{
 					base: &mut self.base,
 					answer: &self.questions[top.aid.0].answers[top.aid.1],
 					attributes: &mut self.attributes,
+					bid: top.bid,
 				};				
 
 				econj
@@ -464,7 +468,8 @@ pub fn matching(
 	curr_answer: &mut Answer, 
 	psterms: &mut PSTerms, 
 	base: &mut Base,
-	attributes: &mut Attributes) -> bool{
+	attributes: &mut Attributes,
+	bid: BlockId) -> bool{
 	
 	if btid == qtid{
 		true
@@ -474,9 +479,9 @@ pub fn matching(
 		match qterm{
 			Term::AVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes, bid)
 				}else if let Some(new_qtid) = curr_answer.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes, bid)
 				}else{
 					curr_answer.push(qtid, btid);
 					true
@@ -484,7 +489,7 @@ pub fn matching(
 			},
 			Term::EVariable(..) => {
 				if let Some(new_qtid) = context.get(&qtid){
-					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes)
+					matching(btid, *new_qtid, context, curr_answer, psterms, base, attributes, bid)
 				}else{
 					false
 				}
@@ -492,7 +497,7 @@ pub fn matching(
 			Term::SFunctor(q_sid, q_args) => {
 				match bterm{
 					Term::SFunctor(b_sid,b_args) if q_sid == b_sid => {
-						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms, base, attributes))
+						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms, base, attributes, bid))
 					},
 					_ => false,
 				}
@@ -505,10 +510,11 @@ pub fn matching(
 					base: base,
 					answer: &curr_answer,
 					attributes: attributes,
+					bid: bid,
 				};	
 							
 				let new_qtid = processing(qtid, context, Some(&curr_answer), &mut env).unwrap();
-				let m = matching(btid, new_qtid, context, curr_answer, psterms, base, attributes);
+				let m = matching(btid, new_qtid, context, curr_answer, psterms, base, attributes, bid);
 				psterms.back_to(p);
 				m
 			},

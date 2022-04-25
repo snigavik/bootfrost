@@ -1,4 +1,4 @@
-
+use crate::misc::*;
 use crate::term::*;
 use crate::base::*;
 use crate::answer::*;
@@ -9,4 +9,5 @@ pub struct PEnv<'a>{
 	pub base: &'a mut Base,
 	pub answer: &'a Answer,
 	pub attributes: &'a mut Attributes,
+	pub bid: BlockId,
 }
