@@ -44,8 +44,8 @@ pub struct Solver{
 	tqfs: Vec<Tqf>,
 	questions: Vec<Question>,
 	bstack: Vec<BranchBlock>,
-	bid: BlockId,
-	step: usize,
+	curr_bid: BlockId,
+	curr_step: usize,
 	attributes: Attributes,
 }
 
@@ -164,8 +164,8 @@ impl Solver{
 			tqfs: tqfs,
 			questions: vec![],
 			bstack: vec![first_block],
-			bid: BlockId(0),
-			step:0,
+			curr_bid: BlockId(0),
+			curr_step:0,
 			attributes: Attributes::new(),
 		};
 
@@ -217,14 +217,14 @@ impl Solver{
 
 		let commands = &self.tqfs[a_tqf.0].commands;
 
-		self.bid = BlockId(self.bid.0 + 1);
+		self.curr_bid = BlockId(self.curr_bid.0 + 1);
 
 		let mut env = PEnv{
 			psterms: &mut self.psterms,
 			base: &mut self.base,
 			answer: &answer,
 			attributes: &mut self.attributes,
-			bid: self.bid,
+			bid: self.curr_bid,
 		};
 		commands.iter().for_each(|c| {processing(*c, &curr_context, Some(&answer), &mut env);});
 
@@ -235,7 +235,7 @@ impl Solver{
 			atqf: atqf,
 			eindex: 0,
 			context: Context::new(&curr_context, &answer),
-			bid: self.bid,
+			bid: self.curr_bid,
 			psterms_car:self.psterms.len(),
 			enabled: false,
 		};
@@ -353,8 +353,8 @@ impl Solver{
 			let esize = e_tqfs.len();
 			if top.eindex < esize - 1{
 				top.eindex = top.eindex + 1;
-				self.bid = BlockId(self.bid.0 + 1); 
-				top.bid = self.bid;
+				self.curr_bid = BlockId(self.curr_bid.0 + 1); 
+				top.bid = self.curr_bid;
 				true
 			}else{
 				false
@@ -381,7 +381,7 @@ impl Solver{
 	pub fn solver_loop(&mut self, limit:usize) -> SolverResult{
 		let mut i = 0;
 		while i < limit{
-			println!("================================ Step {}, stack: {}  ================================", self.step, self.bstack.len());
+			println!("================================ Step {}, stack: {}  ================================", self.curr_step, self.bstack.len());
 			i = i + 1;
 			if self.bstack.is_empty(){
 				println!("Refuted");
@@ -389,7 +389,7 @@ impl Solver{
 			}
 			if let Some(aid) = self.find_answer_global(){
 				self.transform(aid);
-				self.step = self.step + 1;
+				self.curr_step = self.curr_step + 1;
 			}else{
 				println!("Exhausted");
 				return SolverResult{t: SolverResultType::Exhausted, steps: i};
