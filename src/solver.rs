@@ -14,6 +14,7 @@ use crate::strategies::*;
 use crate::base::*;
 use crate::strategies::environment::*;
 use crate::strategies::attributes::*;
+use crate::strategies::strategies::*;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum SolverResultType{
@@ -47,6 +48,7 @@ pub struct Solver{
 	curr_bid: BlockId,
 	curr_step: usize,
 	attributes: Attributes,
+	strategy: Strategy,
 }
 
 impl Solver{
@@ -167,6 +169,7 @@ impl Solver{
 			curr_bid: BlockId(0),
 			curr_step:0,
 			attributes: Attributes::new(),
+			strategy: Strategy::General,
 		};
 
 		solver.enable_block();
@@ -180,10 +183,21 @@ impl Solver{
 
 	fn strategy(&self) -> Vec<StrategyItem>{		
 		
-		//plain_shift_strategy(&self.questions, self.step);
-
-		let curr_level = self.bstack.len() - 1;
-		general_strategy(&self.questions, &self.tqfs, curr_level)
+		match self.strategy{
+			Strategy::PlainShift => {
+				plain_shift_strategy(&self.questions, self.curr_step)
+			},
+			Strategy::General => {
+				let curr_level = self.bstack.len() - 1;
+				general_strategy(&self.questions, &self.tqfs, curr_level)
+			},
+			Strategy::Manual => {
+				panic!("");
+			},
+			Strategy::User => {
+				panic!("");
+			},
+		}
 	}
 
 	fn find_answer_global(&mut self) -> Option<AnswerId>{

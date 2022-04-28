@@ -4,6 +4,8 @@ use crate::question::*;
 
 use crate::answer::*;
 
+use crate::strategies::environment::*;
+
 
 pub struct StrategyItem{
 	pub qid: QuestionId,
@@ -20,6 +22,13 @@ pub enum SelectorStrategy{
 pub enum StartFrom{
 	Last,
 	Scratch,
+}
+
+pub enum Strategy{
+	PlainShift,
+	General,
+	Manual,
+	User,
 }
 
 
