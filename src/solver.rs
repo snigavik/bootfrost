@@ -129,17 +129,17 @@ impl Solver{
 		}
 	}
 
-	pub fn parse_file(path: &str) -> Solver{
+	pub fn parse_file(path: &str, strategy: Strategy) -> Solver{
 		let pf = crate::parser::parser::parse_file(path);
-		Solver::from_pf(pf)
+		Solver::from_pf(pf, strategy)
 	}
 
-	pub fn parse_string(s: &str) -> Solver{
+	pub fn parse_string(s: &str, strategy: Strategy) -> Solver{
 		let pf = crate::parser::parser::parse_string(s);
-		Solver::from_pf(pf)
+		Solver::from_pf(pf, strategy)
 	}
 
-	pub fn from_pf(pf: PlainFormula) -> Solver{
+	pub fn from_pf(pf: PlainFormula, strategy: Strategy) -> Solver{
 
 		let mut vstack = vec![];
 		let mut smap = HashMap::from([("false".to_string(),TermId(0)), ("true".to_string(),TermId(1))]);
@@ -169,7 +169,8 @@ impl Solver{
 			curr_bid: BlockId(0),
 			curr_step:0,
 			attributes: Attributes::new(),
-			strategy: Strategy::General,
+			// strategy: Strategy::Manual, //Strategy::General,
+			strategy: strategy,
 		};
 
 		solver.enable_block();
@@ -192,7 +193,7 @@ impl Solver{
 				general_strategy(&self.questions, &self.tqfs, curr_level)
 			},
 			Strategy::Manual => {
-				panic!("");
+				manual_strategy(&self.questions)
 			},
 			Strategy::User => {
 				panic!("");
@@ -205,6 +206,7 @@ impl Solver{
 		let strategy = self.strategy();
 		for si in strategy.iter(){
 			let fstack_i = self.questions[si.qid.0].fstack_i;
+			println!("Try question {}", si.qid.0);
 			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context, &mut self.attributes){
 				let answer = &self.questions[aid.0].answers[aid.1];
 				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});

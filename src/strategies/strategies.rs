@@ -6,6 +6,7 @@ use crate::answer::*;
 
 use crate::strategies::environment::*;
 
+use std::io::stdin;
 
 pub struct StrategyItem{
 	pub qid: QuestionId,
@@ -75,5 +76,40 @@ pub fn general_strategy(questions: &Vec<Question>, tqfs: &Vec<Tqf>, curr_level: 
 	vq
 }
 
+pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
+	println!("Type questions from 0 to {}: ", questions.len()-1);
+    let mut input_string = String::new();
+    stdin().read_line(&mut input_string)
+    	.ok()
+        .expect("Failed to read line");
+
+    let mut vq: Vec<StrategyItem> = vec![];
+
+    let q_list = input_string.trim().split(","); //.map(|x| x.parse::<usize>().unwrap());
+    for x in q_list{
+    	// println!("{}",x);
+    	let q = x.parse::<usize>().unwrap();
+    	let si = StrategyItem{
+    		qid: QuestionId(q),
+    		selector: SelectorStrategy::First(|answer, psterms|{
+    			println!("Do you accept this answer: {}", AnswerDisplay{answer: answer, psterms: psterms, dm: DisplayMode::Plain});
+    			let mut inp = String::new();
+    			stdin().read_line(&mut inp)
+    				.ok()
+    				.expect("Failed to read line");
+    			match inp.trim(){
+    				"y" => true,
+    				"n" => false,
+    				_ => {panic!("");}
+    			}
+    		}),
+    		sf: StartFrom::Last,
+    		limit:1000,
+    	};
+    	vq.push(si);
+    }
+
+    vq
+}
 
 

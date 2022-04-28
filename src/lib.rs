@@ -6,7 +6,7 @@ mod question;
 pub mod solver;
 mod plain;
 mod parser;
-mod strategies;
+pub mod strategies;
 mod base;
 
 

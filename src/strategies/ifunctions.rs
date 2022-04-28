@@ -4,6 +4,7 @@ use crate::misc::*;
 use crate::solver::*;
 use crate::strategies::environment::*;
 use crate::strategies::attributes::*;
+use crate::strategies::strategies::Strategy;
 use std::fs;
 
 
@@ -155,7 +156,7 @@ fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	};
 	
 
-    let mut solver = Solver::parse_string(&n1);
+    let mut solver = Solver::parse_string(&n1, Strategy::General);
     let res = solver.solver_loop(150);
     let r = if SolverResultType::Refuted == res.t{
     	true
