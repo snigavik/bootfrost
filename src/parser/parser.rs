@@ -123,7 +123,7 @@ pub fn prepare_lines_string(
         buff: &mut String, 
         flag: &mut bool){
 
-    let line0 = if let Some((s,_)) = origin_line.split_once("//"){
+    let line0 = if let Some((s,_)) = origin_line.split_once("#"){
         s
     }else{
         &origin_line
