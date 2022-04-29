@@ -76,19 +76,58 @@ pub fn general_strategy(questions: &Vec<Question>, tqfs: &Vec<Tqf>, curr_level: 
 	vq
 }
 
-pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
-	println!("Type questions from 0 to {}: ", questions.len()-1);
-    let mut input_string = String::new();
-    stdin().read_line(&mut input_string)
-    	.ok()
-        .expect("Failed to read line");
 
+fn read_questions_list(qlen: usize) -> Vec<usize>{
+	loop{
+		let mut try_again = false;
+		let mut res = vec![];
+
+		println!("Type list of questions separated by commas (example: 0,2,1)");
+		println!("Each question must be a positive number in the range [0..{}]",qlen);
+	    let mut input_string = String::new();
+	    stdin().read_line(&mut input_string)
+	    	.ok()
+	        .expect("Failed to read line");	
+	    if input_string.trim() == "q"{
+	    	panic!("");
+	    }
+	    let q_list = input_string.trim().split(",");
+
+	    for x in q_list{
+	    	let q = match x.trim().parse::<usize>(){
+	    		Ok(n) => {
+	    			if n > qlen{
+	    				try_again = true;
+	    				println!("Question #{} is out of possible range [0..{}]. Try again.", n, qlen);
+	    				break;
+	    			}else{
+	    				n
+	    			}
+	    		},
+	    		Err(_) => {
+	    			try_again = true;
+	    			println!("Erorr. Invalid item: {}. Question must be a positive number. Try again.", x);
+	    			break;
+	    		},
+	    	};
+	    	res.push(q);
+	    }
+	    if try_again{
+	    	try_again = false;
+	    	continue;
+	    }else{
+	    	return res;
+	    }
+	}
+}
+
+pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
     let mut vq: Vec<StrategyItem> = vec![];
 
-    let q_list = input_string.trim().split(","); //.map(|x| x.parse::<usize>().unwrap());
-    for x in q_list{
-    	// println!("{}",x);
-    	let q = x.parse::<usize>().unwrap();
+ 	let q_list = read_questions_list(questions.len()-1);
+
+    for q in q_list{
+
     	let si = StrategyItem{
     		qid: QuestionId(q),
     		selector: SelectorStrategy::First(|answer, psterms|{
