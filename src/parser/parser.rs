@@ -57,7 +57,6 @@ fn proc(lines: &Vec<PfLine>, k: &mut usize, stack_indents: &mut Vec<i64>) -> Vec
 
     while lines[*k].indent > *stack_indents.last().unwrap(){
         stack_indents.push(lines[*k].indent);
-        dbg!(&lines[*k].line);
         let mut pf = crate::parser::tqfline::TqfLineParser::new().parse(&lines[*k].line).unwrap();
         *k = *k + 1;
         if *k >= lines.len(){
@@ -169,9 +168,6 @@ pub fn parse_string(s: &str) -> PlainFormula{
 
 pub fn parse_file(path: &str) -> PlainFormula{
     let pflines = file_to_pflines(path);
-    for x in pflines.iter(){
-        println!("{}",x);
-    }
     pflines_to_plainformula(pflines) 
 }
 

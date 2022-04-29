@@ -126,7 +126,6 @@ impl Question{
 					match curr_answer.last().unwrap(){
 						LogItem::Matching{batom_i, qatom_i, ..} => {
 							let bterm = &base[*batom_i];
-							// if bterm.deleted{
 							if attributes.check(KeyObject::BaseIndex(*batom_i), AttributeName("deleted".to_string()), AttributeValue("true".to_string())){
 								
 								curr_answer.state = MatchingState::Fail;

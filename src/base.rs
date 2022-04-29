@@ -33,13 +33,17 @@ impl Base{
 		self.base.push(BTerm{term: tid, bid: bid, deleted: false})
 	}
 
-	pub fn push_and_check(&mut self, tid:TermId, bid:BlockId){
+	pub fn push_and_check(&mut self, tid:TermId, bid:BlockId) -> bool{
 		if let Some(i) = self.index.get(&tid){
 			if self.base[*i].deleted{
 				self.push(tid, bid);
+				true
+			}else{
+				false
 			}
 		}else{
 			self.push(tid, bid);
+			true
 		}
 	}
 

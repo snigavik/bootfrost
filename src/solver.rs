@@ -107,6 +107,8 @@ impl Solver{
 	}
 
 	pub fn print(&self){
+		println!("\nCurrent formula:");
+		print!("Base: ");
 		for (i,b) in self.base.base.iter().enumerate(){
 			let deleted = self.attributes.check(KeyObject::BaseIndex(i), AttributeName("deleted".to_string()), AttributeValue("true".to_string()));
 			if deleted{ print!("[");}
@@ -123,8 +125,9 @@ impl Solver{
 			if i < self.base.len() - 1{ print!(",");}
 			
 		}
-		println!("\n");
-		for q in &self.questions{
+		println!("\n\nQuestions:");
+		for (i,q) in self.questions.iter().enumerate(){
+			print!("({}) ", i);
 			self.print_tqf(q.aformula, "".to_string(), &self.bstack[q.fstack_i].context);
 		}
 	}
@@ -169,7 +172,6 @@ impl Solver{
 			curr_bid: BlockId(0),
 			curr_step:0,
 			attributes: Attributes::new(),
-			// strategy: Strategy::Manual, //Strategy::General,
 			strategy: strategy,
 		};
 
@@ -211,6 +213,8 @@ impl Solver{
 				let answer = &self.questions[aid.0].answers[aid.1];
 				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
 				return Some(aid);
+			}else{
+				println!("No answers have been found.");
 			}
 		}
 		None
@@ -330,13 +334,22 @@ impl Solver{
 				econj.clone()
 			};
 
+			let mut added_terms = vec![];
+			let mut skipped_terms = vec![];
 			for a in new_conj{
 				if a == TermId(0){
+					println!("False has been occurred");
 					return false;
 				}
 
-				self.base.push_and_check(a,top.bid);
+				let r = self.base.push_and_check(a,top.bid);
+				if r{
+					added_terms.push(a);
+				}else{
+					skipped_terms.push(a);
+				}
 			}	
+			println!("Terms added to the base: {}", TidsDisplay{tids: &added_terms, psterms: &self.psterms, context:None, dm: DisplayMode::Plain, d:", "});
 
 			// add questions
 			let a_tqfs = &etqf.next;
@@ -381,7 +394,6 @@ impl Solver{
 	}
 
 	pub fn remove_branch(&mut self){
-		dbg!("remove branch");
 		while let Some(..) = self.bstack.last(){
 			self.disable_block();
 			if !self.next_block(){
@@ -390,6 +402,8 @@ impl Solver{
 				break;
 			}
 		}
+		println!("Branch has been removed");
+
 	}
 
 
@@ -397,22 +411,24 @@ impl Solver{
 	pub fn solver_loop(&mut self, limit:usize) -> SolverResult{
 		let mut i = 0;
 		while i < limit{
-			println!("================================ Step {}, stack: {}  ================================", self.curr_step, self.bstack.len());
+			println!("=========================================================================");
+			println!("================================ Step {} ================================", self.curr_step);
+			println!("=========================================================================");
 			i = i + 1;
 			if self.bstack.is_empty(){
-				println!("Refuted");
+				println!("\nResult: Refuted");
 				return SolverResult{t: SolverResultType::Refuted, steps: i};
 			}
 			if let Some(aid) = self.find_answer_global(){
 				self.transform(aid);
 				self.curr_step = self.curr_step + 1;
 			}else{
-				println!("Exhausted");
+				println!("\nResult: Exhausted");
 				return SolverResult{t: SolverResultType::Exhausted, steps: i};
 			}
 			self.print();
 		}
-		println!("LimitReached");
+		println!("\nResult: LimitReached");
 		return SolverResult{t: SolverResultType::LimitReached, steps: i};
 	}
 }
