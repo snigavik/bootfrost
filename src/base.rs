@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use crate::misc::*;
 use crate::term::*;
 
+use crate::strategies::attributes::*;
 
 
 pub struct Base{
@@ -33,9 +34,11 @@ impl Base{
 		self.base.push(BTerm{term: tid, bid: bid, deleted: false})
 	}
 
-	pub fn push_and_check(&mut self, tid:TermId, bid:BlockId) -> bool{
+	pub fn push_and_check(&mut self, tid:TermId, bid:BlockId, attributes: &Attributes) -> bool{
 		if let Some(i) = self.index.get(&tid){
-			if self.base[*i].deleted{
+			let deleted = attributes.check(KeyObject::BaseIndex(*i), AttributeName("deleted".to_string()), AttributeValue("true".to_string()));
+			// if self.base[*i].deleted{
+			if deleted{
 				self.push(tid, bid);
 				true
 			}else{

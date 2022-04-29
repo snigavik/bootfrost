@@ -342,7 +342,7 @@ impl Solver{
 					return false;
 				}
 
-				let r = self.base.push_and_check(a,top.bid);
+				let r = self.base.push_and_check(a,top.bid, &self.attributes);
 				if r{
 					added_terms.push(a);
 				}else{
