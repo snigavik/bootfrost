@@ -349,8 +349,9 @@ impl Solver{
 					skipped_terms.push(a);
 				}
 			}	
-			println!("Terms added to the base: {}", TidsDisplay{tids: &added_terms, psterms: &self.psterms, context:None, dm: DisplayMode::Plain, d:", "});
-
+			if level > 1{
+				println!("Terms added to the base: {}", TidsDisplay{tids: &added_terms, psterms: &self.psterms, context:None, dm: DisplayMode::Plain, d:", "});
+			}
 			// add questions
 			let a_tqfs = &etqf.next;
 			let q_len = self.questions.len();
