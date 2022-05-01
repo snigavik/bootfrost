@@ -1,0 +1,4 @@
+? A(e), A(b), A(c), B(a), B(b)
+	!x,y A(x), B(y)
+		? R(x,y)
+	! R(c,b)

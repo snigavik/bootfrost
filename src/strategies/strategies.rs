@@ -16,9 +16,10 @@ pub struct StrategyItem{
 	pub limit: usize,
 }
 
+#[derive(Clone)]
 pub enum SelectorStrategy{
 	First(fn(&Answer, &PSTerms) -> bool),
-	Best,
+	Best(fn(&Vec<Answer>, usize, &PSTerms) -> Option<AnswerId>),
 }
 
 pub enum StartFrom{
@@ -29,7 +30,8 @@ pub enum StartFrom{
 pub enum Strategy{
 	PlainShift,
 	General,
-	Manual,
+	ManualFirst,
+	ManualBest,
 	User,
 }
 
@@ -122,7 +124,7 @@ fn read_questions_list(qlen: usize) -> Vec<usize>{
 }
 
 
-pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
+pub fn manual_strategy(questions: &Vec<Question>, selector: SelectorStrategy) -> Vec<StrategyItem>{
     let mut vq: Vec<StrategyItem> = vec![];
 
  	let q_list = read_questions_list(questions.len()-1);
@@ -131,7 +133,7 @@ pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
 
     	let si = StrategyItem{
     		qid: QuestionId(q),
-    		selector: SelectorStrategy::First(first_manual),
+    		selector: selector.clone(), //SelectorStrategy::First(first_manual),
     		sf: StartFrom::Last,
     		limit:1000,
     	};

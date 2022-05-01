@@ -31,7 +31,8 @@ fn main() {
 	let s = match args.strategy.as_str(){
 		"plain" => Strategy::PlainShift,
 		"general" => Strategy::General,
-		"manual" => Strategy::Manual,
+		"manualfirst" => Strategy::ManualFirst,
+		"manualbest" => Strategy::ManualBest,
 		_ => {
 			panic!("Invalid strategy name. Type plain, general or manual.");
 		},

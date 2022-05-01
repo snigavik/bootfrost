@@ -1,6 +1,7 @@
 
 use crate::strategies::strategies::StrategyItem;
 use crate::strategies::strategies::general_strategy;
+use crate::strategies::answer_validators::*;
 use std::collections::HashMap;
 
 
@@ -194,9 +195,12 @@ impl Solver{
 				let curr_level = self.bstack.len() - 1;
 				general_strategy(&self.questions, &self.tqfs, curr_level)
 			},
-			Strategy::Manual => {
-				manual_strategy(&self.questions)
+			Strategy::ManualFirst => {
+				manual_strategy(&self.questions, SelectorStrategy::First(first_manual))
 			},
+			Strategy::ManualBest => {
+				manual_strategy(&self.questions, SelectorStrategy::Best(best_manual))
+			},			
 			Strategy::User => {
 				panic!("");
 			},

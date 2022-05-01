@@ -111,6 +111,7 @@ impl Question{
 		let mut curr_answer = self.curr_answer_stack.pop().unwrap();
 
 		let mut i = 0;
+		let start = self.answers.len();
 		while i < limit{
 			i = i + 1;
 			match &curr_answer.state{
@@ -211,7 +212,7 @@ impl Question{
 								continue;
 							}
 						},
-						SelectorStrategy::Best => {
+						SelectorStrategy::Best(..) => {
 							continue;
 						}
 					}
@@ -223,6 +224,16 @@ impl Question{
 
 		}
 		self.curr_answer_stack.push(curr_answer);
+
+		let finish = self.answers.len();
+		if let SelectorStrategy::Best(f) = si.selector{
+			if self.answers.len() == 0{
+				return None;
+			}
+			let res_answer = f(&self.answers, 0, &psterms);
+			return res_answer;
+		}
+
 		None //		 
 	}	
 }
