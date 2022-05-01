@@ -5,6 +5,7 @@ use crate::question::*;
 use crate::answer::*;
 
 use crate::strategies::environment::*;
+use crate::strategies::answer_validators::*;
 
 use std::io::stdin;
 
@@ -120,6 +121,7 @@ fn read_questions_list(qlen: usize) -> Vec<usize>{
 	}
 }
 
+
 pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
     let mut vq: Vec<StrategyItem> = vec![];
 
@@ -129,34 +131,7 @@ pub fn manual_strategy(questions: &Vec<Question>) -> Vec<StrategyItem>{
 
     	let si = StrategyItem{
     		qid: QuestionId(q),
-    		selector: SelectorStrategy::First(|answer, psterms|{
-    			loop{
-    				let mut try_again = false;
-	    			println!("Do you accept this answer [y/n]: {}", AnswerDisplay{answer: answer, psterms: psterms, dm: DisplayMode::Plain});
-	    			let mut inp = String::new();
-	    			stdin().read_line(&mut inp)
-	    				.ok()
-	    				.expect("Failed to read line");
-	    			match inp.trim(){
-	    				"y" => {
-	    					return true;
-	    				},
-	    				"n" => {
-	    					return false;
-	    				},
-	    				"q" => {
-	    					panic!("");
-	    				},
-	    				_ => {
-	    					println!("Type y or n.");
-	    					try_again = true;
-	    				}
-	    			}
-	    			if try_again{
-	    				continue;
-	    			}
-    			}
-    		}),
+    		selector: SelectorStrategy::First(first_manual),
     		sf: StartFrom::Last,
     		limit:1000,
     	};
