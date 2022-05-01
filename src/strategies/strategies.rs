@@ -83,7 +83,7 @@ pub fn general_strategy(questions: &Vec<Question>, tqfs: &Vec<Tqf>, curr_level: 
 fn read_questions_list(qlen: usize) -> Vec<usize>{
 	loop{
 		let mut try_again = false;
-		let mut res = vec![];
+		let mut res:Vec<usize> = vec![];
 
 		println!("Type list of questions separated by commas (example: 0,2,1)");
 		println!("Each question must be a positive number in the range [0..{}]",qlen);
@@ -94,9 +94,18 @@ fn read_questions_list(qlen: usize) -> Vec<usize>{
 	    if input_string.trim() == "q"{
 	    	panic!("");
 	    }
-	    let q_list = input_string.trim().split(",");
+	    let q_list:Vec<&str> = input_string.trim().split(",").collect();
 
-	    for x in q_list{
+	    for (i,x) in q_list.iter().enumerate(){
+	    	if i == q_list.len()-1 && x.trim() == ".."{
+	    		let r_full:Vec<usize> = (0..qlen+1).collect();
+	    		for r in r_full{
+	    			if !res.contains(&r){
+	    				res.push(r);
+	    			}
+	    		}
+	    		return res;
+	    	}
 	    	let q = match x.trim().parse::<usize>(){
 	    		Ok(n) => {
 	    			if n > qlen{
