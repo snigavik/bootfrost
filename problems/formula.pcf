@@ -1,6 +1,6 @@
 # test comments
 ? B(1), R(3) # base facts
 	!x,y B(x), R(y) #first question
-		? B(x + 10), R(y + 10), S(replace(rfts("./problems/testfile"),"apple","orange"))
+		? B(x + 10), R(y + 10), S(replace(read_file_to_string("./problems/testfile"),"apple","orange"))
 	# second question
 	! blen() > 10

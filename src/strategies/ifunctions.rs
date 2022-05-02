@@ -225,7 +225,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("replace".to_string(), (replace as IFunction, Position::Classic)),
 		("blen".to_string(), (blen as IFunction, Position::Classic)),
 		("remove_fact".to_string(), (remove_fact as IFunction, Position::Classic)),
-		("rfts".to_string(), (read_file_to_string as IFunction, Position::Classic)),
+		("read_file_to_string".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
 		("string".to_string(), (string as IFunction, Position::Classic)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),

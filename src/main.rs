@@ -34,7 +34,7 @@ fn main() {
 		"manualfirst" => Strategy::ManualFirst,
 		"manualbest" => Strategy::ManualBest,
 		_ => {
-			panic!("Invalid strategy name. Type plain, general or manual.");
+			panic!("Invalid strategy name. Type plain, general, manualfirst or manualbest.");
 		},
 	};
 
