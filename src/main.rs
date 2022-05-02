@@ -14,7 +14,7 @@ struct Arguments{
 	formula: String,
 
 	#[clap(short, long)]
-	/// Strategy: "plain", "general", "manual" or path to the file containing the user strategy
+	/// Strategy: "plain", "general", "manualfirst", "manualbest" or path to the file containing the user strategy
 	strategy: String,
 
 	#[clap(short, long)]

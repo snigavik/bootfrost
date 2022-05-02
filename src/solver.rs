@@ -123,7 +123,7 @@ impl Solver{
 
 
 			if deleted{ print!("]");}			
-			if i < self.base.len() - 1{ print!(",");}
+			if i < self.base.len() - 1{ print!(", ");}
 			
 		}
 		println!("\n\nQuestions:");

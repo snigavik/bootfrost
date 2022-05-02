@@ -14,6 +14,6 @@
 		? P(qGs,qHt)
 	! qGs,qHt,q1t,e P(qGs,qHt), dG(qGs,e,q1t), Eo(e)
 		?
-			! y,q2t dH(qHt,y,q2t), y & e
+			! y,q2t dH(qHt,y,q2t), y != e
 				? Uo(qHt,y)
 	! q,e Uo(q,e)

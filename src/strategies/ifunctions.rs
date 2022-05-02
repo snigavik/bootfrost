@@ -17,8 +17,8 @@ fn plus(a:i64,b:i64) -> i64 {a + b}
 fn minus(a:i64,b:i64) -> i64 {a - b}
 fn multiply(a:i64,b:i64) -> i64 {a * b}
 
-fn eq(a:i64, b:i64) -> bool {a == b}
-fn noteq(a:i64, b:i64) -> bool {a != b}
+// fn eq(a:i64, b:i64) -> bool {a == b}
+// fn noteq(a:i64, b:i64) -> bool {a != b}
 fn lt(a:i64, b:i64) -> bool {a < b}
 fn gt(a:i64, b:i64) -> bool {a > b}
 fn lteq(a:i64, b:i64) -> bool {a <= b}
@@ -183,13 +183,22 @@ fn string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 }
 
 
-fn notequal(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+fn noteq(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 2{
 		panic!("");
 	}
 	let res = args[0] == args[1];
 
 	env.psterms.get_tid(Term::Bool(!res)).unwrap()
+}
+
+fn eq(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+	let res = args[0] == args[1];
+
+	env.psterms.get_tid(Term::Bool(res)).unwrap()
 }
 
 
@@ -201,11 +210,13 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 
 
 	let fs = HashMap::from([
+		("!=".to_string(), (noteq as IFunction, Position::Infix)),
+		("==".to_string(), (eq as IFunction, Position::Infix)),
 		("+".to_string(), (ifunction_binary_integers!(plus, i64) as IFunction, Position::Infix)),
 		("-".to_string(), (ifunction_binary_integers!(minus, i64) as IFunction, Position::Infix)),
 		("*".to_string(), (ifunction_binary_integers!(multiply, i64) as IFunction, Position::Infix)),
-		("==".to_string(), (ifunction_binary_integers!(eq, bool) as IFunction, Position::Infix)),
-		("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as IFunction, Position::Infix)),
+		// ("==".to_string(), (ifunction_binary_integers!(eq, bool) as IFunction, Position::Infix)),
+		// ("!=".to_string(), (ifunction_binary_integers!(noteq, bool) as IFunction, Position::Infix)),
 		("<".to_string(), (ifunction_binary_integers!(lt, bool) as IFunction, Position::Infix)),
 		(">".to_string(), (ifunction_binary_integers!(gt, bool) as IFunction, Position::Infix)),
 		("<=".to_string(), (ifunction_binary_integers!(lteq, bool) as IFunction, Position::Infix)),
@@ -217,7 +228,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("rfts".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
 		("string".to_string(), (string as IFunction, Position::Classic)),
-		("&".to_string(), (notequal as IFunction, Position::Infix)),
+		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 
 
