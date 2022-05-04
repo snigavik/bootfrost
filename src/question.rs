@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::strategies::strategies::StrategyItem;
 use crate::strategies::strategies::SelectorStrategy;
 use crate::strategies::attributes::*;
@@ -11,6 +13,7 @@ use crate::solver::*;
 
 use crate::context::*;
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Tqf{
 	pub quantifier: Quantifier,
 	pub vars: Vec<TermId>,
@@ -25,7 +28,7 @@ impl Tqf{
 	}
 }
 
-
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Question{
 	pub qid: QuestionId,
 	pub bid: BlockId,

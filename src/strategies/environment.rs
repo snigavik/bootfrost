@@ -1,8 +1,11 @@
+use serde::{Deserialize, Serialize};
+
 use crate::misc::*;
 use crate::term::*;
 use crate::base::*;
 use crate::answer::*;
 use crate::strategies::attributes::*;
+
 
 pub struct PEnv<'a>{
 	pub psterms: &'a mut PSTerms,

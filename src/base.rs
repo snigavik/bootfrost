@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use std::ops::Index;
 use std::collections::HashMap;
 
@@ -7,6 +9,7 @@ use crate::term::*;
 use crate::strategies::attributes::*;
 
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Base{
 	pub base: Vec<BTerm>,
 	index: HashMap<TermId, usize>,

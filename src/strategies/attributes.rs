@@ -1,19 +1,22 @@
+use serde::{Deserialize, Serialize};
+
 use std::collections::HashMap;
 use crate::misc::*;
 
-#[derive(Hash, Eq, PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone, Debug, Deserialize, Serialize)]
 pub struct AttributeName(pub String);
 
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug, Deserialize, Serialize)]
 pub struct AttributeValue(pub String);
 
-#[derive(Hash, Eq, PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone, Debug, Deserialize, Serialize)]
 pub enum KeyObject{
 	BaseIndex(usize),
 }
 
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Attributes{
 	map: HashMap<KeyObject, HashMap<AttributeName, Vec<(AttributeValue, BlockId)>>>,
 	index: HashMap<BlockId, Vec<(KeyObject, AttributeName)>>,

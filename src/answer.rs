@@ -1,4 +1,4 @@
-
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::misc::*;
@@ -9,7 +9,7 @@ use crate::base::*;
 use std::fmt;
 
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 pub enum MatchingState{
 	Ready,
 	Fail,
@@ -43,7 +43,7 @@ impl fmt::Debug for MatchingState{
 }
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum LogItem{
 	Matching{
 		qatom_i: usize, 
@@ -57,7 +57,7 @@ pub enum LogItem{
 
 
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Answer{
 	pub amap: HashMap<TermId, TermId>,
 	pub log: Vec<LogItem>,

@@ -1,11 +1,11 @@
-
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::misc::*;
 use crate::term::*;
 use crate::answer::*;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Context{
 	pub map: HashMap<TermId, TermId>,
 }

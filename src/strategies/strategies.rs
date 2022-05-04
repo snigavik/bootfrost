@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::misc::*;
 use crate::term::*;
 use crate::question::*;
@@ -8,6 +10,7 @@ use crate::strategies::environment::*;
 use crate::strategies::answer_validators::*;
 
 use std::io::stdin;
+
 
 pub struct StrategyItem{
 	pub qid: QuestionId,
@@ -22,11 +25,13 @@ pub enum SelectorStrategy{
 	Best(fn(&Vec<Answer>, usize, &PSTerms) -> Option<AnswerId>),
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub enum StartFrom{
 	Last,
 	Scratch,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Strategy{
 	PlainShift,
 	General,

@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 
 use crate::strategies::strategies::StrategyItem;
 use crate::strategies::strategies::general_strategy;
@@ -17,18 +18,20 @@ use crate::strategies::environment::*;
 use crate::strategies::attributes::*;
 use crate::strategies::strategies::*;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum SolverResultType{
 	Refuted,
 	Exhausted,
 	LimitReached,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SolverResult{
 	pub t: SolverResultType,
 	pub steps: usize,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BranchBlock{
 	pub aid: AnswerId,
 	pub atqf: TqfId,
@@ -38,6 +41,7 @@ pub struct BranchBlock{
 	pub psterms_car: usize,
 	pub enabled: bool,
 }
+
 
 
 pub struct Solver{

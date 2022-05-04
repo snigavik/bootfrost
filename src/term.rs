@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 
 use crate::strategies::environment::PEnv;
 use std::fmt;
@@ -32,7 +33,7 @@ impl fmt::Debug for Symbol{
 }
 
 
-#[derive(Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Eq, PartialEq, Hash, Debug, Deserialize, Serialize)]
 pub enum Term{
 	AVariable(SymbolId),
 	EVariable(SymbolId, BlockId),
@@ -44,13 +45,13 @@ pub enum Term{
 	IFunctor(SymbolId, Vec<TermId>,),
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BTerm{
 	pub term: TermId,
 	pub bid: BlockId,
 	pub deleted: bool,
 }
 
-#[derive(Debug)]
 pub struct PSTerms{
 	symbols: Vec<Symbol>,
 	terms: Vec<Term>,

@@ -1,42 +1,46 @@
+use serde::{Deserialize, Serialize};
 
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize)]
 pub struct SymbolId(pub usize);
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize)]
 pub struct TermId(pub usize);
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize)]
 pub struct TqfId(pub usize);
 
 pub struct ConjunctIndex(pub usize);
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize)]
 pub struct QuestionId(pub usize);
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct AnswerId(pub usize, pub usize);
 
-#[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq, Debug, Deserialize, Serialize)]
 pub struct BlockId(pub usize);
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
 pub enum Quantifier{
     Forall,
     Exists,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
 pub enum DisplayMode{
 	Plain,
 	PlainSid,
 	PlainSidTid
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Position{
 	Classic,
 	Infix,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub enum ProcessingResult{
 	New(TermId),
 	Existing(TermId),
