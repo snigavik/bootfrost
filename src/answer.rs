@@ -118,6 +118,15 @@ impl Answer{
 		self.log.len()
 	}
 
+	pub fn get_batoms(&self) -> Vec<Option<usize>>{
+		self.log.iter().map(|x| {
+			match x{
+				LogItem::Matching{batom_i,..} => Some(*batom_i),
+				LogItem::Interpretation{..} => None,
+			}
+		}).collect()
+	}
+
 	pub fn last(&self) -> Option<&LogItem>{
 		self.log.last()
 	}

@@ -123,6 +123,28 @@ fn remove_fact(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::Bool(true)).unwrap()	
 }
 
+pub fn print_batoms(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 0{
+		panic!("");
+	}
+
+	let vector = env.answer.get_batoms();
+	for v in vector{
+		if let Some(b) = v{
+			print!("{}, ", TidDisplay{
+				tid: env.base[b].term,
+				psterms: env.psterms,
+				context: None,
+				dm: DisplayMode::Plain,
+			});
+		}else{
+			print!("=i=");
+		}
+	}
+
+	env.psterms.get_tid(Term::Bool(true)).unwrap()	
+}
+
 fn read_file_to_string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 1{
 		panic!("");
