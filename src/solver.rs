@@ -17,6 +17,7 @@ use crate::base::*;
 use crate::strategies::environment::*;
 use crate::strategies::attributes::*;
 use crate::strategies::strategies::*;
+use crate::strategies::ifunctions::*;
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum SolverResultType{
@@ -359,6 +360,14 @@ impl Solver{
 			}	
 			if level > 1{
 				println!("Terms added to the base: {}", TidsDisplay{tids: &added_terms, psterms: &self.psterms, context:None, dm: DisplayMode::Plain, d:", "});
+				let mut env = PEnv{
+					psterms: &mut self.psterms,
+					base: &mut self.base,
+					answer: &self.questions[top.aid.0].answers[top.aid.1],
+					attributes: &mut self.attributes,
+					bid: top.bid,
+				};				
+				print_batoms(&vec![], &mut env);
 			}
 			// add questions
 			let a_tqfs = &etqf.next;
