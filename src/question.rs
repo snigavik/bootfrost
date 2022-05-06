@@ -1,17 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-use crate::strategies::strategies::StrategyItem;
-use crate::strategies::strategies::SelectorStrategy;
-use crate::strategies::attributes::*;
-use crate::strategies::environment::PEnv;
+use crate::strategies::{strategies::StrategyItem, strategies::SelectorStrategy, attributes::*, environment::PEnv};
 use crate::misc::*;
 use crate::answer::*;
 use crate::base::*;
 use crate::term::*;
-
 use crate::solver::*;
-
 use crate::context::*;
+
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Tqf{

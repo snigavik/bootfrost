@@ -1,6 +1,5 @@
 
 use clap::Parser;
-// use std::path::Path;
 
 use bootfrost::solver::*;
 use bootfrost::strategies::strategies::Strategy;

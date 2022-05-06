@@ -1,8 +1,4 @@
 use serde::{Deserialize, Serialize};
-
-use crate::strategies::strategies::StrategyItem;
-use crate::strategies::strategies::general_strategy;
-use crate::strategies::answer_validators::*;
 use std::collections::HashMap;
 
 
@@ -12,12 +8,10 @@ use crate::question::*;
 use crate::context::*;
 use crate::answer::*;
 use crate::plain::*;
-use crate::strategies::*;
 use crate::base::*;
-use crate::strategies::environment::*;
-use crate::strategies::attributes::*;
-use crate::strategies::strategies::*;
-use crate::strategies::ifunctions::*;
+
+use crate::strategies::{environment::*, attributes::*, strategies::*, ifunctions::*, answer_validators::*};
+
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum SolverResultType{

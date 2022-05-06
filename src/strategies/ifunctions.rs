@@ -129,7 +129,7 @@ pub fn print_batoms(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	}
 
 	let vector = env.answer.get_batoms();
-	print!("Atoms used in the base: ");
+	print!("Terms used in the base: ");
 	for v in vector{
 		if let Some(b) = v{
 			print!("{}, ", TidDisplay{
