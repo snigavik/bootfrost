@@ -1,4 +1,5 @@
-use serde::{Deserialize, Serialize};
+// use serde::{Deserialize, Serialize};
+use serde::ser::{Serialize, Serializer, SerializeStruct};
 
 use crate::strategies::environment::PEnv;
 use std::fmt;
@@ -26,6 +27,20 @@ pub struct Symbol{
 	pub position: Position,
 }
 
+impl Serialize for Symbol{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Symbol", 3)?;
+        state.serialize_field("uid", &self.uid)?;
+        state.serialize_field("name", &self.name)?;
+        state.serialize_field("position", &self.position)?;
+        state.end()
+    }	
+}
+
+
 impl fmt::Debug for Symbol{
     fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
     	write!(fmt,"symbol: {}, {}",self.uid, self.name)
@@ -33,7 +48,7 @@ impl fmt::Debug for Symbol{
 }
 
 
-#[derive(Clone, Eq, PartialEq, Hash, Debug, Deserialize, Serialize)]
+#[derive(Clone, Eq, PartialEq, Hash, Debug, serde::Deserialize, serde::Serialize)]
 pub enum Term{
 	AVariable(SymbolId),
 	EVariable(SymbolId, BlockId),
@@ -45,13 +60,13 @@ pub enum Term{
 	IFunctor(SymbolId, Vec<TermId>,),
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct BTerm{
 	pub term: TermId,
 	pub bid: BlockId,
 	pub deleted: bool,
 }
-
+#[derive(serde::Serialize)]
 pub struct PSTerms{
 	symbols: Vec<Symbol>,
 	terms: Vec<Term>,

@@ -38,7 +38,7 @@ pub struct BranchBlock{
 }
 
 
-
+#[derive(Serialize)]
 pub struct Solver{
 	psterms: PSTerms,
 	base: Base,
