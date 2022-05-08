@@ -66,12 +66,26 @@ pub struct BTerm{
 	pub bid: BlockId,
 	pub deleted: bool,
 }
-#[derive(serde::Serialize)]
+//#[derive(serde::Serialize)]
 pub struct PSTerms{
 	symbols: Vec<Symbol>,
 	terms: Vec<Term>,
 	index: HashMap<Term,TermId>,	
 }
+
+impl Serialize for PSTerms{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("PSTerms", 3)?;
+        state.serialize_field("symbols", &self.symbols)?;
+        state.serialize_field("terms", &self.terms)?;
+        state.end()
+    }	
+}
+
+
 
 impl Index<&TermId> for PSTerms{
 	type Output = Term;
