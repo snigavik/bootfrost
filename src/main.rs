@@ -1,4 +1,4 @@
-
+use std::mem;
 use clap::Parser;
 
 use bootfrost::solver::*;
@@ -40,4 +40,5 @@ fn main() {
 	let mut solver = Solver::parse_file(&args.formula, s);
 	solver.print();
 	solver.solver_loop(args.limit);
+
 }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
+use std::mem;
 
 use crate::misc::*;
 use crate::term::*;
@@ -426,7 +426,6 @@ impl Solver{
 			println!("=========================================================================");
 			println!("================================ Step {} ================================", self.curr_step);
 			println!("=========================================================================");
-			
 			i = i + 1;
 			if self.bstack.is_empty(){
 				println!("\nResult: Refuted");
