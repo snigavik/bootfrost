@@ -12,6 +12,7 @@ use crate::base::*;
 
 use crate::strategies::{environment::*, attributes::*, strategies::*, ifunctions::*, answer_validators::*};
 
+use crate::utils::totalsize::TotalSize;
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum SolverResultType{
@@ -426,6 +427,7 @@ impl Solver{
 			println!("=========================================================================");
 			println!("================================ Step {} ================================", self.curr_step);
 			println!("=========================================================================");
+			println!("== {}",self.base[0].term.total_size());
 			i = i + 1;
 			if self.bstack.is_empty(){
 				println!("\nResult: Refuted");
