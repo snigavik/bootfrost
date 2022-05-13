@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use crate::utils::totalsize::TotalSize;
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize, TotalSize)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize)]
 pub struct SymbolId(pub usize);
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize, TotalSize)]
