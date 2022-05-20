@@ -13,11 +13,17 @@ pub fn derive_total_size(input: proc_macro::TokenStream) -> proc_macro::TokenStr
 
     let ast = parse_macro_input!(input as DeriveInput);
     let name = ast.ident;
+    let data = ast.data;
 
     let gen = quote! {
         impl TotalSize for #name {
             fn total_size(&self) -> usize {
-                100
+			    // match *data {
+			    //     Data::Struct(ref inner) => 0, 
+			    //     Data::Enum(ref inner) => 0,
+			    //     Data::Union(_) => 0,
+			    // }
+			    0
             }
         }
     };
