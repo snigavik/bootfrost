@@ -71,7 +71,7 @@ impl Solver{
 			tids: &tqf.vars,
 			psterms: &self.psterms,
 			context: Some(context),
-			dm: DisplayMode::Plain,
+			dm: DisplayMode::PlainSid,
 			d: ",",
 		});
 
@@ -427,7 +427,7 @@ impl Solver{
 			println!("=========================================================================");
 			println!("================================ Step {} ================================", self.curr_step);
 			println!("=========================================================================");
-			println!("== {}",self.base[0].term.total_size());
+			// println!("== {}",self.base[0].term.total_size());
 			i = i + 1;
 			if self.bstack.is_empty(){
 				println!("\nResult: Refuted");
@@ -463,6 +463,13 @@ pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, env: 
 					panic!("");
 				}
 			}else{
+				// println!("{}",
+				// 	TidDisplay{
+				// 		tid: tid,
+				// 		psterms: env.psterms,
+				// 		context: Some(context),
+				// 		dm: DisplayMode::PlainSid,							
+				// 	});	
 				panic!("");
 			}
 		},
