@@ -1,0 +1,34 @@
+? 	Q(St), Q(Mo), Q(Pu), Q(Ro), ~
+	Q0G(St), ~
+	E("tn"), E("mv"), E("ro"), E("st"), E("pu"), ~
+	Ec("tn"), Ec("mv"), Ec("ro"), Ec("st"), Ec("pu"), ~
+	Euo("tn"), Eo("mv"), Eo("ro"), Eo("st"), Eo("pu"), ~
+	dG(St,"mv",Mo), dG(St,"pu",Pu), dG(St,"ro",Ro), dG(Mo,"pu",Pu), dG(Mo,"st",St), dG(Mo,"tn",Ro), ~
+	dG(Pu,"mv",Mo), dG(Pu,"tn",Ro), dG(Pu,"st",St), dG(Ro,"pu",Pu), dG(Ro,"st",St), dG(Ro,"mv",Mo), ~
+	Q0H(St), ~
+	dH(St,"mv",Mo), dH(St,"pu",Pu), dH(St,"ro",Ro), dH(Mo,"pu",Pu), dH(Mo,"st",St), dH(Mo,"tn",Ro), ~
+	dH(Pu,"mv",Mo), dH(Pu,"tn",Ro), dH(Ro,"pu",Pu), dH(Ro,"st",St), dH(Ro,"mv",Mo), ~
+	NoFG(St, "tn"), NoFG(St, "st"), NoFG(Ro, "tn"), NoFG(Ro, "ro"), ~
+	NoFG(Mo, "mv"), NoFG(Mo, "ro"), NoFG(Pu, "ro"), NoFG(Pu, "pu"), ~
+	FG(St, "mv"), FG(St, "pu"), FG(St, "ro"), FG(Mo, "pu"), ~
+	FG(Mo, "tn"), FG(Mo, "st"), FG(Pu, "mv"), FG(Pu, "tn"), ~
+	FG(Pu, "st"), FG(Ro, "pu"), FG(Ro, "st"), FG(Ro, "mv"), ~
+	NoFH(St, "tn"), NoFH(St, "st"), NoFH(Ro, "tn"), NoFH(Ro, "ro"), ~
+	NoFH(Mo, "mv"), NoFH(Mo, "ro"), NoFH(Pu, "st"), NoFH(Pu, "pu"), NoFH(Pu, "ro"), ~
+	FH(St, "mv"), FH(St, "pu"), FH(St, "ro"), FH(Mo, "pu"), FH(Mo, "st"), ~
+	FH(Mo, "tn"), FH(Ro, "pu"), FH(Ro, "st"), FH(Ro, "mv"), FH(Pu, "mv"), FH(Pu, "tn") 
+#	! e,q E(e), Q(q)
+#		? NoFG(q,e)
+#	! e,q,q1 dG(q, e, q1), NoFG(q,e) $ remove_fact(1)
+#		? FG(q,e)
+	! qH,qG Q0H(qH), Q0G(qG) 
+		? T(qH,qH,qG)
+	! qH1,qH2,qG,e T(qH1,qH2,qG), Ec(e), FH(qH1,e), NoFH(qH2,e), FG(qG,e)
+		? dead(qH1,qH2,qG,e)
+	! x,y,z,s dead(x,y,z,s)
+	! qH1,qH2,qG,e,qtH1,qtH2,qtG T(qH1,qH2,qG), Ec(e), Eo(e), dH(qH1,e,qtH1), dH(qH2,e,qtH2), dG(qG,e,qtG)
+		? T(qtH1,qtH2,qtG)
+	! qH1,qH2,qG,e,qtH1 T(qH1,qH2,qG), Ec(e), Euo(e), dH(qH1,e,qtH1)
+		? T(qtH1,qH2,qG)
+	! qH1,qH2,qG,e,qtH2,qtG T(qH1,qH2,qG), Ec(e), Euo(e), dH(qH2,e,qtH2), dG(qG,e,qtG)
+		? T(qH1,qtH2,qtG)

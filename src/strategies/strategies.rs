@@ -19,6 +19,8 @@ pub struct StrategyItem{
 	pub limit: usize,
 }
 
+const T_LIMIT: usize = 1000000000;
+
 #[derive(Clone)]
 pub enum SelectorStrategy{
 	First(fn(&Answer, &PSTerms) -> bool),
@@ -51,7 +53,7 @@ pub fn plain_shift_strategy(questions: &Vec<Question>, step: usize) -> Vec<Strat
 				qid: QuestionId(i),
 				selector: SelectorStrategy::First(|_,_| true),
 				sf: StartFrom::Last,
-				limit:1000}).collect();
+				limit:T_LIMIT}).collect();
 	vq.rotate_left(step % questions.len());	
 	vq	
 }
@@ -76,7 +78,7 @@ pub fn general_strategy(questions: &Vec<Question>, tqfs: &Vec<Tqf>, curr_level: 
 				qid: *qid,
 				selector: SelectorStrategy::First(|_,_| true),
 				sf: StartFrom::Last,
-				limit:1000,
+				limit:T_LIMIT,
 			}).collect();
 
 	let disp2 = vq.iter().map(|x| (x.qid.0).to_string()).collect::<Vec<String>>().join(", ");
@@ -149,7 +151,7 @@ pub fn manual_strategy(questions: &Vec<Question>, selector: SelectorStrategy) ->
     		qid: QuestionId(q),
     		selector: selector.clone(), //SelectorStrategy::First(first_manual),
     		sf: StartFrom::Last,
-    		limit:1000,
+    		limit:T_LIMIT,
     	};
     	vq.push(si);
     }
