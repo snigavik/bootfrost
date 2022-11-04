@@ -12,7 +12,6 @@ use crate::base::*;
 
 use crate::strategies::{environment::*, attributes::*, strategies::*, ifunctions::*, answer_validators::*};
 
-use crate::utils::totalsize::TotalSize;
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize)]
 pub enum SolverResultType{

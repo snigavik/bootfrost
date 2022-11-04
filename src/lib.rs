@@ -10,7 +10,5 @@ pub mod strategies;
 mod base;
 pub mod utils;
 
-#[macro_use] extern crate bootfrost_derive;
-
 
 #[macro_use] extern crate lalrpop_util;
