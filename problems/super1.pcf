@@ -1,0 +1,20 @@
+? 	Q(St), Q(Mo), Q(Pu), Q(Ro), ~
+	Q0G(St), ~
+	ET1("0"), ~
+	LG("0", St), ~
+	E("tn"), E("mv"), E("ro"), E("st"), E("pu"), ~
+	Ec("tn"), Ec("mv"), Ec("ro"), Ec("st"), Ec("pu"), ~
+	Euo("tn"), Eo("mv"), Eo("ro"), Eo("st"), Eo("pu"), ~
+	dG(St,"mv",Mo), dG(St,"pu",Pu), dG(St,"ro",Ro), dG(Mo,"pu",Pu), dG(Mo,"st",St), dG(Mo,"tn",Ro), ~
+	dG(Pu,"mv",Mo), dG(Pu,"tn",Ro), dG(Pu,"st",St), dG(Ro,"pu",Pu), dG(Ro,"st",St), dG(Ro,"mv",Mo), ~
+	Q0H(St), ~
+	LH("0", St), ~
+	dH(St,"mv",Mo), dH(St,"pu",Pu), dH(St,"ro",Ro), dH(Mo,"pu",Pu), dH(Mo,"st",St), dH(Mo,"tn",Ro), ~
+	dH(Pu,"mv",Mo), dH(Pu,"tn",Ro), dH(Ro,"pu",Pu), dH(Ro,"st",St), dH(Ro,"mv",Mo)
+	! e E(e)
+		? ET1(e)
+	! s,q,e1,q1 ET1(e1), LG(s, q), dG(q, e1, q1)  	$ remove_fact(0)
+		? LG(s ++ e1, q1), ETG(e1)
+	! s,q,e1,q1 Eo(e1), ETG(e1), LH(s, q), dH(q, e1, q1), ~
+						 LG(s, q), dG(q, e1, q1)	$ remove_fact(1)
+		? LS(s ++ e1, q1)
