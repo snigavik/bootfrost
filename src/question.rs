@@ -113,6 +113,7 @@ impl Question{
 		let start = self.answers.len();
 		while i < limit{
 			i = i + 1;
+			curr_answer.tick += 1;
 			match &curr_answer.state{
 				MatchingState::Success | MatchingState::NextA | MatchingState::Zero => {
 					curr_answer.next_a(psterms, &tqfs[self.aformula.0], base);

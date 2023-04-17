@@ -1,0 +1,19 @@
+?	List(Es("a1", Es("r2", nil))), ~
+	dP("PFPFPFFMFM", "a1", "OAOAOAFMFM"), dP("PFPFPFFMFM", "i1", "PFPFPFII"), dP("PFPFPFFMFM", "s1", "PFPFPFSMSM"), ~
+	dP("PFPFPFII", "a1", "OAOAOAII"), dP("PFPFPFSMSM", "a1", "OAOAOASMSM"), dP("OAOAOAFMFM", "r2", "PCPCPCFMFM"), ~
+	dP("PFPFPFII", "f2", "PFPFPFFMFM"), dP("PFPFPFSMSM", "i2", "PFPFPFII"), dP("PFPFPFII", "s2", "PFPFPFSMSM"), ~
+	dP("PFPFPFII", "g1", "PFPFPFGMGM"), dP("OAOAOAFMFM", "i1", "OAOAOAII"), dP("OAOAOAFMFM", "s1", "OAOAOASMSM"), ~
+	dP("PFPFPFGMGM", "a1", "OAOAOAGMGM"), dP("OAOAOAII", "r2", "PCPCPCII"), dP("OAOAOASMSM", "r2", "PCPCPCSMSM"), ~
+	dP("PCPCPCFMFM", "a2", "OAOAOAFMFM"), dP("PCPCPCFMFM", "p2", "PFPFPFFMFM"), dP("PFPFPFGMGM", "i3", "PFPFPFII"), ~
+	dP("OAOAOAII", "f2", "OAOAOAFMFM"), dP("OAOAOASMSM", "i2", "OAOAOAII"), dP("OAOAOAII", "s2", "OAOAOASMSM"), ~
+	dP("OAOAOAII", "g1", "OAOAOAGMGM"), dP("PCPCPCFMFM", "i1", "PCPCPCII"), dP("PCPCPCFMFM", "s1", "PCPCPCSMSM"), ~
+	dP("OAOAOAGMGM", "r2", "PCPCPCGMGM"), dP("PCPCPCII", "a2", "OAOAOAII"), dP("PCPCPCSMSM", "a2", "OAOAOASMSM"), ~
+	dP("PCPCPCII", "p2", "PFPFPFII"), dP("PCPCPCSMSM", "p2", "PFPFPFSMSM"), dP("OAOAOAGMGM", "i3", "OAOAOAII"), ~
+	dP("PCPCPCII", "f2", "PCPCPCFMFM"), dP("PCPCPCSMSM", "i2", "PCPCPCII"), dP("PCPCPCII", "s2", "PCPCPCSMSM"), ~
+	dP("PCPCPCII", "g1", "PCPCPCGMGM"), dP("PCPCPCGMGM", "a2", "OAOAOAGMGM"), ~
+	dP("PCPCPCGMGM", "p2", "PFPFPFGMGM"), dP("PCPCPCGMGM", "i3", "PCPCPCII"), ~
+	L("0", "PFPFPFFMFM")
+	! first, next List(Es(first, next)) $ remove_fact(0)
+		? E(first), List(next)
+	! s, q, e, q1 E(e), L(s, q), dP(q, e, q1)	$ remove_fact(0)
+		? LS(s ++ e, q1)

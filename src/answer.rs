@@ -69,7 +69,8 @@ pub struct Answer{
 	upper: usize,
 	k: usize,
 	pub conj_len: usize,
-	pub state: MatchingState,	
+	pub state: MatchingState,
+	pub tick: usize,	
 }
 
 impl PartialEq for Answer {
@@ -111,6 +112,7 @@ impl Answer{
 			k: 0,
 			conj_len: q_len,
 			state: MatchingState::Zero,
+			tick: 0,
 		}
 	}
 
@@ -309,7 +311,8 @@ impl fmt::Display for AnswerDisplay<'_>{
     			write!(fmt,", ");
     		}
     	}
-    	write!(fmt, "}}")
+    	write!(fmt, "}}");
+    	write!(fmt, "+{}", self.answer.tick)
     }
 }
 

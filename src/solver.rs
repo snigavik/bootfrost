@@ -120,9 +120,9 @@ impl Solver{
 				dm: DisplayMode::Plain,
 			});	
 
-
 			if deleted{ print!("]");}			
 			if i < self.base.len() - 1{ print!(", ");}
+
 			
 		}
 		println!("\n\nQuestions:");

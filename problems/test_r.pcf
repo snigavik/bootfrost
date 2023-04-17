@@ -1,0 +1,5 @@
+? E("o1"), E("s1"), E("r3")
+	! e E(e)  $ remove_fact(0)
+		? EN(e)
+	! e EN(e) $ remove_fact(0)
+		? E(e)
