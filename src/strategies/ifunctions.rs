@@ -55,6 +55,58 @@ macro_rules! ifunction_binary_integers{
 	}
 }
 
+fn push1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+	let arg1 = env.psterms.get_term(&args[1]);
+
+	let mut list = if let Term::List(_n1) = arg0{
+		_n1.clone()
+	}else{
+		panic!("");
+	};
+
+	list.push(args[1]);
+	env.psterms.get_tid(Term::List(list)).unwrap()
+}
+
+fn last1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let list = if let Term::List(_n1) = arg0{
+		_n1
+	}else{
+		panic!("");
+	};
+
+	let res = list.last().unwrap();
+	return *res
+}
+
+fn first1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let list = if let Term::List(_n1) = arg0{
+		_n1
+	}else{
+		panic!("");
+	};
+
+	let res = list.first().unwrap();
+	return *res
+}
+
 fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 2{
 		panic!("");
@@ -251,6 +303,9 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("read_file_to_string".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
 		("string".to_string(), (string as IFunction, Position::Classic)),
+		("push".to_string(), (push1 as IFunction, Position::Classic)),
+		("last".to_string(), (last1 as IFunction, Position::Classic)),
+		("first".to_string(), (first1 as IFunction, Position::Classic)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 

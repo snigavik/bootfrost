@@ -512,6 +512,15 @@ pub fn processing(tid:TermId, context: &Context, answer1: Option<&Answer>, env: 
 				answer1,
 				env)
 		},
+		Term::List(args) => {
+			let new_term = Term::List(
+				args
+					.iter()
+					.map(|arg| 
+						processing(*arg, context, answer1, env).unwrap())
+					.collect());
+			env.psterms.get_tid(new_term)
+		},		
 	}
 }
 
@@ -572,6 +581,14 @@ pub fn matching(
 				let m = matching(btid, new_qtid, context, curr_answer, psterms, base, attributes, bid);
 				psterms.back_to(p);
 				m
+			},
+			Term::List(q_args) => {
+				match bterm{
+					Term::List(b_args) if q_args.len() == b_args.len() => {
+						q_args.iter().zip(b_args.iter()).all(|pair| matching(*pair.1, *pair.0, context, curr_answer, psterms, base, attributes, bid))
+					},
+					_ => false,
+				}
 			},
 			_ => {
 				false

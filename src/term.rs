@@ -58,7 +58,8 @@ pub enum Term{
 	Integer(i64),
 	String(String),
 	SFunctor(SymbolId, Vec<TermId>),
-	IFunctor(SymbolId, Vec<TermId>,),
+	IFunctor(SymbolId, Vec<TermId>),
+	List(Vec<TermId>),
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
@@ -129,6 +130,17 @@ impl PSTerms{
 	pub fn add_plain_functor(&mut self, pt:PlainTerm, vstack: &mut Vec<HashMap<String,TermId>>, smap: &mut HashMap<String, TermId>, fmap: &mut HashMap<String, SymbolId>) -> TermId{
 		if let Some(_sid) = fmap.get(&pt.symbol){
 			if let Some(sid) = self.symbols.get(_sid.0){
+				// if sid.name == "__LIST__"{
+				// 	let term = Term::List(pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
+				// 	if let Some(tid) = self.index.get(&term){
+				// 		return *tid;
+				// 	}else{
+		  //           	let tid = TermId(self.terms.len());
+		  //           	self.terms.push(term.clone());
+		  //           	self.index.insert(term, tid);
+		  //           	return tid;						
+				// 	}					
+				// }
 				if let Some(..) = sid.f{
 					let term = Term::IFunctor(*_sid, pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
 					if let Some(tid) = self.index.get(&term){
@@ -154,6 +166,17 @@ impl PSTerms{
 				panic!("");
 			}
 		}else{
+			if pt.symbol == "__LIST__"{
+				let term = Term::List(pt.args.into_iter().map(|a| plain_to_term(a, self, vstack, smap, fmap)).collect());
+				if let Some(tid) = self.index.get(&term){
+					return *tid;
+				}else{
+	            	let tid = TermId(self.terms.len());
+	            	self.terms.push(term.clone());
+	            	self.index.insert(term, tid);
+	            	return tid;						
+				}					
+			}			
 			let sid = SymbolId(self.symbols.len());
 			self.symbols.push(Symbol{uid: sid.0, name: pt.symbol.clone(), f: None, position: pt.position});
 			fmap.insert(pt.symbol, sid);
@@ -415,6 +438,17 @@ impl fmt::Display for TidDisplay<'_>{
 					}
 				}
 
+			},
+			Term::List(args) => {
+				write!(fmt,"[{}]", 
+					TidsDisplay{
+						tids: &args,
+						psterms: self.psterms,
+						context: self.context,
+						dm: self.dm,
+						d: ", "
+					}.to_string()
+				)				
 			},
 		}
 	}

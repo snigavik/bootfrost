@@ -43,6 +43,7 @@ pterm: PlainTerm = {
 	<s: symbol> => PlainTerm::new(s.parse().unwrap(),vec![], false),
 	<s: symbol> "(" ")" => PlainTerm::new(s.parse().unwrap(),vec![], true),
 	<s: symbol> "(" <a: terms> ")" => PlainTerm::new(s.parse().unwrap(),a, true),
+	"[" <a: terms> "]" => PlainTerm::new("__LIST__".to_string(),a,true),
 }
 
 infix_pterm: PlainTerm = {
