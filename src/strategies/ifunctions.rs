@@ -55,6 +55,7 @@ macro_rules! ifunction_binary_integers{
 	}
 }
 
+// lists
 fn push1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 2{
 		panic!("");
@@ -73,6 +74,7 @@ fn push1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::List(list)).unwrap()
 }
 
+// lists
 fn last1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 1{
 		panic!("");
@@ -90,6 +92,7 @@ fn last1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	return *res
 }
 
+// lists
 fn first1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 1{
 		panic!("");
@@ -107,6 +110,8 @@ fn first1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	return *res
 }
 
+
+// string, lists
 fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 2{
 		panic!("");
@@ -115,14 +120,22 @@ fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	let arg0 = env.psterms.get_term(&args[0]);
 	let arg1 = env.psterms.get_term(&args[1]);
 
-	let (n1,n2) = if let (Term::String(_n1), Term::String(_n2)) = (arg0, arg1){
-		(_n1, _n2)
-	}else{
-		panic!("");
-	};
+	match (arg0, arg1){
+		(Term::String(n1), Term::String(n2)) => {
+			let res = format!("{}{}",n1,n2);
+			env.psterms.get_tid(Term::String(res)).unwrap()
+		},
+		(Term::List(n1), Term::List(n2)) => {
+			let mut res = vec![];
+			res.append(&mut n1.clone());
+			res.append(&mut n2.clone());
+			env.psterms.get_tid(Term::List(res)).unwrap()
+		}
+		_ => {
+			panic!("");
+		}
+	}
 
-	let res = format!("{}{}",n1,n2);
-	env.psterms.get_tid(Term::String(res)).unwrap()
 }
 
 fn replace(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
