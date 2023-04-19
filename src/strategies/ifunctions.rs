@@ -110,6 +110,25 @@ fn first1(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	return *res
 }
 
+//lists
+fn notempty(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let list = if let Term::List(_n1) = arg0{
+		_n1
+	}else{
+		panic!("");
+	};
+
+	let res = !list.is_empty();
+
+	env.psterms.get_tid(Term::Bool(res)).unwrap()
+}
+
 
 // string, lists
 fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
@@ -319,6 +338,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("push".to_string(), (push1 as IFunction, Position::Classic)),
 		("last".to_string(), (last1 as IFunction, Position::Classic)),
 		("first".to_string(), (first1 as IFunction, Position::Classic)),
+		("notempty".to_string(), (notempty as IFunction, Position::Classic)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 
