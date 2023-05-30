@@ -57,7 +57,7 @@ fn proc(lines: &Vec<PfLine>, k: &mut usize, stack_indents: &mut Vec<i64>) -> Vec
 
     while lines[*k].indent > *stack_indents.last().unwrap(){
         stack_indents.push(lines[*k].indent);
-        // println!("line: {}",&lines[*k].line);
+        println!("{}",&lines[*k].line);
         let mut pf = crate::parser::tqfline::TqfLineParser::new().parse(&lines[*k].line).unwrap();
         *k = *k + 1;
         if *k >= lines.len(){

@@ -129,6 +129,47 @@ fn notempty(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::Bool(res)).unwrap()
 }
 
+//lists
+fn inlist(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+	let arg1 = env.psterms.get_term(&args[1]);
+
+	let list = if let Term::List(_n1) = arg1{
+		_n1
+	}else{
+		panic!("");
+	};
+
+	let res = list.contains(&args[0]);
+
+	env.psterms.get_tid(Term::Bool(res)).unwrap()
+}
+
+//lists
+fn notinlist(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 2{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+	let arg1 = env.psterms.get_term(&args[1]);
+
+	let list = if let Term::List(_n1) = arg1{
+		_n1
+	}else{
+		panic!("");
+	};
+
+	let res = !list.contains(&args[0]);
+
+	env.psterms.get_tid(Term::Bool(res)).unwrap()
+}
+
+
 
 // string, lists
 fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
@@ -339,6 +380,8 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("last".to_string(), (last1 as IFunction, Position::Classic)),
 		("first".to_string(), (first1 as IFunction, Position::Classic)),
 		("notempty".to_string(), (notempty as IFunction, Position::Classic)),
+		("in".to_string(), (inlist as IFunction, Position::Infix)),
+		("notin".to_string(), (notinlist as IFunction, Position::Infix)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 

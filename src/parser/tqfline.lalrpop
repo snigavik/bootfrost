@@ -70,6 +70,8 @@ infatom:String = {
 	"<=" => "<=".to_string(),
 	"==" => "==".to_string(),
 	"!=" => "!=".to_string(),
+	"in" => "in".to_string(),
+	"notin" => "notin".to_string(),
 }
 
 symbol: String = {
