@@ -291,11 +291,12 @@ fn read_file_to_string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 }
 
 fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
-	if args.len() != 1{
+	if args.len() != 2{
 		panic!("");
 	}
 
 	let arg0 = env.psterms.get_term(&args[0]);
+	let arg1 = env.psterms.get_term(&args[1]);
 
 	let n1 = if let Term::String(_n1) = arg0{
 		_n1
@@ -303,9 +304,16 @@ fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 		panic!("");
 	};
 	
+	let d = if let Term::Integer(_n2) = arg1{
+		_n2
+	}else{
+		panic!("");
+	};
+
+	
 
     let mut solver = Solver::parse_string(&n1, Strategy::General);
-    let res = solver.solver_loop(150);
+    let res = solver.solver_loop(d.try_into().unwrap());
     let r = if SolverResultType::Refuted == res.t{
     	true
     }else{

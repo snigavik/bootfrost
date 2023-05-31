@@ -1,4 +1,4 @@
 ? B(1)
 	!x B(x)
 		? B(x + 1)
-	!x B(x), solve(replace(read_file_to_string("./problems/subformula.pcf"), "$a", string(x)))
+	!x B(x), solve(replace(read_file_to_string("./problems/subformula.pcf"), "$a", string(x)),100)
