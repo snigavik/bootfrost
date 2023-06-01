@@ -228,10 +228,12 @@ fn base_to_string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 0{
 		panic!("");
 	}	
+	
 	let bstr = env.base.base
 		.iter()
-		.filter(|x|!x.deleted)
-		.map(|x|
+		.enumerate()
+		.filter(|(i,_)|!env.attributes.check(KeyObject::BaseIndex(*i), AttributeName("deleted".to_string()), AttributeValue("true".to_string())))
+		.map(|(_,x)|
 			TidDisplay{
 				tid: x.term,
 				psterms: &env.psterms,
