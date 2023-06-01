@@ -14,5 +14,5 @@
 		# ? N(ql)
 	# ! q1, e, q2, qs, le dG(q1, e, q2), o(le), e in le, T0(qs), q1 in qs
 		 # ? f(qs, e)
-	! solve( replace( read_file_to_string("./problems/no_uo_left_N0.pcf"), "baseformula", base_to_string() ), 1000)
+	! solve( replace( read_file_to_string("./problems/no_uo_left_N0.pcf"), "baseformula", "A("d")" ), 1000)
 		? T0ready(a)
