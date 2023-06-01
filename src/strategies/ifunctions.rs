@@ -224,6 +224,24 @@ fn blen(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	env.psterms.get_tid(Term::Integer(env.base.len().try_into().unwrap())).unwrap()	
 }
 
+fn base_to_string(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 0{
+		panic!("");
+	}	
+	let bstr = env.base.base
+		.iter()
+		.filter(|x|!x.deleted)
+		.map(|x|
+			TidDisplay{
+				tid: x.term,
+				psterms: &env.psterms,
+				context: None,
+				dm: DisplayMode::Plain,
+			}.to_string()).collect::<Vec<String>>().join(",");
+	env.psterms.get_tid(Term::String(bstr)).unwrap()	
+}
+
+
 fn remove_fact(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 	if args.len() != 1{
 		panic!("");
@@ -380,6 +398,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("++".to_string(), (concat as IFunction, Position::Infix)),
 		("replace".to_string(), (replace as IFunction, Position::Classic)),
 		("blen".to_string(), (blen as IFunction, Position::Classic)),
+		("base_to_string".to_string(), (base_to_string as IFunction, Position::Classic)),
 		("remove_fact".to_string(), (remove_fact as IFunction, Position::Classic)),
 		("read_file_to_string".to_string(), (read_file_to_string as IFunction, Position::Classic)),
 		("solve".to_string(), (solve as IFunction, Position::Classic)),
