@@ -1,0 +1,18 @@
+?   Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), ~
+	uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), ~
+	Q0G(1), ~
+	dG(1,"ed",2), dG(1,"a",4), dG(2,"u",3), dG(2,"a",5), dG(3,"c",7), dG(4,"b",8), ~
+	dG(4,"ed",5), dG(5,"u",6), dG(5,"b",9), dG(6,"g",7), dG(7,"v",5), dG(7,"b",10), ~
+	dG(8,"ed",9), dG(8,"d",1), dG(8,"v",12), dG(9,"d",2), dG(9,"u",10), dG(10,"d",3), ~
+	dG(11,"d",1), dG(12,"ed",11), ~
+	T0([1,2,3])
+	# ! q1, le, q2, qs, e dG(q1, e, q2), uo(le), T0(qs), q1 == last(qs), e in le	$ remove_fact(0), remove_fact(2)
+		 # ? T0(push(qs,q2))  
+	# ! solve(replace(read_file_to_string("./no_uo_left_T0.pcf"), "$base", get_base_as_string()),1000) == false
+		# ? T0ready
+	# ! ql T0ready, T0(ql)
+		# ? N(ql)
+	# ! q1, e, q2, qs, le dG(q1, e, q2), o(le), e in le, T0(qs), q1 in qs
+		 # ? f(qs, e)
+	! solve( replace( read_file_to_string("./problems/no_uo_left_N0.pcf"), "baseformula", "A("d")" ), 1000)
+		? T0ready(a)

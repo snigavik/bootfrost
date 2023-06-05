@@ -144,7 +144,13 @@ fn inlist(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 		panic!("");
 	};
 
-	let res = list.contains(&args[0]);
+	let res = if let Term::List(_n2) = arg0{
+		_n2.iter().all(|x|list.contains(&x))
+	}else{
+		list.contains(&args[0])		
+	};
+
+	// let res = list.contains(&args[0]);
 
 	env.psterms.get_tid(Term::Bool(res)).unwrap()
 }
