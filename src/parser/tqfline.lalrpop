@@ -72,6 +72,7 @@ infatom:String = {
 	"!=" => "!=".to_string(),
 	"in" => "in".to_string(),
 	"notin" => "notin".to_string(),
+	"subseteq" => "subseteq".to_string(),
 }
 
 symbol: String = {
