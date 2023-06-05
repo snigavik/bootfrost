@@ -1,0 +1,4 @@
+? L1([8,32,4,16,2,1])
+	! x L1(x)
+		? L1Sorted(sort(x))
+	! x L1Sorted(x)

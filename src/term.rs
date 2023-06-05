@@ -257,6 +257,15 @@ impl PSTerms{
 	}
 
 
+	pub fn is_integer(&self, tid:&TermId) -> bool{
+		match self.terms[tid.0]{
+			Term::Integer(_) => {
+				true
+			},
+			_ => false
+		}
+	}
+
 
 	pub fn is_false(&self, tid:&TermId) -> bool{
 		match self.terms[tid.0]{

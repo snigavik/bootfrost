@@ -201,6 +201,41 @@ fn notinlist(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 }
 
 
+// lists
+fn sortlist(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let mut list = if let Term::List(_n1) = arg0{
+		_n1.clone()
+	}else{
+		panic!("");
+	};
+
+	let res = if list.iter().all(|x| env.psterms.is_integer(x)){
+		let mut list_i: Vec<i64> = list.iter().map(|x|
+			if let Term::Integer(i) = env.psterms.get_term(x){
+				i
+			}else{
+				panic!("")
+			}
+		).collect();
+
+		list_i.sort();
+		list_i.iter().map(|x|env.psterms.get_tid(Term::Integer(*x)).unwrap()).collect::<Vec<TermId>>()
+	}else{
+		panic!("");
+	};
+
+	// list.push(args[1]);
+	env.psterms.get_tid(Term::List(res)).unwrap()
+}
+
+
+
 
 // string, lists
 fn concat(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
@@ -443,6 +478,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("in".to_string(), (inlist as IFunction, Position::Infix)),
 		("notin".to_string(), (notinlist as IFunction, Position::Infix)),
 		("subseteq".to_string(), (subseteq as IFunction, Position::Infix)),
+		("sort".to_string(), (sortlist as IFunction, Position::Infix)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 
