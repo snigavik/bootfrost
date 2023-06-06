@@ -478,7 +478,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("in".to_string(), (inlist as IFunction, Position::Infix)),
 		("notin".to_string(), (notinlist as IFunction, Position::Infix)),
 		("subseteq".to_string(), (subseteq as IFunction, Position::Infix)),
-		("sort".to_string(), (sortlist as IFunction, Position::Infix)),
+		("sort".to_string(), (sortlist as IFunction, Position::Classic)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 

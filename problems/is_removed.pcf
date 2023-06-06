@@ -1,0 +1,3 @@
+? base
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
