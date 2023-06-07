@@ -235,6 +235,47 @@ fn sortlist(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 }
 
 
+// lists
+fn dedup(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
+	if args.len() != 1{
+		panic!("");
+	}
+
+	let arg0 = env.psterms.get_term(&args[0]);
+
+	let list = if let Term::List(_n1) = arg0{
+		_n1
+	}else{
+		panic!("");
+	};
+
+	// let res = if list.iter().all(|x| env.psterms.is_integer(x)){
+	// 	let mut list_i: Vec<i64> = list.iter().map(|x|
+	// 		if let Term::Integer(i) = env.psterms.get_term(x){
+	// 			i
+	// 		}else{
+	// 			panic!("")
+	// 		}
+	// 	).collect();
+
+	// 	// let list_i: Vec<i64> = list.iter().unique().collect()
+	// 	// list_i.iter().map(|x|env.psterms.get_tid(Term::Integer(*x)).unwrap()).collect::<Vec<TermId>>()
+	// }else{
+	// 	panic!("");
+	// };
+	let mut res: Vec<TermId> = vec![];
+	for x in list{
+		if !res.contains(&x){
+			res.push(x.clone());
+		}
+	}	
+
+	// let res = res_i.iter().map(|x|env.psterms.get_tid(Term::Integer(*x)).unwrap()).collect::<Vec<TermId>>();
+
+	// list.push(args[1]);
+	env.psterms.get_tid(Term::List(res)).unwrap()
+}
+
 
 
 // string, lists
@@ -492,6 +533,7 @@ pub fn init() -> (PSTerms, HashMap<String, SymbolId>){
 		("notin".to_string(), (notinlist as IFunction, Position::Infix)),
 		("subseteq".to_string(), (subseteq as IFunction, Position::Infix)),
 		("sort".to_string(), (sortlist as IFunction, Position::Classic)),
+		("dedup".to_string(), (dedup as IFunction, Position::Classic)),
 		// ("&".to_string(), (notequal as IFunction, Position::Infix)),
 	]);
 
