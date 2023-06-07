@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::fmt;
 // use crate::utils::totalsize::TotalSize;
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Deserialize, Serialize)]
@@ -56,4 +57,14 @@ impl ProcessingResult{
 			}
 		}
 	}
+}
+
+
+
+impl fmt::Display for TermId{
+    fn fmt (&self, fmt: &mut fmt::Formatter) -> fmt::Result{
+		write!(fmt, "{}",
+			self.0
+		)  	
+    }
 }

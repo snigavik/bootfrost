@@ -12,7 +12,7 @@
 	dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), ~
 	Q1count(0), Q2count(0)
 	! q1, q2 Q1count(q1), Q2count(q2), ~
-		solve(replace(read_file_to_string("./is_removed.pcf"), "base", base_to_string()), 1000) == false
+		solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false
 		? is_removed(q1, q2)
 	! q1, le, q2, e, q1c, q2c dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), ~
 							is_removed(q1c, q2c)	$ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)

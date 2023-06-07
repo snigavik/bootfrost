@@ -95,6 +95,9 @@ impl Question{
 		context: &Context,
 		attributes: &mut Attributes) -> Option<AnswerId>{	
 
+		// println!("New answers finding [START]");
+		
+
 		let limit = si.limit;
 		if let Some(top) = self.curr_answer_stack.last(){
 			if top.bid != bid{
@@ -199,6 +202,7 @@ impl Question{
 					}				
 					let aid = self.answers.len();	
 					self.answers.push(na);
+					println!("New answer has been found: {}", AnswerDisplay{answer: self.answers.last().unwrap(), psterms: psterms, dm: DisplayMode::Plain});
 
 					let mut answer1 = self.answers.last().unwrap().clone();
 					match si.selector{
@@ -207,6 +211,7 @@ impl Question{
 								answer1.level = Some(level); 
 								self.used_answers.push(answer1.clone());
 								self.curr_answer_stack.push(curr_answer);
+								// println!("New answers finding [FINISH]");
 								return Some(AnswerId(self.qid.0, self.answers.len()-1))
 							}else{
 								continue;
@@ -223,17 +228,26 @@ impl Question{
 			}
 
 		}
+		
+		// level??
+
 		self.curr_answer_stack.push(curr_answer);
 
 		let finish = self.answers.len();
 		if let SelectorStrategy::Best(f) = si.selector{
 			if self.answers.len() == 0{
+				// println!("New answers finding [FINISH]");
 				return None;
 			}
-			let res_answer = f(&self.answers, 0, &psterms);
+			let res_answer = f(&self.answers, &self.used_answers, 0, &psterms);
+			if let Some(ref aidbest) = res_answer{
+				self.used_answers.push(self.answers[aidbest.1].clone());
+			}
+			// println!("New answers finding [FINISH]");
 			return res_answer;
 		}
 
+		// println!("New answers finding [FINISH]");
 		None //		 
 	}	
 }

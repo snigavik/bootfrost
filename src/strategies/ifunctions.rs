@@ -398,13 +398,25 @@ fn solve(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 
 	
 
+	println!("\n");
+    println!("*******************************************************");
+    println!("**************** START OF SUBINFERENCE ****************");
+    println!("*******************************************************");
+
+
     let mut solver = Solver::parse_string(&n1, Strategy::General);
     let res = solver.solver_loop(d.try_into().unwrap());
     let r = if SolverResultType::Refuted == res.t{
+    	println!("**** REFUTED ****");
     	true
     }else{
+    	println!("**** FAIL ****");
     	false
     };
+    println!("*****************************************************");
+    println!("**************** END OF SUBINFERENCE ****************");
+    println!("*****************************************************");
+    println!("\n");
 
 	env.psterms.get_tid(Term::Bool(r)).unwrap()
 }
@@ -439,6 +451,7 @@ fn eq(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 		panic!("");
 	}
 	let res = args[0] == args[1];
+
 
 	env.psterms.get_tid(Term::Bool(res)).unwrap()
 }

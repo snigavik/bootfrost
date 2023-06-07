@@ -35,11 +35,15 @@ pub fn first_manual(answer: &Answer, psterms: &PSTerms) -> bool{
 }
 
 
-pub fn best_manual(answers: &Vec<Answer>, start:usize, psterms: &PSTerms) -> Option<AnswerId>{
+pub fn best_manual(answers: &Vec<Answer>, used_answers: &Vec<Answer>, start:usize, psterms: &PSTerms) -> Option<AnswerId>{
 	let new_len = answers.len() - start;
-	println!("Select your answer (type corresponding number)");
+	println!("\nSelect your answer (type corresponding number)");
 	for (i, x) in answers[start..].iter().enumerate(){
-		println!("({}) {}",i, AnswerDisplay{answer: x, psterms: psterms, dm: DisplayMode::Plain});
+		let mut mark = "";
+		if used_answers.contains(&answers[i]){
+			mark = " ,used";
+		}
+		println!("({}{}) {}",i, mark, AnswerDisplay{answer: x, psterms: psterms, dm: DisplayMode::Plain});
 	}
 
 	loop{
@@ -63,9 +67,9 @@ pub fn best_manual(answers: &Vec<Answer>, start:usize, psterms: &PSTerms) -> Opt
 
 		let na = match inp.trim().parse::<usize>(){
 			Ok(n) => {
-				if n > new_len{
+				if n >= new_len{
 					try_again = true;
-					println!("Answer #{} is out of possible range [0..{}]. Try again.", n, new_len);
+					println!("Answer #{} is out of possible range [0..{}]. Try again.", n, new_len-1);
 					continue;
 				}else{
 					n
