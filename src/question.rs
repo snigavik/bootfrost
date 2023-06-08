@@ -96,25 +96,30 @@ impl Question{
 		attributes: &mut Attributes) -> Option<AnswerId>{	
 
 		// println!("New answers finding [START]");
-		
+		// for x in self.curr_answer_stack.iter().rev(){
+		// 	println!("stack_el: {}", AnswerDisplay{answer: x, psterms: psterms, dm: DisplayMode::Plain});
+		// }
 
 		let limit = si.limit;
-		if let Some(top) = self.curr_answer_stack.last(){
-			if top.bid != bid{
-				let mut new_top = top.clone();
-				new_top.bid = bid;
-				self.curr_answer_stack.push(new_top);
-			}
-		}else{
+		// if let Some(top) = self.curr_answer_stack.last(){
+		// 	if top.bid != bid{
+		// 		let mut new_top = top.clone();
+		// 		new_top.bid = bid;
+		// 		self.curr_answer_stack.push(new_top);
+		// 	}
+		// }else{
 			let new_top = Answer::new(bid, self.qid, base.len(), tqfs[self.aformula.0].conj.len());
 			self.curr_answer_stack.push(new_top);
-		}
+		// }
 
 		let mut curr_answer = self.curr_answer_stack.pop().unwrap();
+
+		// println!("curr_answer: {}", AnswerDisplay{answer: &curr_answer, psterms: psterms, dm: DisplayMode::Plain});
 
 		let mut i = 0;
 		let start = self.answers.len();
 		while i < limit{
+			// println!("{:?}",&curr_answer.state);
 			i = i + 1;
 			curr_answer.tick += 1;
 			match &curr_answer.state{
@@ -181,6 +186,7 @@ impl Question{
 					curr_answer.next_k();
 				},
 				MatchingState::Exhausted => {
+					// println!("Exhausted state");
 					if curr_answer.shift_bounds(base.len()){
 						curr_answer.state = MatchingState::Zero;
 					}else{

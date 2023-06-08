@@ -1,0 +1,1276 @@
+Arguments { formula: "./problems/Observer.pcf", strategy: "general", limit: 100 }
+?   Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), 	uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), 	Q0G(1), 	dG(1,"ed",2), dG(1,"a",4), dG(2,"u",3), dG(2,"a",5), dG(3,"c",7), 	dG(4,"b",8), dG(4,"ed",5), dG(5,"u",6), dG(5,"b",9), dG(6,"g",7), 	dG(7,"v",5), dG(7,"b",10), dG(8,"ed",9), dG(8,"d",1), dG(8,"v",12), 	dG(9,"d",2), dG(9,"u",10), dG(10,"d",3), dG(11,"d",1), dG(12,"ed",11), 	T0([1]), T([]), 	dI([1], "ed", [2]), dI([1], "a", [4]), dI([2], "u", [3]), dI([2], "a", [5]), dI([3], "c", [7]), 	dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), 	dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), 	dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), 	Q1count(0), Q2count(0)
+	! q1, q2 Q1count(q1), Q2count(q2), 		solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false
+		? is_removed(q1, q2)
+	! q1, le, q2, e, q1c, q2c dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), 							is_removed(q1c, q2c)	$ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+		? remove(q1, q2), Q1count(q1), Q2count(q2)
+	! q1, q2, e, q3, q4 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+		? dI( sort(q3 ++ q2), e, q4 )
+	! q1, q2, e, q3, q4 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+		? dI( sort(q3 ++ q1), e, q4 )
+	! q1, q2, e, q3, q4 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+		? dI( q3, e, sort(q4 ++ q2) )
+	! q1, q2, e, q3, q4 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+		? dI( q3, e, sort(q4 ++ q1) )
+
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), dI([1], "ed", [2]), dI([1], "a", [4]), dI([2], "u", [3]), dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), Q1count(0), Q2count(0)
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0.041666666666666664, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664
+0, 1, 2, 3, 4, 5
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([1], "ed", [2]),dI([1], "a", [4]),dI([2], "u", [3]),dI([2], "a", [5]),dI([3], "c", [7]),dI([4], "b", [8]),dI([4], "ed", [5]),dI([5], "u", [6]),dI([5], "b", [9]),dI([6], "g", [7]),dI([7], "v", [5]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "d", [1]),dI([8], "v", [12]),dI([9], "d", [2]),dI([9], "u", [10]),dI([10], "d", [3]),dI([11], "d", [1]),dI([12], "ed", [11]),Q1count(0),Q2count(0)
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 1
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 2
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 3
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+
+Result: Exhausted
+**** FAIL ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+New answer has been found: {q2 -> 0, q1 -> 0}+222
+0: {q2 -> 0, q1 -> 0}+222
+Terms added to the base: is_removed(0, 0)
+Terms used in the base: Q1count(0), Q2count(0), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), dI([1], "ed", [2]), dI([1], "a", [4]), dI([2], "u", [3]), dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), Q1count(0), Q2count(0), is_removed(0, 0)
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 1 ================================
+=========================================================================
+0.25, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664
+1, 2, 3, 4, 5, 0
+Try question 1
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+1: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+Terms added to the base: remove([1], [2]), Q1count([1]), Q2count([2])
+Terms used in the base: dI([1], "ed", [2]), uo(["ed", "u", "v"]), =i=Q1count(0), Q2count(0), is_removed(0, 0), 
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], dI([1], "a", [4]), dI([2], "u", [3]), dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 2 ================================
+=========================================================================
+0.5, 0.25, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664
+2, 3, 4, 5, 1, 0
+Try question 2
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+2: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+Terms added to the base: dI([1, 2], "a", [4])
+Terms used in the base: remove([1], [2]), dI([1], "a", [4]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], dI([2], "u", [3]), dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 3 ================================
+=========================================================================
+0.75, 0.5, 0.25, 0.041666666666666664, 0.041666666666666664, 0.041666666666666664
+3, 4, 5, 2, 1, 0
+Try question 3
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+3: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+Terms added to the base: dI([1, 2], "u", [3])
+Terms used in the base: remove([1], [2]), dI([2], "u", [3]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4]), dI([1, 2], "u", [3])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 4 ================================
+=========================================================================
+1, 0.75, 0.5, 0.25, 0.041666666666666664, 0.041666666666666664
+4, 5, 3, 2, 1, 0
+Try question 4
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+4: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+Terms added to the base: dI([8], "d", [1, 2])
+Terms used in the base: remove([1], [2]), dI([8], "d", [1]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 5 ================================
+=========================================================================
+1.25, 1, 0.75, 0.5, 0.25, 0.041666666666666664
+5, 4, 3, 2, 1, 0
+Try question 5
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+5: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+Terms added to the base: dI([9], "d", [1, 2])
+Terms used in the base: remove([1], [2]), dI([9], "d", [2]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 6 ================================
+=========================================================================
+1.5, 1.25, 1, 0.75, 0.5, 0.25
+5, 4, 3, 2, 1, 0
+Try question 5
+New answers finding [START]
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+Exhausted state
+shift_bounds: 61, 63
+Exhausted state
+shift_bounds: 62, 63
+No answers have been found.
+Try question 4
+New answers finding [START]
+stack_el: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+curr_answer: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+New answer has been found: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+4: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+Terms added to the base: dI([11], "d", [1, 2])
+Terms used in the base: remove([1], [2]), dI([11], "d", [1]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], dI([2], "a", [5]), dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 7 ================================
+=========================================================================
+1.75, 1.5, 1.25, 1, 0.41666666666666663, 0.5
+4, 5, 3, 2, 1, 0
+Try question 4
+New answers finding [START]
+stack_el: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+stack_el: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+curr_answer: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+Exhausted state
+shift_bounds: 60, 64
+Exhausted state
+shift_bounds: 63, 64
+No answers have been found.
+Try question 5
+New answers finding [START]
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {}+816
+Exhausted state
+shift_bounds: 62, 64
+Exhausted state
+shift_bounds: 63, 64
+No answers have been found.
+Try question 3
+New answers finding [START]
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+New answer has been found: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+3: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+Terms added to the base: dI([1, 2], "a", [5])
+Terms used in the base: remove([1], [2]), dI([2], "a", [5]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), dI([1, 2], "a", [5])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 8 ================================
+=========================================================================
+2, 1.75, 1.5, 0.41666666666666663, 0.8333333333333333, 0.75
+3, 5, 4, 2, 1, 0
+Try question 3
+New answers finding [START]
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+Exhausted state
+shift_bounds: 59, 65
+Exhausted state
+shift_bounds: 64, 65
+No answers have been found.
+Try question 5
+New answers finding [START]
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {}+1297
+Exhausted state
+shift_bounds: 63, 65
+Exhausted state
+shift_bounds: 64, 65
+No answers have been found.
+Try question 4
+New answers finding [START]
+stack_el: {}+812
+stack_el: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+stack_el: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+curr_answer: {}+812
+Exhausted state
+shift_bounds: 63, 65
+Exhausted state
+shift_bounds: 64, 65
+No answers have been found.
+Try question 2
+New answers finding [START]
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+curr_answer: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+Exhausted state
+shift_bounds: 58, 65
+Exhausted state
+shift_bounds: 64, 65
+No answers have been found.
+Try question 1
+New answers finding [START]
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+Exhausted state
+shift_bounds: 55, 65
+Exhausted state
+shift_bounds: 64, 65
+No answers have been found.
+Try question 0
+New answers finding [START]
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {q2 -> 0, q1 -> 0}+222
+Exhausted state
+shift_bounds: 54, 65
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([4], "b", [8]),dI([4], "ed", [5]),dI([5], "u", [6]),dI([5], "b", [9]),dI([6], "g", [7]),dI([7], "v", [5]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),Q1count([1]),Q2count([2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),dI([1, 2], "a", [5])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 1
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 2
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 3
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+
+Result: Exhausted
+**** FAIL ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+New answer has been found: {q2 -> [2], q1 -> [1]}+372
+0: {q2 -> [2], q1 -> [1]}+372
+Terms added to the base: is_removed([1], [2])
+Terms used in the base: Q1count([1]), Q2count([2]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), Q1count([1]), Q2count([2]), dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), dI([1, 2], "a", [5]), is_removed([1], [2])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 9 ================================
+=========================================================================
+0.41666666666666663, 2, 1.75, 0.8333333333333333, 1.25, 1
+0, 3, 5, 4, 2, 1
+Try question 0
+New answers finding [START]
+stack_el: {q2 -> [2], q1 -> [1]}+372
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {q2 -> [2], q1 -> [1]}+372
+Exhausted state
+shift_bounds: 64, 66
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([4], "b", [8]),dI([4], "ed", [5]),dI([5], "u", [6]),dI([5], "b", [9]),dI([6], "g", [7]),dI([7], "v", [5]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),Q1count([1]),Q2count([2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),dI([1, 2], "a", [5]),is_removed([1], [2])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 55, 56
+No answers have been found.
+Try question 1
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 55, 56
+No answers have been found.
+Try question 2
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 55, 56
+No answers have been found.
+Try question 3
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 55, 56
+No answers have been found.
+
+Result: Exhausted
+**** FAIL ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+Exhausted state
+shift_bounds: 65, 66
+No answers have been found.
+Try question 3
+New answers finding [START]
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {}+802
+Exhausted state
+shift_bounds: 64, 66
+Exhausted state
+shift_bounds: 65, 66
+No answers have been found.
+Try question 5
+New answers finding [START]
+stack_el: {}+1784
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {}+1784
+Exhausted state
+shift_bounds: 64, 66
+Exhausted state
+shift_bounds: 65, 66
+No answers have been found.
+Try question 4
+New answers finding [START]
+stack_el: {}+1299
+stack_el: {}+812
+stack_el: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+stack_el: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+curr_answer: {}+1299
+Exhausted state
+shift_bounds: 64, 66
+Exhausted state
+shift_bounds: 65, 66
+No answers have been found.
+Try question 2
+New answers finding [START]
+stack_el: {}+782
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+curr_answer: {}+782
+Exhausted state
+shift_bounds: 64, 66
+Exhausted state
+shift_bounds: 65, 66
+No answers have been found.
+Try question 1
+New answers finding [START]
+stack_el: {}+17538
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {}+17538
+Exhausted state
+shift_bounds: 64, 66
+New answer has been found: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+1: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+Terms added to the base: remove([4], [5]), Q1count([4]), Q2count([5])
+Terms used in the base: dI([4], "ed", [5]), uo(["ed", "u", "v"]), =i=Q1count([1]), Q2count([2]), is_removed([1], [2]), 
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), [dI([4], "ed", [5])], dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), dI([1, 2], "a", [5]), [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 10 ================================
+=========================================================================
+0.8333333333333333, 0.41666666666666663, 2, 1.25, 1.6666666666666665, 1.25
+1, 0, 3, 5, 4, 2
+Try question 1
+New answers finding [START]
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+stack_el: {}+17538
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+Exhausted state
+shift_bounds: 65, 69
+Exhausted state
+shift_bounds: 68, 69
+No answers have been found.
+Try question 0
+New answers finding [START]
+stack_el: {}+1050
+stack_el: {q2 -> [2], q1 -> [1]}+372
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {}+1050
+Exhausted state
+shift_bounds: 65, 69
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([4], "b", [8]),dI([5], "u", [6]),dI([5], "b", [9]),dI([6], "g", [7]),dI([7], "v", [5]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),dI([1, 2], "a", [5]),remove([4], [5]),Q1count([4]),Q2count([5])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q1 -> [4], e -> "b", q2 -> [8], q2c -> [5], q1c -> [4]}+520
+0: {q1 -> [4], e -> "b", q2 -> [8], q2c -> [5], q1c -> [4]}+520
+Branch has been removed
+
+Current formula:
+Base: 
+
+Questions:
+=========================================================================
+================================ Step 1 ================================
+=========================================================================
+
+Result: Refuted
+**** REFUTED ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+Exhausted state
+shift_bounds: 68, 69
+No answers have been found.
+Try question 3
+New answers finding [START]
+stack_el: {}+1295
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {}+1295
+Exhausted state
+shift_bounds: 65, 69
+New answer has been found: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+3: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+Terms added to the base: dI([4, 5], "u", [6])
+Terms used in the base: remove([4], [5]), dI([5], "u", [6]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), [dI([4], "ed", [5])], [dI([5], "u", [6])], dI([5], "b", [9]), dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), dI([1, 2], "a", [5]), [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5]), dI([4, 5], "u", [6])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 11 ================================
+=========================================================================
+1.25, 0.8333333333333333, 2.25, 0.5833333333333333, 2.0833333333333335, 1.5
+3, 1, 0, 5, 4, 2
+Try question 3
+New answers finding [START]
+stack_el: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+stack_el: {}+1295
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+New answer has been found: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+3: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+Terms added to the base: dI([4, 5], "b", [9])
+Terms used in the base: remove([4], [5]), dI([5], "b", [9]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), [dI([4], "ed", [5])], [dI([5], "u", [6])], [dI([5], "b", [9])], dI([6], "g", [7]), dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), dI([1, 2], "a", [5]), [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5]), dI([4, 5], "u", [6]), dI([4, 5], "b", [9])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 12 ================================
+=========================================================================
+1.6666666666666665, 1.25, 2.5, 0.75, 2.5, 1.75
+3, 1, 0, 5, 2, 4
+Try question 3
+New answers finding [START]
+stack_el: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+stack_el: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+stack_el: {}+1295
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+Exhausted state
+shift_bounds: 68, 71
+Exhausted state
+shift_bounds: 70, 71
+No answers have been found.
+Try question 1
+New answers finding [START]
+stack_el: {}+49273
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+stack_el: {}+17538
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {}+49273
+Exhausted state
+shift_bounds: 68, 71
+Exhausted state
+shift_bounds: 70, 71
+No answers have been found.
+Try question 0
+New answers finding [START]
+stack_el: {}+1477
+stack_el: {}+1050
+stack_el: {q2 -> [2], q1 -> [1]}+372
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {}+1477
+Exhausted state
+shift_bounds: 68, 71
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([4], "b", [8]),dI([6], "g", [7]),dI([7], "v", [5]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),dI([1, 2], "a", [5]),remove([4], [5]),Q1count([4]),Q2count([5]),dI([4, 5], "u", [6]),dI([4, 5], "b", [9])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q2 -> [8], e -> "b", q1 -> [4], q1c -> [4], q2c -> [5]}+512
+0: {q2 -> [8], e -> "b", q1 -> [4], q1c -> [4], q2c -> [5]}+512
+Branch has been removed
+
+Current formula:
+Base: 
+
+Questions:
+=========================================================================
+================================ Step 1 ================================
+=========================================================================
+
+Result: Refuted
+**** REFUTED ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([4], "b", [8]),dI([6], "g", [7]),dI([7], "v", [5]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),dI([1, 2], "a", [5]),remove([4], [5]),Q1count([4]),Q2count([5]),dI([4, 5], "u", [6]),dI([4, 5], "b", [9])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q2 -> [8], e -> "b", q2c -> [5], q1c -> [4], q1 -> [4]}+512
+0: {q2 -> [8], e -> "b", q2c -> [5], q1c -> [4], q1 -> [4]}+512
+Branch has been removed
+
+Current formula:
+Base: 
+
+Questions:
+=========================================================================
+================================ Step 1 ================================
+=========================================================================
+
+Result: Refuted
+**** REFUTED ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+Exhausted state
+shift_bounds: 70, 71
+No answers have been found.
+Try question 5
+New answers finding [START]
+stack_el: {}+2277
+stack_el: {}+1784
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {}+2277
+Exhausted state
+shift_bounds: 65, 71
+New answer has been found: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+5: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+Terms added to the base: dI([7], "v", [4, 5])
+Terms used in the base: remove([4], [5]), dI([7], "v", [5]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), [dI([4], "ed", [5])], [dI([5], "u", [6])], [dI([5], "b", [9])], dI([6], "g", [7]), [dI([7], "v", [5])], dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), dI([1, 2], "a", [5]), [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5]), dI([4, 5], "u", [6]), dI([4, 5], "b", [9]), dI([7], "v", [4, 5])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 13 ================================
+=========================================================================
+2.0833333333333335, 1.6666666666666665, 2.75, 1.5, 2.916666666666667, 0.41666666666666663
+5, 3, 1, 0, 2, 4
+Try question 5
+New answers finding [START]
+stack_el: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+stack_el: {}+2277
+stack_el: {}+1784
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+New answer has been found: {q4 -> [5], q3 -> [1, 2], q1 -> [4], e -> "a", q2 -> [5]}+2478
+5: {q4 -> [5], q3 -> [1, 2], q1 -> [4], e -> "a", q2 -> [5]}+2478
+Terms added to the base: dI([1, 2], "a", [4, 5])
+Terms used in the base: remove([4], [5]), dI([1, 2], "a", [5]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), dI([4], "b", [8]), [dI([4], "ed", [5])], [dI([5], "u", [6])], [dI([5], "b", [9])], dI([6], "g", [7]), [dI([7], "v", [5])], dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), [dI([1, 2], "a", [5])], [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5]), dI([4, 5], "u", [6]), dI([4, 5], "b", [9]), dI([7], "v", [4, 5]), dI([1, 2], "a", [4, 5])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 14 ================================
+=========================================================================
+2.5, 2.0833333333333335, 3, 2.25, 3.333333333333333, 0.5833333333333333
+5, 1, 3, 0, 2, 4
+Try question 5
+New answers finding [START]
+stack_el: {q4 -> [5], q3 -> [1, 2], q1 -> [4], e -> "a", q2 -> [5]}+2478
+stack_el: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+stack_el: {}+2277
+stack_el: {}+1784
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {q4 -> [5], q3 -> [1, 2], q1 -> [4], e -> "a", q2 -> [5]}+2478
+Exhausted state
+shift_bounds: 70, 73
+Exhausted state
+shift_bounds: 72, 73
+No answers have been found.
+Try question 1
+New answers finding [START]
+stack_el: {}+66181
+stack_el: {}+49273
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+stack_el: {}+17538
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {}+66181
+Exhausted state
+shift_bounds: 70, 73
+Exhausted state
+shift_bounds: 72, 73
+No answers have been found.
+Try question 3
+New answers finding [START]
+stack_el: {}+2734
+stack_el: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+stack_el: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+stack_el: {}+1295
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {}+2734
+Exhausted state
+shift_bounds: 70, 73
+Exhausted state
+shift_bounds: 72, 73
+No answers have been found.
+Try question 0
+New answers finding [START]
+stack_el: {}+1926
+stack_el: {}+1477
+stack_el: {}+1050
+stack_el: {q2 -> [2], q1 -> [1]}+372
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {}+1926
+Exhausted state
+shift_bounds: 70, 73
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([4], "b", [8]),dI([6], "g", [7]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),remove([4], [5]),Q1count([4]),Q2count([5]),dI([4, 5], "u", [6]),dI([4, 5], "b", [9]),dI([7], "v", [4, 5]),dI([1, 2], "a", [4, 5])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q1 -> [4], e -> "b", q2c -> [5], q2 -> [8], q1c -> [4]}+504
+0: {q1 -> [4], e -> "b", q2c -> [5], q2 -> [8], q1c -> [4]}+504
+Branch has been removed
+
+Current formula:
+Base: 
+
+Questions:
+=========================================================================
+================================ Step 1 ================================
+=========================================================================
+
+Result: Refuted
+**** REFUTED ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+Exhausted state
+shift_bounds: 72, 73
+No answers have been found.
+Try question 2
+New answers finding [START]
+stack_el: {}+1275
+stack_el: {}+782
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+curr_answer: {}+1275
+Exhausted state
+shift_bounds: 65, 73
+New answer has been found: {q3 -> [4], e -> "b", q1 -> [4], q4 -> [8], q2 -> [5]}+1366
+2: {q3 -> [4], e -> "b", q1 -> [4], q4 -> [8], q2 -> [5]}+1366
+Terms added to the base: dI([4, 5], "b", [8])
+Terms used in the base: remove([4], [5]), dI([4], "b", [8]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), [dI([4], "b", [8])], [dI([4], "ed", [5])], [dI([5], "u", [6])], [dI([5], "b", [9])], dI([6], "g", [7]), [dI([7], "v", [5])], dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], dI([1, 2], "a", [4]), dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), [dI([1, 2], "a", [5])], [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5]), dI([4, 5], "u", [6]), dI([4, 5], "b", [9]), dI([7], "v", [4, 5]), dI([1, 2], "a", [4, 5]), dI([4, 5], "b", [8])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 15 ================================
+=========================================================================
+2.916666666666667, 2.5, 0.41666666666666663, 3, 3.75, 1.1666666666666665
+2, 5, 1, 0, 3, 4
+Try question 2
+New answers finding [START]
+stack_el: {q3 -> [4], e -> "b", q1 -> [4], q4 -> [8], q2 -> [5]}+1366
+stack_el: {}+1275
+stack_el: {}+782
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+curr_answer: {q3 -> [4], e -> "b", q1 -> [4], q4 -> [8], q2 -> [5]}+1366
+Exhausted state
+shift_bounds: 72, 74
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 5
+New answers finding [START]
+stack_el: {}+3752
+stack_el: {q4 -> [5], q3 -> [1, 2], q1 -> [4], e -> "a", q2 -> [5]}+2478
+stack_el: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+stack_el: {}+2277
+stack_el: {}+1784
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {}+3752
+Exhausted state
+shift_bounds: 72, 74
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 1
+New answers finding [START]
+stack_el: {}+82817
+stack_el: {}+66181
+stack_el: {}+49273
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+stack_el: {}+17538
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {}+82817
+Exhausted state
+shift_bounds: 72, 74
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 0
+New answers finding [START]
+stack_el: {}+2383
+stack_el: {}+1926
+stack_el: {}+1477
+stack_el: {}+1050
+stack_el: {q2 -> [2], q1 -> [1]}+372
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {}+2383
+Exhausted state
+shift_bounds: 72, 74
+
+
+*******************************************************
+**************** START OF SUBINFERENCE ****************
+*******************************************************
+? Euo("ed"),Euo("u"),Euo("v"),Eo("a"),Eo("b"),Eo("c"),Eo("d"),Eo("g"),uo(["ed", "u", "v"]),o(["a", "b", "c", "d", "g"]),Q0G(1),dG(1, "ed", 2),dG(1, "a", 4),dG(2, "u", 3),dG(2, "a", 5),dG(3, "c", 7),dG(4, "b", 8),dG(4, "ed", 5),dG(5, "u", 6),dG(5, "b", 9),dG(6, "g", 7),dG(7, "v", 5),dG(7, "b", 10),dG(8, "ed", 9),dG(8, "d", 1),dG(8, "v", 12),dG(9, "d", 2),dG(9, "u", 10),dG(10, "d", 3),dG(11, "d", 1),dG(12, "ed", 11),T0([1]),T([]),dI([3], "c", [7]),dI([6], "g", [7]),dI([7], "b", [10]),dI([8], "ed", [9]),dI([8], "v", [12]),dI([9], "u", [10]),dI([10], "d", [3]),dI([12], "ed", [11]),remove([1], [2]),dI([1, 2], "a", [4]),dI([1, 2], "u", [3]),dI([8], "d", [1, 2]),dI([9], "d", [1, 2]),dI([11], "d", [1, 2]),remove([4], [5]),Q1count([4]),Q2count([5]),dI([4, 5], "u", [6]),dI([4, 5], "b", [9]),dI([7], "v", [4, 5]),dI([1, 2], "a", [4, 5]),dI([4, 5], "b", [8])
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q1c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q1 == q2c
+	! q1, q2, e, q1c, q2c dI(q1,e,q2), Q1count(q1c), Q2count(q2c), q2 == q1c
+=========================================================================
+================================ Step 0 ================================
+=========================================================================
+0, 0, 0, 0
+0, 1, 2, 3
+Try question 0
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 1
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 2
+New answers finding [START]
+curr_answer: {}+0
+Exhausted state
+shift_bounds: 54, 55
+No answers have been found.
+Try question 3
+New answers finding [START]
+curr_answer: {}+0
+New answer has been found: {q1c -> [4], e -> "a", q1 -> [1, 2], q2 -> [4], q2c -> [5]}+2112
+3: {q1c -> [4], e -> "a", q1 -> [1, 2], q2 -> [4], q2c -> [5]}+2112
+Branch has been removed
+
+Current formula:
+Base: 
+
+Questions:
+=========================================================================
+================================ Step 1 ================================
+=========================================================================
+
+Result: Refuted
+**** REFUTED ****
+*****************************************************
+**************** END OF SUBINFERENCE ****************
+*****************************************************
+
+
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 3
+New answers finding [START]
+stack_el: {}+3491
+stack_el: {}+2734
+stack_el: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+stack_el: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+stack_el: {}+1295
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {}+3491
+Exhausted state
+shift_bounds: 72, 74
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 4
+New answers finding [START]
+stack_el: {}+1792
+stack_el: {}+1299
+stack_el: {}+812
+stack_el: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+stack_el: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+curr_answer: {}+1792
+Exhausted state
+shift_bounds: 65, 74
+New answer has been found: {q3 -> [1, 2], q2 -> [5], q4 -> [4], q1 -> [4], e -> "a"}+1953
+4: {q3 -> [1, 2], q2 -> [5], q4 -> [4], q1 -> [4], e -> "a"}+1953
+Terms added to the base: 
+Terms used in the base: remove([4], [5]), dI([1, 2], "a", [4]), =i=
+Current formula:
+Base: Euo("ed"), Euo("u"), Euo("v"), Eo("a"), Eo("b"), Eo("c"), Eo("d"), Eo("g"), uo(["ed", "u", "v"]), o(["a", "b", "c", "d", "g"]), Q0G(1), dG(1, "ed", 2), dG(1, "a", 4), dG(2, "u", 3), dG(2, "a", 5), dG(3, "c", 7), dG(4, "b", 8), dG(4, "ed", 5), dG(5, "u", 6), dG(5, "b", 9), dG(6, "g", 7), dG(7, "v", 5), dG(7, "b", 10), dG(8, "ed", 9), dG(8, "d", 1), dG(8, "v", 12), dG(9, "d", 2), dG(9, "u", 10), dG(10, "d", 3), dG(11, "d", 1), dG(12, "ed", 11), T0([1]), T([]), [dI([1], "ed", [2])], [dI([1], "a", [4])], [dI([2], "u", [3])], [dI([2], "a", [5])], dI([3], "c", [7]), [dI([4], "b", [8])], [dI([4], "ed", [5])], [dI([5], "u", [6])], [dI([5], "b", [9])], dI([6], "g", [7]), [dI([7], "v", [5])], dI([7], "b", [10]), dI([8], "ed", [9]), [dI([8], "d", [1])], dI([8], "v", [12]), [dI([9], "d", [2])], dI([9], "u", [10]), dI([10], "d", [3]), [dI([11], "d", [1])], dI([12], "ed", [11]), [Q1count(0)], [Q2count(0)], [is_removed(0, 0)], remove([1], [2]), [Q1count([1])], [Q2count([2])], [dI([1, 2], "a", [4])], dI([1, 2], "u", [3]), dI([8], "d", [1, 2]), dI([9], "d", [1, 2]), dI([11], "d", [1, 2]), [dI([1, 2], "a", [5])], [is_removed([1], [2])], remove([4], [5]), Q1count([4]), Q2count([5]), dI([4, 5], "u", [6]), dI([4, 5], "b", [9]), dI([7], "v", [4, 5]), dI([1, 2], "a", [4, 5]), dI([4, 5], "b", [8])
+
+Questions:
+(0) !q1.37,q2.38 Q1count(q1), Q2count(q2), solve(replace(read_file_to_string("./problems/is_removed.pcf"), "base", base_to_string()), 1000) == false 
+    ? is_removed(q1, q2) 
+(1) !q1.40,le.41,q2.42,e.43,q1c.44,q2c.45 dI(q1, e, q2), uo(le), e in le, Q1count(q1c), Q2count(q2c), is_removed(q1c, q2c) $ remove_fact(0), remove_fact(3), remove_fact(4), remove_fact(5)
+    ? remove(q1, q2), Q1count(q1), Q2count(q2) 
+(2) !q1.47,q2.48,e.49,q3.50,q4.51 remove(q1, q2), dI(q3, e, q4), q3 subseteq q1 $ remove_fact(1)
+    ? dI(sort(q3 ++ q2), e, q4) 
+(3) !q1.52,q2.53,e.54,q3.55,q4.56 remove(q1, q2), dI(q3, e, q4), q3 subseteq q2 $ remove_fact(1)
+    ? dI(sort(q3 ++ q1), e, q4) 
+(4) !q1.57,q2.58,e.59,q3.60,q4.61 remove(q1, q2), dI(q3, e, q4), q4 subseteq q1 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q2)) 
+(5) !q1.62,q2.63,e.64,q3.65,q4.66 remove(q1, q2), dI(q3, e, q4), q4 subseteq q2 $ remove_fact(1)
+    ? dI(q3, e, sort(q4 ++ q1)) 
+=========================================================================
+================================ Step 16 ================================
+=========================================================================
+3.333333333333333, 2.916666666666667, 0.8333333333333333, 3.75, 0.5833333333333333, 1.75
+4, 2, 5, 1, 0, 3
+Try question 4
+New answers finding [START]
+stack_el: {q3 -> [1, 2], q2 -> [5], q4 -> [4], q1 -> [4], e -> "a"}+1953
+stack_el: {}+1792
+stack_el: {}+1299
+stack_el: {}+812
+stack_el: {q3 -> [11], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+280
+stack_el: {q3 -> [8], q2 -> [2], q4 -> [1], q1 -> [1], e -> "d"}+252
+curr_answer: {q3 -> [1, 2], q2 -> [5], q4 -> [4], q1 -> [4], e -> "a"}+1953
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 2
+New answers finding [START]
+stack_el: {}+2774
+stack_el: {q3 -> [4], e -> "b", q1 -> [4], q4 -> [8], q2 -> [5]}+1366
+stack_el: {}+1275
+stack_el: {}+782
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q4 -> [4], q3 -> [1]}+188
+curr_answer: {}+2774
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 5
+New answers finding [START]
+stack_el: {}+4519
+stack_el: {}+3752
+stack_el: {q4 -> [5], q3 -> [1, 2], q1 -> [4], e -> "a", q2 -> [5]}+2478
+stack_el: {q4 -> [5], q3 -> [7], q1 -> [4], e -> "v", q2 -> [5]}+2386
+stack_el: {}+2277
+stack_el: {}+1784
+stack_el: {}+1297
+stack_el: {}+816
+stack_el: {q4 -> [2], q3 -> [9], q1 -> [1], e -> "d", q2 -> [2]}+260
+curr_answer: {}+4519
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 1
+New answers finding [START]
+stack_el: {}+100701
+stack_el: {}+82817
+stack_el: {}+66181
+stack_el: {}+49273
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [5], q2c -> [2], q1c -> [1], q1 -> [4]}+18671
+stack_el: {}+17538
+stack_el: {e -> "ed", le -> ["ed", "u", "v"], q2 -> [2], q2c -> 0, q1c -> 0, q1 -> [1]}+420
+curr_answer: {}+100701
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 0
+New answers finding [START]
+stack_el: {}+2848
+stack_el: {}+2383
+stack_el: {}+1926
+stack_el: {}+1477
+stack_el: {}+1050
+stack_el: {q2 -> [2], q1 -> [1]}+372
+stack_el: {q2 -> 0, q1 -> 0}+222
+curr_answer: {}+2848
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+Try question 3
+New answers finding [START]
+stack_el: {}+4258
+stack_el: {}+3491
+stack_el: {}+2734
+stack_el: {q2 -> [5], e -> "b", q1 -> [4], q3 -> [5], q4 -> [9]}+1402
+stack_el: {q2 -> [5], e -> "u", q1 -> [4], q3 -> [5], q4 -> [6]}+1394
+stack_el: {}+1295
+stack_el: {}+802
+stack_el: {q2 -> [2], e -> "a", q1 -> [1], q3 -> [2], q4 -> [5]}+198
+stack_el: {q2 -> [2], e -> "u", q1 -> [1], q3 -> [2], q4 -> [3]}+190
+curr_answer: {}+4258
+Exhausted state
+shift_bounds: 73, 74
+No answers have been found.
+
+Result: Exhausted
