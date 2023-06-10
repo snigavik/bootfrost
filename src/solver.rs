@@ -206,21 +206,42 @@ impl Solver{
 		}
 	}
 
-	fn find_answer_global(&mut self) -> Option<AnswerId>{
+	fn find_answer_global(&mut self) -> AnswerOption{
 		let bid = self.bstack.last().unwrap().bid;
 		let strategy = self.strategy();
 		for si in strategy.iter(){
 			let fstack_i = self.questions[si.qid.0].fstack_i;
 			println!("Try question {}", si.qid.0);
-			if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context, &mut self.attributes){
-				let answer = &self.questions[aid.0].answers[aid.1];
-				println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
-				return Some(aid);
-			}else{
-				println!("No answers have been found.");
+			let res = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context, &mut self.attributes);
+			match res{
+				AnswerOption::Success(aid) => {
+					let answer = &self.questions[aid.0].answers[aid.1];
+					println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
+					return AnswerOption::Success(aid);
+				},
+				AnswerOption::Next => {
+					continue;
+				},
+				AnswerOption::Restart => {
+					return AnswerOption::Restart;
+				},
+				AnswerOption::Fail => {
+					println!("No answers have been found (selected).");
+				},			
 			}
+			// if let Some(aid) = self.questions[si.qid.0].find_answer_local(si, bid, &mut self.psterms, &self.tqfs, &mut self.base, self.bstack.len()-1, &self.bstack[fstack_i].context, &mut self.attributes){
+			// 	let answer = &self.questions[aid.0].answers[aid.1];
+			// 	println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
+			// 	return Some(aid);
+			// }else{
+			// 	println!("No answers have been found.");
+			// }
 		}
-		None
+		
+		match self.strategy{
+			Strategy::ManualBest => AnswerOption:: Restart,
+			_ => AnswerOption::Fail,
+		}
 	}
 
 
@@ -432,13 +453,32 @@ impl Solver{
 				println!("\nResult: Refuted");
 				return SolverResult{t: SolverResultType::Refuted, steps: i};
 			}
-			if let Some(aid) = self.find_answer_global(){
-				self.transform(aid);
-				self.curr_step = self.curr_step + 1;
-			}else{
-				println!("\nResult: Exhausted");
-				return SolverResult{t: SolverResultType::Exhausted, steps: i};
+			let res = self.find_answer_global();
+			match res{
+				AnswerOption::Success(aid) => {
+					self.transform(aid);
+					self.curr_step = self.curr_step + 1;					
+				},
+				AnswerOption::Restart => {
+					println!("restart");
+				},
+				AnswerOption::Fail => {
+					println!("\nResult: Exhausted");
+					return SolverResult{t: SolverResultType::Exhausted, steps: i};					
+				},
+				AnswerOption::Next => {
+					panic!("");
+				}
 			}
+
+
+			// if let Some(aid) = self.find_answer_global(){
+			// 	self.transform(aid);
+			// 	self.curr_step = self.curr_step + 1;
+			// }else{
+			// 	println!("\nResult: Exhausted");
+			// 	return SolverResult{t: SolverResultType::Exhausted, steps: i};
+			// }
 			self.print();
 		}
 		println!("\nResult: LimitReached");

@@ -4,6 +4,7 @@ use crate::answer::*;
 
 use std::io::stdin;
 
+use crate::strategies::{strategies::AnswerOption};
 
 pub fn first_manual(answer: &Answer, psterms: &PSTerms) -> bool{
 	loop{
@@ -35,7 +36,7 @@ pub fn first_manual(answer: &Answer, psterms: &PSTerms) -> bool{
 }
 
 
-pub fn best_manual(answers: &Vec<Answer>, used_answers: &Vec<Answer>, start:usize, psterms: &PSTerms) -> Option<AnswerId>{
+pub fn best_manual(answers: &Vec<Answer>, used_answers: &Vec<Answer>, start:usize, psterms: &PSTerms) -> AnswerOption{
 	let new_len = answers.len() - start;
 	println!("\nSelect your answer (type corresponding number)");
 	for (i, x) in answers[start..].iter().enumerate(){
@@ -55,8 +56,11 @@ pub fn best_manual(answers: &Vec<Answer>, used_answers: &Vec<Answer>, start:usiz
 		
 		match inp.trim(){
 			"n" => {
-				return None;
+				return AnswerOption::Next;
 			},
+			"r" => {
+				return AnswerOption::Restart;
+			},			
 			"q" => {
 				panic!("");
 			},
@@ -84,7 +88,7 @@ pub fn best_manual(answers: &Vec<Answer>, used_answers: &Vec<Answer>, start:usiz
 		if try_again{
 			continue;
 		}	
-		return Some(AnswerId(answers[start+na].qid.0, start+na));	
+		return AnswerOption::Success(AnswerId(answers[start+na].qid.0, start+na));	
 	}
 }
 

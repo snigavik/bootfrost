@@ -24,7 +24,7 @@ const T_LIMIT: usize = 1000000000;
 #[derive(Clone)]
 pub enum SelectorStrategy{
 	First(fn(&Answer, &PSTerms) -> bool),
-	Best(fn(&Vec<Answer>, &Vec<Answer>, usize, &PSTerms) -> Option<AnswerId>),
+	Best(fn(&Vec<Answer>, &Vec<Answer>, usize, &PSTerms) -> AnswerOption),
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -40,6 +40,14 @@ pub enum Strategy{
 	ManualFirst,
 	ManualBest,
 	User,
+}
+
+#[derive(Debug)]
+pub enum AnswerOption{
+	Success(AnswerId), 
+	Fail, 
+	Next,
+	Restart,
 }
 
 

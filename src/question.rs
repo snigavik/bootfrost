@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::strategies::{strategies::StrategyItem, strategies::SelectorStrategy, attributes::*, environment::PEnv};
+use crate::strategies::{strategies::StrategyItem, strategies::SelectorStrategy, strategies::AnswerOption, attributes::*, environment::PEnv};
 use crate::misc::*;
 use crate::answer::*;
 use crate::base::*;
@@ -93,7 +93,7 @@ impl Question{
 		base: &mut Base,
 		level: usize,
 		context: &Context,
-		attributes: &mut Attributes) -> Option<AnswerId>{	
+		attributes: &mut Attributes) -> AnswerOption{	
 
 		// println!("New answers finding [START]");
 		// for x in self.curr_answer_stack.iter().rev(){
@@ -218,7 +218,7 @@ impl Question{
 								self.used_answers.push(answer1.clone());
 								self.curr_answer_stack.push(curr_answer);
 								// println!("New answers finding [FINISH]");
-								return Some(AnswerId(self.qid.0, self.answers.len()-1))
+								return AnswerOption::Success(AnswerId(self.qid.0, self.answers.len()-1))
 							}else{
 								continue;
 							}
@@ -243,10 +243,10 @@ impl Question{
 		if let SelectorStrategy::Best(f) = si.selector{
 			if self.answers.len() == 0{
 				// println!("New answers finding [FINISH]");
-				return None;
+				return AnswerOption::Fail;
 			}
 			let res_answer = f(&self.answers, &self.used_answers, 0, &psterms);
-			if let Some(ref aidbest) = res_answer{
+			if let AnswerOption::Success(ref aidbest) = res_answer{
 				self.used_answers.push(self.answers[aidbest.1].clone());
 			}
 			// println!("New answers finding [FINISH]");
@@ -254,7 +254,7 @@ impl Question{
 		}
 
 		// println!("New answers finding [FINISH]");
-		None //		 
+		AnswerOption::Fail //		 
 	}	
 }
 
