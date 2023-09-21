@@ -6,6 +6,7 @@ grammar;
 pub TqfLine: PlainFormula = {
 	<q:quantifier> => PlainFormula::new(q, vec![], vec![], vec![], vec![]),
 	<q:quantifier> <conj:atoms> => PlainFormula::new(q, vec![], conj, vec![], vec![]),
+	<q:quantifier> <vars:vars> => PlainFormula::new(q, vars,  vec![], vec![], vec![]),
 	<q:quantifier> <vars:vars> <conj:atoms> => PlainFormula::new(q, vars, conj, vec![], vec![]),
 	<q:quantifier> <vars:vars> <conj:atoms> "$" <commands:atoms> => PlainFormula::new(q, vars, conj, commands, vec![]),	
 	<q:quantifier> "$" <commands:atoms> => PlainFormula::new(q, vec![], vec![], commands, vec![]),
