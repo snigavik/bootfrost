@@ -80,7 +80,7 @@ impl Solver{
 			tids: &tqf.conj,
 			psterms: &self.psterms,
 			context: Some(context),
-			dm: DisplayMode::Plain,
+			dm: DisplayMode::PlainSid,
 			d: ", ",
 		});
 
@@ -92,7 +92,7 @@ impl Solver{
 				tids: &tqf.commands,
 				psterms: &self.psterms,
 				context: Some(context),
-				dm: DisplayMode::Plain,
+				dm: DisplayMode::PlainSid,
 				d: ", ",
 			});			
 		}
@@ -117,7 +117,7 @@ impl Solver{
 				tid: b.term,
 				psterms: &self.psterms,
 				context: None,
-				dm: DisplayMode::Plain,
+				dm: DisplayMode::PlainSid,
 			});	
 
 			if deleted{ print!("]");}			
