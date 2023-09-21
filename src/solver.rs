@@ -387,7 +387,7 @@ impl Solver{
 			// add questions
 			let a_tqfs = &etqf.next;
 			let q_len = self.questions.len();
-			let mut new_questions = 
+			let mut new_questions: Vec<Question> = 
 				a_tqfs
 					.iter()
 					.enumerate()
@@ -401,6 +401,11 @@ impl Solver{
 							answers: vec![],
 							used_answers: vec![],
 						}).collect();
+			if new_questions.len() > 0{
+				println!("\nNew questions: YES. ({})-({})", self.questions.len(), self.questions.len() + new_questions.len() - 1)
+			}else{
+				println!("\nNew questions: NO.")
+			}
 			self.questions.append(&mut new_questions);
 			return true;		
 		}else{
