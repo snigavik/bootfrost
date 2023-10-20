@@ -9,6 +9,7 @@ use crate::context::*;
 use crate::answer::*;
 use crate::plain::*;
 use crate::base::*;
+use crate::solverlog::*;
 
 use crate::strategies::{environment::*, attributes::*, strategies::*, ifunctions::*, answer_validators::*};
 
@@ -49,6 +50,7 @@ pub struct Solver{
 	curr_step: usize,
 	attributes: Attributes,
 	strategy: Strategy,
+	pub slog: SolverLog,
 }
 
 impl Solver{
@@ -173,6 +175,7 @@ impl Solver{
 			curr_step:0,
 			attributes: Attributes::new(),
 			strategy: strategy,
+			slog: SolverLog::new()
 		};
 
 		solver.enable_block();
@@ -452,6 +455,7 @@ impl Solver{
 			println!("=========================================================================");
 			println!("================================ Step {} ================================", self.curr_step);
 			println!("=========================================================================");
+			self.slog.new_step(self.curr_step);
 			// println!("== {}",self.base[0].term.total_size());
 			i = i + 1;
 			if self.bstack.is_empty(){

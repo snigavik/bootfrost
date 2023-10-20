@@ -4,7 +4,7 @@ use clap::Parser;
 use bootfrost::solver::*;
 use bootfrost::strategies::strategies::Strategy;
 
-use bootfrost::solverlog::*;
+//use bootfrost::solverlog::*;
 
 #[derive(Parser,Default,Debug)]
 #[clap(author="Aleksandr Larionov", version, about="Bootfrost Solver")]
@@ -38,9 +38,10 @@ fn main() {
 		},
 	};
 
-	let mut slog = SolverLog::new();
 	let mut solver = Solver::parse_file(&args.formula, s);
 	solver.print();
 	solver.solver_loop(args.limit);
+	let j = serde_json::to_string_pretty(&solver.slog).unwrap();
+	println!("\n\n---- JSON LOG ----\n {}", j);
 
 }
