@@ -4,6 +4,7 @@ use clap::Parser;
 use bootfrost::solver::*;
 use bootfrost::strategies::strategies::Strategy;
 
+use bootfrost::solverlog::*;
 
 #[derive(Parser,Default,Debug)]
 #[clap(author="Aleksandr Larionov", version, about="Bootfrost Solver")]
@@ -37,6 +38,7 @@ fn main() {
 		},
 	};
 
+	let mut slog = SolverLog::new();
 	let mut solver = Solver::parse_file(&args.formula, s);
 	solver.print();
 	solver.solver_loop(args.limit);

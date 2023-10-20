@@ -9,6 +9,7 @@ mod parser;
 pub mod strategies;
 mod base;
 pub mod utils;
+pub mod solverlog;
 
 
 #[macro_use] extern crate lalrpop_util;
