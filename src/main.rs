@@ -20,6 +20,10 @@ struct Arguments{
 	#[clap(short, long)]
 	/// Maximum number of steps
 	limit: usize,
+
+	#[clap(short, long)]
+	/// json logging
+	json: bool,
 }
 
 
@@ -41,7 +45,9 @@ fn main() {
 	let mut solver = Solver::parse_file(&args.formula, s);
 	solver.print();
 	solver.solver_loop(args.limit);
-	let j = serde_json::to_string_pretty(&solver.slog).unwrap();
-	println!("\n\n---- JSON LOG ----\n {}", j);
+	if args.json{
+		let j = serde_json::to_string_pretty(&solver.slog).unwrap();
+		println!("\n\n---- JSON LOG ----\n {}", j);
+	}
 
 }
