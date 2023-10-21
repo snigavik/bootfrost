@@ -14,13 +14,15 @@ pub struct StepItem{
 #[derive(Serialize)]
 pub struct SolverLog{
 	pub log: Vec<StepItem>,
+	pub result: String,
 	//pub curr_step: usize
 }
 
 impl SolverLog{
 	pub fn new() -> SolverLog{
 		SolverLog{
-			log: vec![], 
+			log: vec![],
+			result: "".to_string() 
 			//curr_step: 0
 		}
 	}
@@ -58,6 +60,10 @@ impl SolverLog{
 	pub fn set_base(&mut self, b: String){
 		let mut x = self.log.last_mut().unwrap();
 		x.base = b;		
+	}
+
+	pub fn set_result(&mut self, r: String){
+		self.result = r;
 	}
 }
 

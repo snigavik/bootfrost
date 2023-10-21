@@ -44,7 +44,8 @@ fn main() {
 
 	let mut solver = Solver::parse_file(&args.formula, s);
 	solver.print();
-	solver.solver_loop(args.limit);
+	let r = solver.solver_loop(args.limit);
+	solver.slog.set_result(format!("{:?}",r));
 	if args.json{
 		let j = serde_json::to_string_pretty(&solver.slog).unwrap();
 		println!("\n\n---- JSON LOG ----\n {}", j);
