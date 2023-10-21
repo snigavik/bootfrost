@@ -55,7 +55,7 @@ fn main() {
 	    
 	    let mut data_file = File::create("solverlog.json").expect("creation failed");
 	    data_file.write(j.as_bytes()).expect("write failed");
-	    println!("\n\n ---- JSON have been saved ----");
+	    println!("---- JSON has been saved ----\n");
 
 	}
 
