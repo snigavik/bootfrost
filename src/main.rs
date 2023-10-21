@@ -4,6 +4,9 @@ use clap::Parser;
 use bootfrost::solver::*;
 use bootfrost::strategies::strategies::Strategy;
 
+use std::fs::File;
+use std::io::Write;
+
 //use bootfrost::solverlog::*;
 
 #[derive(Parser,Default,Debug)]
@@ -48,7 +51,12 @@ fn main() {
 	solver.slog.set_result(format!("{:?}",r));
 	if args.json{
 		let j = serde_json::to_string_pretty(&solver.slog).unwrap();
-		println!("\n\n---- JSON LOG ----\n {}", j);
+		//println!("\n\n---- JSON LOG ----\n {}", j);
+	    
+	    let mut data_file = File::create("solverlog.json").expect("creation failed");
+	    data_file.write(j.as_bytes()).expect("write failed");
+	    println!("\n\n ---- JSON have been saved ----");
+
 	}
 
 }
