@@ -14,12 +14,15 @@ pub struct StepItem{
 #[derive(Serialize)]
 pub struct SolverLog{
 	pub log: Vec<StepItem>,
-	pub curr_step: usize
+	//pub curr_step: usize
 }
 
 impl SolverLog{
 	pub fn new() -> SolverLog{
-		SolverLog{log: vec![], curr_step: 0}
+		SolverLog{
+			log: vec![], 
+			//curr_step: 0
+		}
 	}
 
 	pub fn is_empty(&self) -> bool{
