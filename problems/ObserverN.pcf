@@ -7,7 +7,14 @@
 	dI([1], "ed", [2]), dI([1], "a", [4]), dI([2], "u", [3]), dI([2], "a", [5]), dI([3], "c", [7]), ~
 	dI([4], "b", [8]), dI([4], "ed", [5]), dI([5], "u", [6]), dI([5], "b", [9]), dI([6], "g", [7]), ~
 	dI([7], "v", [5]), dI([7], "b", [10]), dI([8], "ed", [9]), dI([8], "d", [1]), dI([8], "v", [12]), ~
-	dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11])#, ~
+	dI([9], "d", [2]), dI([9], "u", [10]), dI([10], "d", [3]), dI([11], "d", [1]), dI([12], "ed", [11]), ~
+	Q1T([1]), Q1T([2]), Q1T([3]), Q1T([4]), Q1T([5]), Q1T([6]), Q1T([7]), Q1T([8]), Q1T([9]), Q1T([10]), Q1T([11]), Q1T([12])
 #	Eps0_isnotready([])
-	! q0, q1, e, q2, qEps dI( q1, e, q2 ), e in Euo, Q0G(q0), q0 in q1#, Eps0_isnotready(qEps)
-		? Eps0(sort(q1++q2))
+	! q0, q1, e, q2, euo dG( q1, e, q2 ), Euo(euo), e in euo, Q0G(q0), q0 == q1 $ remove_fact(0)
+		? Eps0(sort(push([],q1)++push([],q2)))
+	! q1, e, q2, qEps, euo dG( q1, e, q2 ), Euo(euo), e in euo, Eps0(qEps), q1 in qEps $ remove_fact(0), remove_fact(3)
+		? Eps0(sort(qEps++push([],q2)))
+	! q1, e, q2, qEps, eo dI( q1, e, q2 ), Eps0(qEps), q1 subseteq qEps, Eo(eo), e in eo
+		? to_make_trans(e, q2)
+	! q1, e, q2, qT dI( q1, e, q2 ), Euo(euo), e in euo, Q1T(qT), last(q1) in qT, last(q2) notin qT $ remove_fact(3)
+		? Q1T( qT ++ q2 )

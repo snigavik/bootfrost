@@ -398,8 +398,8 @@ impl Solver{
 				};				
 				print_batoms(&vec![], &mut env);
 				
-				let vector = env.answer.get_batoms();
-				
+				let mut vector = env.answer.get_batoms();
+				vector.retain(|s| s.is_some());
 				let a_u_str = vector.iter().map(|ve|
 					format!("{}, ", TidDisplay{
 						tid: env.base[ve.unwrap()].term,

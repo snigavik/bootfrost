@@ -380,7 +380,8 @@ pub fn print_batoms(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 		panic!("");
 	}
 
-	let vector = env.answer.get_batoms();
+	let mut vector = env.answer.get_batoms();
+	vector.retain(|s| s.is_some());
 	print!("Terms used in the base: ");
 	for v in vector{
 		if let Some(b) = v{
@@ -391,7 +392,7 @@ pub fn print_batoms(args: &Vec<TermId>, env: &mut PEnv) -> TermId{
 				dm: DisplayMode::Plain,
 			});
 		}else{
-			print!("=i=");
+			print!("=i=,");
 		}
 	}
 
