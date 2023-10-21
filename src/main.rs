@@ -22,7 +22,7 @@ struct Arguments{
 	limit: usize,
 
 	#[clap(short, long)]
-	/// json logging
+	/// JSON logging
 	json: bool,
 }
 

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct StepItem{
 	pub step: usize,
 	pub qid: usize,
-	pub subst: String,
+	pub answer: String,
 	pub completed: bool   
 }
 
@@ -20,7 +20,14 @@ impl SolverLog{
 	}
 
 	pub fn new_step(&mut self, n: usize){
-		let x = StepItem{step:n, qid:0, subst: "".to_string(), completed: false};
+		let x = StepItem{step:n, qid:0, answer: "".to_string(), completed: false};
 		self.log.push(x);
+	}
+
+	// set question and answer
+	pub fn set_qa(&mut self, q: usize, a: String){
+		let mut x = self.log.last_mut().unwrap();
+		x.qid = q;
+		x.answer = a;
 	}
 }

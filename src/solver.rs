@@ -220,6 +220,7 @@ impl Solver{
 				AnswerOption::Success(aid) => {
 					let answer = &self.questions[aid.0].answers[aid.1];
 					println!("{}: {}",si.qid.0, AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain});
+					self.slog.set_qa(si.qid.0, format!("{}",AnswerDisplay{answer: &answer, psterms: &self.psterms, dm: DisplayMode::Plain}));
 					return AnswerOption::Success(aid);
 				},
 				AnswerOption::Next => {
