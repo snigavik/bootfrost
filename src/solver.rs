@@ -108,25 +108,35 @@ impl Solver{
 
 	}
 
-	pub fn print(&self){
+
+	pub fn print(&mut self){
 		println!("\nCurrent formula:");
 		print!("Base: ");
+		let mut b_str = "".to_string();
+
 		for (i,b) in self.base.base.iter().enumerate(){
 			let deleted = self.attributes.check(KeyObject::BaseIndex(i), AttributeName("deleted".to_string()), AttributeValue("true".to_string()));
-			if deleted{ print!("[");}
+			if deleted{ print!("["); b_str = format!("{}[",b_str);}
 
-			print!("{}", TidDisplay{
+			let td1 = TidDisplay{
 				tid: b.term,
 				psterms: &self.psterms,
 				context: None,
 				dm: DisplayMode::PlainSid,
-			});	
+			};
 
-			if deleted{ print!("]");}			
-			if i < self.base.len() - 1{ print!(", ");}
+			print!("{}", &td1);
+			b_str = format!("{}{}",b_str,&td1);
+
+			if deleted{ print!("]");b_str = format!("{}]",b_str);}			
+			if i < self.base.len() - 1{ print!(", "); b_str = format!("{}, ",b_str);}
 
 			
 		}
+		if !self.slog.is_empty(){
+			self.slog.set_base(b_str);
+		}
+
 		println!("\n\nQuestions:");
 		for (i,q) in self.questions.iter().enumerate(){
 			print!("({}) ", i);
@@ -387,6 +397,22 @@ impl Solver{
 					bid: top.bid,
 				};				
 				print_batoms(&vec![], &mut env);
+				
+				let vector = env.answer.get_batoms();
+				
+				let a_u_str = vector.iter().map(|ve|
+					format!("{}, ", TidDisplay{
+						tid: env.base[ve.unwrap()].term,
+						psterms: env.psterms,
+						context: None,
+						dm: DisplayMode::Plain,}
+					)
+				).collect::<Vec<String>>().join(", ");
+				
+				let a_a_str = format!("{}", TidsDisplay{tids: &added_terms, psterms: &self.psterms, context:None, dm: DisplayMode::Plain, d:", "});
+
+				self.slog.set_atoms(a_a_str, a_u_str);
+
 			}
 			// add questions
 			let a_tqfs = &etqf.next;
