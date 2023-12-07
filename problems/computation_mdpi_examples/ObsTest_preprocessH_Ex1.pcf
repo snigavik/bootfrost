@@ -1,0 +1,8 @@
+? 	Q(1), Q(2), Q(3), Q(4), Q(5), ~
+	E("a"), E("b"), E("c"), E("u"), E("v"), E("d"), E("e"), ~
+	dH(1, "u", 2), dH(2, "v", 3), dH(3, "a", 4), ~
+	dH(4, "c", 5), dH(4, "b", 2), dH(5, "d", 1)
+	! e,q E(e), Q(q)
+		? NoFH(q,e)
+	! e,q,q1 dH(q, e, q1), NoFH(q,e) $ remove_fact(1)
+		? FH(q,e)

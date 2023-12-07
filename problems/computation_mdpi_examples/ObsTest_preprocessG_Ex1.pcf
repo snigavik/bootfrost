@@ -1,0 +1,8 @@
+? 	Q(1), Q(2), Q(3), Q(4), Q(5), ~
+	E("a"), E("b"), E("c"), E("u"), E("v"), E("d"), E("e"), ~
+	dG(1, "u", 2), dG(2, "v", 3), dG(4, "b", 2), dG(1, "a", 4), dG(3, "b", 2), ~
+	dG(4, "c", 5), dG(3, "a", 4), dG(5, "d", 1), dG(5, "e", 3)
+	! e,q E(e), Q(q)
+		? NoFG(q,e)
+	! e,q,q1 dG(q, e, q1), NoFG(q,e) $ remove_fact(1)
+		? FG(q,e)

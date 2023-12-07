@@ -1,0 +1,7 @@
+? 	dH(1, "u", 2), dH(2, "v", 3), dH(3, "a", 4), dH(4, "c", 5), ~
+	dH(4, "b", 2), dH(5, "d", 1), ~
+	unObs(["u", "c", "e"]), ~
+	dHobs([1,2], "v", [3]), dHobs([3], "a", [4,5]), ~
+	dHobs([4,5], "d", [1,2]), dHobs([4,5], "b", [1,2])
+	! q, e, q1, e1, ql, ql1, el dH(q, e, q1), dHobs(ql, e1, ql1), unObs(el), q in ql, e in el
+		? dHobs(ql, e, ql)

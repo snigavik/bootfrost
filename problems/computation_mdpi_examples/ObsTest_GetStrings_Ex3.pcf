@@ -1,0 +1,34 @@
+? 	Q(1), Q(2), Q(3), Q(4), Q(5), ~
+	Q0G(1), Q0H(1), Q0T(1,1,1), ~
+	E("a"), E("b"), E("c"), E("u"), E("v"), E("d"),  E("e"), ~
+	Ec("a"), Ec("b"), Ec("c"), Ec("u"), Ec("v"), Ec("d"), Ec("e"), ~
+	Euo("u"), Euo("v"), Euo("c"), Euo("e"), ~
+	Eo("a"), Eo("b"), Eo("d"), ~
+	dG(1, "u", 2), dG(2, "v", 3), dG(4, "b", 2), dG(1, "a", 4), ~
+	dG(3, "b", 2), dG(4, "c", 5), dG(3, "a", 4), dG(5, "d", 1), ~
+	dG(5, "e", 3), ~
+	NoFG(2, "a"), NoFG(4, "a"), NoFG(5, "a"), NoFG(1, "b"), NoFG(2, "b"), ~
+	NoFG(5, "b"), NoFG(1, "c"), NoFG(2, "c"), NoFG(3, "c"), NoFG(5, "c"), ~
+	NoFG(2, "u"), NoFG(3, "u"), NoFG(4, "u"), NoFG(5, "u"), NoFG(1, "v"), ~
+	NoFG(3, "v"), NoFG(4, "v"), NoFG(5, "v"), NoFG(1, "d"), NoFG(2, "d"), ~
+	NoFG(3, "d"), NoFG(4, "d"), NoFG(1, "e"), NoFG(2, "e"), NoFG(3, "e"), NoFG(4, "e"), ~
+	FG(1, "a"), FG(1, "u"), FG(2, "v"), FG(4, "b"), FG(3, "b"), FG(4, "c"), ~
+	FG(3, "a"), FG(5, "d"), FG(5, "e"), ~
+	dH(1, "u", 2), dH(2, "v", 3), dH(3, "a", 4), dH(4, "c", 5), ~
+	dH(4, "b", 2), dH(5, "d", 1), ~
+	NoFH(1, "a"), NoFH(2, "a"), NoFH(4, "a"), NoFH(5, "a"), NoFH(1, "b"), ~
+	NoFH(2, "b"), NoFH(3, "b"), NoFH(5, "b"), NoFH(1, "c"), NoFH(2, "c"), ~
+	NoFH(3, "c"), NoFH(5, "c"), NoFH(2, "u"), NoFH(3, "u"), NoFH(4, "u"), ~
+	NoFH(5, "u"), NoFH(1, "v"), NoFH(3, "v"), NoFH(4, "v"), NoFH(5, "v"), ~
+	NoFH(1, "d"), NoFH(2, "d"), NoFH(3, "d"), NoFH(4, "d"), ~
+	NoFH(1, "e"), NoFH(2, "e"), NoFH(3, "e"), NoFH(4, "e"), NoFH(5, "e"), ~
+	FH(3, "a"), FH(1, "u"), FH(2, "v"), FH(4, "c"), FH(4, "b"), FH(5, "d"), ~
+	T(1, 1, 1), T(2, 1, 1), T(1, 2, 2), T(2, 2, 2), T(1, 3, 3), T(2, 3, 3), T(3, 1, 1), ~
+	dT(1, 1, 1, "u", "eps", "eps", 2, 1, 1), dT(1, 1, 1, "eps", "u", "u", 1, 2, 2), ~
+	dT(2, 1, 1, "eps", "u", "u", 2, 2, 2), dT(1, 2, 2, "eps", "v", "v", 1, 3, 3), ~
+	dT(2, 2, 2, "eps", "v", "v", 2, 3, 3), dT(2, 1, 1, "v", "eps", "eps", 3, 1, 1), ~
+	dead(3, 1, 1, "a")
+	! qH1,qH2,qG,e,qH1f,qH2f,qGf,s1,s2,s3 dead(qH1,qH2,qG,e), dT(qH1f, qH2f, qGf, s1, s2, s3, qH1, qH2, qG)
+		? next(qH1f, qH2f, qGf, s1, s2, s3, e)
+	! qH1,qH2,qG,e,qH1f,qH2f,qGf,s1,s2,s3,e1,e2,e3 next(qH1, qH2, qG, s1, s2, s3, e), dT(qH1f, qH2f, qGf, e1, e2, e3, qH1, qH2, qG) $ remove_fact(0)
+		? next(qH1f, qH2f, qGf, e1++s1, e2++s2, e3++s3, e)
