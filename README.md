@@ -1,6 +1,8 @@
 cargo build
 
-USAGE:
+bootfrost --help
+
+USAGE: \
     bootfrost [OPTIONS] --formula <FORMULA> --strategy <STRATEGY> --limit <LIMIT>
 
 OPTIONS:
