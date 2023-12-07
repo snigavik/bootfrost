@@ -3,14 +3,14 @@ cargo build
 bootfrost --help
 
 USAGE: \
-    bootfrost [OPTIONS] --formula &lt; FORMULA &gt; --strategy `<`STRATEGY`>` --limit `<`LIMIT`>`
+    bootfrost [OPTIONS] --formula &lt;FORMULA&gt; --strategy &lt;STRATEGY&gt; --limit &lt;LIMIT&gt;
 
 OPTIONS: \
-    -f, --formula `<`FORMULA`>`      Path to the file containing the formula \
+    -f, --formula &lt;FORMULA&gt;      Path to the file containing the formula \
     -h, --help                   Print help information \
     -j, --json                   JSON logging \
-    -l, --limit `<`LIMIT`>`          Maximum number of steps \
-    -s, --strategy `<`STRATEGY`>`    Strategy: "plain", "general", "manualfirst", "manualbest" or path \
+    -l, --limit &lt;LIMIT&gt;          Maximum number of steps \
+    -s, --strategy &lt;STRATEGY&gt;    Strategy: "plain", "general", "manualfirst", "manualbest" or path \
                                  to the file containing the user strategy \
     -V, --version                Print version information \
 
