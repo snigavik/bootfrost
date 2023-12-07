@@ -3,7 +3,7 @@ cargo build
 bootfrost --help
 
 USAGE: \
-    bootfrost [OPTIONS] --formula `<`FORMULA`>` --strategy `<`STRATEGY`>` --limit `<`LIMIT`>`
+    bootfrost [OPTIONS] --formula &lt; FORMULA &gt; --strategy `<`STRATEGY`>` --limit `<`LIMIT`>`
 
 OPTIONS: \
     -f, --formula `<`FORMULA`>`      Path to the file containing the formula \
