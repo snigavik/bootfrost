@@ -1,3 +1,5 @@
+BOOTFROST - automated theorem proving program for first-order formulas with extensions. 
+
 cargo build
 
 bootfrost --help
